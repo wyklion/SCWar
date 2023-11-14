@@ -9,8 +9,7 @@ abstract class Entity extends PositionComponent {
 
   Entity(double x, double y, this.isCircle, this.value) {
     size.setAll(GameConfig.baseLen);
-    (Color, double) nconfig =
-        numberMap[value] ?? (const Color.fromARGB(1, 1, 1, 1), 1);
+    (Color, double) nconfig = numberMap[value] ?? (Colors.white, 1);
     this.x = x;
     this.y = y;
     final renderer =

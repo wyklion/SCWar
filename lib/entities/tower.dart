@@ -118,10 +118,15 @@ class Tower extends Entity
     text.text = '$value';
   }
 
-  Future<void> shoot(double dis) async {
+  Future<void> shoot(int enemyRow, double dis) async {
     var bullet = Bullet(value, dis);
     add(bullet);
     await bullet.removed;
+    // log('tower $r,$c bullet removed');
+    if (enemyRow != -1) {
+      await gameRef.gameManager.attackEnemy(enemyRow, c, value);
+    }
+    // log('tower $r,$c attack finished');
   }
 
   @override

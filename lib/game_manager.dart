@@ -1,4 +1,5 @@
 import 'dart:developer';
+import 'dart:math' as math;
 import 'package:flame/components.dart';
 import 'package:flame/game.dart';
 import 'entities/enemy.dart';
@@ -11,6 +12,7 @@ enum GameState {
   playerMove,
   shooting,
   enemyMove,
+  enemyCreate,
   dead,
 }
 
@@ -62,6 +64,7 @@ class GameManager {
   List<Tower> towers = [];
   List<Enemy> enemies = [];
   GameState _currentState = GameState.ready;
+  math.Random _random = math.Random();
 
   GameManager(this.game) {
     for (var i = 0; i < 10; i++) {
@@ -79,18 +82,20 @@ class GameManager {
   GameState get currentState => _currentState;
 
   void test() {
-    addTower(0, 0, 1);
+    addTower(0, 0, 2);
     addTower(0, 1, 4);
+    addTower(0, 2, 128);
     addTower(0, 4, 1024);
     addTower(1, 3, 2048);
-    addEnemy(0, 0, 128, 1);
-    addEnemy(1, 1, 1024, 1);
-    addEnemy(2, 2, 8192, 1);
-    addEnemy(4, 3, 8192, 1);
-    addEnemy(6, 4, 16384, 1);
-    addEnemy(7, 4, 32768, 1);
-    addEnemy(8, 2, 65536, 1);
-    addEnemy(9, 3, 131072, 1);
+    addEnemy(0, 0, 4, 1);
+    addEnemy(8, 1, 7, 1);
+    addEnemy(1, 3, 1024, 1);
+    addEnemy(2, 2, 8, 1);
+    addEnemy(4, 3, 3252, 1);
+    addEnemy(6, 4, 253, 1);
+    addEnemy(7, 4, 253, 1);
+    addEnemy(8, 2, 524, 1);
+    addEnemy(9, 3, 235, 1);
   }
 
   void startGame() {
@@ -101,34 +106,62 @@ class GameManager {
     _currentState = GameState.playerMove;
   }
 
-  void addRandomEnemy() {}
-
   void playerMove() {
+    log('state playerMove...');
     _currentState = GameState.playerMove;
   }
 
   void startShooting() async {
+    if (_currentState != GameState.playerMove) {
+      return;
+    }
+    playerMoveCount++;
+    log('state shooting...');
     _currentState = GameState.shooting;
+    List<Future<void>> tasks = [];
     for (var tower in towers) {
       var enemyRow = getTowerTarget(tower.r, tower.c);
       var dis = sizeConfig.getTowerEnemyDistance(tower.r, enemyRow);
-      log('shoot $enemyRow,${tower.c}');
-      tower
-          .shoot(dis)
-          .then((value) => {attackEnemy(enemyRow, tower.c, tower.value)});
+      tasks.add(tower.shoot(enemyRow, dis));
     }
+    await Future.wait(tasks);
+    await enemyMove();
+    dump();
   }
 
-  void attackEnemy(int r, int c, int attack) {
+  Future<void> attackEnemy(int r, int c, int attack) async {
     log('attackEnemy $r, $c, $attack');
     Enemy? enemy = board[r][c];
     if (enemy != null) {
-      enemy.takeDamage(attack);
+      await enemy.takeDamage(attack);
     }
   }
 
-  void enemyMove() {
+  Future<void> enemyMove() async {
+    log('state evemyMove...');
     _currentState = GameState.enemyMove;
+    List<Future<void>> tasks = [];
+    for (var enemy in enemies) {
+      board[enemy.r][enemy.c] = null;
+      if (enemy.r < 9) {
+        board[enemy.r + 1][enemy.c] = enemy;
+      }
+      tasks.add(enemy.moveOneStep());
+    }
+    await Future.wait(tasks);
+    addRandomEnemy();
+  }
+
+  void addRandomEnemy() {
+    _currentState = GameState.enemyCreate;
+    for (var i = 0; i < 5; i++) {
+      if (board[0][i] == null) {
+        if (_random.nextInt(10) >= 6) {
+          addEnemy(0, i, _random.nextInt(1000), 1);
+        }
+      }
+    }
+    playerMove();
   }
 
   void dead() {
@@ -151,12 +184,21 @@ class GameManager {
   }
 
   void addEnemy(int r, int c, int value, int body) {
+    if (board[r][c] != null) {
+      return;
+    }
     var pos = sizeConfig.getEnemyPos(r, c);
     var enemy = Enemy(r, c, pos.x, pos.y, value, 1);
     enemies.add(enemy);
     game.addContent(enemy);
     board[r][c] = enemy;
     log('addEnemy ($r,$c) $pos $value');
+  }
+
+  void removeEnemy(Enemy enemy) {
+    board[enemy.r][enemy.c] = null;
+    enemies.remove(enemy);
+    enemy.removeFromParent();
   }
 
   int getTowerTarget(int r, int c) {
@@ -181,5 +223,16 @@ class GameManager {
   void handlePlayerMove() {
     playerMoveCount++;
     // 更新炮塔和敌人的位置、数值等
+  }
+
+  void dump() {
+    var s = '';
+    for (var i = 0; i < 10; i++) {
+      for (var j = 0; j < 5; j++) {
+        s += board[i][j] != null ? '*' : '_';
+      }
+      s += '\n';
+    }
+    log(s);
   }
 }
