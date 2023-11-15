@@ -3,7 +3,7 @@ import 'package:flame/components.dart';
 import 'package:flame/effects.dart';
 import 'package:flutter/material.dart';
 import 'package:flame/events.dart';
-import '../game.dart';
+import 'package:scwar/game_manager.dart';
 import '../game_config.dart';
 import 'bullet.dart';
 import 'entity.dart';
@@ -15,8 +15,7 @@ enum TowerState {
   backing,
 }
 
-class Tower extends Entity
-    with HasGameRef<SCWarGame>, TapCallbacks, DragCallbacks {
+class Tower extends Entity with TapCallbacks, DragCallbacks {
   int r;
   int c;
   TowerState state = TowerState.ready;
@@ -24,9 +23,10 @@ class Tower extends Entity
   Vector2 movingPos = Vector2(0, 0);
   Vector2 pos = Vector2(0, 0);
   Tower? mergingTower;
+  Tower? swapTower;
+  (int, int)? movePos;
   Paint paint = Paint()..color = Colors.blue;
-  Tower(this.r, this.c, double x, double y, int value)
-      : super(x, y, true, value) {
+  Tower(this.r, this.c, double x, double y, int value) : super(x, y, value) {
     _rect = Rect.fromCenter(
         center: Offset.zero,
         width: GameConfig.baseLen,
@@ -36,13 +36,20 @@ class Tower extends Entity
     log(_rect.toString());
   }
 
+  void setPos(int r, int c) {
+    this.r = r;
+    this.c = c;
+    var towerPos = gameManager.sizeConfig.getTowerPos(r, c);
+    pos.x = x = towerPos.x;
+    pos.y = y = towerPos.y;
+  }
+
   @override
   bool containsLocalPoint(Vector2 point) => _rect.contains(point.toOffset());
 
   @override
   void onTapDown(TapDownEvent event) {
     log('onTapDown');
-    gameRef.gameManager.startShooting();
   }
 
   @override
@@ -52,6 +59,9 @@ class Tower extends Entity
 
   @override
   void onDragStart(DragStartEvent event) {
+    if (gameManager.currentState != GameState.playerMove) {
+      return;
+    }
     super.onDragStart(event);
     state = TowerState.moving;
     movingPos.x = pos.x;
@@ -61,30 +71,59 @@ class Tower extends Entity
 
   @override
   void onDragUpdate(DragUpdateEvent event) {
+    if (state != TowerState.moving) {
+      return;
+    }
     movingPos.x += event.delta.x;
     movingPos.y += event.delta.y;
-    var tower = gameRef.gameManager.checkTowerByPos(movingPos.x, movingPos.y);
+    var (tower, towerBlockPos) =
+        gameManager.checkTowerByPos(movingPos.x, movingPos.y);
     x = movingPos.x;
     y = movingPos.y;
-    if (tower is Tower && tower.value == value) {
+    mergingTower = null;
+    swapTower = null;
+    movePos = null;
+    if (tower != this && tower is Tower) {
       x = tower.pos.x;
       y = tower.pos.y;
-      paint.color = Colors.lightBlue;
-      mergingTower = tower;
-      text.text = '${value * 2}';
+      if (tower.value == value) {
+        paint.color = Colors.lightBlue;
+        mergingTower = tower;
+        text.text = '${value * 2}';
+      } else {
+        paint.color = Colors.blueGrey;
+        swapTower = tower;
+      }
     } else {
       text.text = '$value';
       mergingTower = null;
       paint.color = Colors.blue;
+      if (towerBlockPos != null) {
+        var (tr, tc) = towerBlockPos;
+        var tp = gameManager.sizeConfig.getTowerPos(tr, tc);
+        x = tp.x;
+        y = tp.y;
+        movePos = towerBlockPos;
+      }
     }
   }
 
   @override
   void onDragEnd(DragEndEvent event) {
+    if (state != TowerState.moving) {
+      return;
+    }
+    state = TowerState.ready;
     super.onDragEnd(event);
     if (mergingTower != null) {
-      mergingTower!.upgrade();
-      removeFromParent();
+      gameManager.upgradeTower(mergingTower!);
+      gameManager.removeTower(this);
+    } else if (swapTower != null) {
+      // 还原颜色
+      paint.color = Colors.blue;
+      gameManager.swapTower(this, swapTower!);
+    } else if (movePos != null) {
+      gameManager.moveTower(this, movePos!.$1, movePos!.$2);
     } else {
       goBack();
     }
@@ -124,7 +163,7 @@ class Tower extends Entity
     await bullet.removed;
     // log('tower $r,$c bullet removed');
     if (enemyRow != -1) {
-      await gameRef.gameManager.attackEnemy(enemyRow, c, value);
+      await gameManager.attackEnemy(enemyRow, c, value);
     }
     // log('tower $r,$c attack finished');
   }

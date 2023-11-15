@@ -17,7 +17,7 @@ class SCWarGame extends FlameGame with TapDetector {
 
   @override
   FutureOr<void> onLoad() async {
-    gameManager.setSize(size);
+    gameManager.onLoad();
     addBg();
     // 初始化游戏元素，炮塔、敌人等
     gameManager.startGame();

@@ -1,11 +1,14 @@
 import 'dart:developer';
-import 'dart:math' as math;
 import 'package:flame/components.dart';
 import 'package:flame/game.dart';
+import 'entities/energy.dart';
+import 'entities/entity.dart';
 import 'entities/enemy.dart';
 import 'entities/tower.dart';
 import 'game.dart';
 import 'game_config.dart';
+import 'utils/generator.dart';
+import 'utils/size_config.dart';
 
 enum GameState {
   ready,
@@ -16,65 +19,31 @@ enum GameState {
   dead,
 }
 
-class SizeConfig {
-  late Vector2 size;
-  double baseLen = 20;
-  SizeConfig(Vector2 size) {
-    var w = size.x;
-    var h = size.y - 100;
-    var rate = 500 / 800;
-    if (w / h > rate) {
-      w = h * rate;
-    } else {
-      h = w / rate;
-    }
-    this.size = Vector2(w, h);
-    baseLen = w / 8;
-    GameConfig.size = this.size.clone();
-    GameConfig.baseLen = baseLen;
-    GameConfig.snapLenSquare = (baseLen / 2) * (baseLen / 2);
-    log('originSize: $size, size ($w, $h) baseLen: $baseLen');
-  }
-
-  Vector2 getPrepareTowerPos() {
-    return Vector2(size.x - baseLen, size.y - baseLen * 2);
-  }
-
-  Vector2 getTowerPos(int row, int column) {
-    return Vector2(30 + baseLen * column, size.y - 30 - baseLen * row);
-  }
-
-  Vector2 getEnemyPos(int row, int column) {
-    return Vector2(30 + baseLen * column, 30 + baseLen * row);
-  }
-
-  double getTowerEnemyDistance(int towerRow, int enemyRow) {
-    var t = size.y - 30 - baseLen * towerRow;
-    var e = 30 + baseLen * enemyRow;
-    return t - e - baseLen;
-  }
-}
-
 class GameManager {
   SCWarGame game;
   late SizeConfig sizeConfig;
-  int playerMoveCount = 0;
-  late Tower prepareTower;
-  List<List<Enemy?>> board = [];
+  late Generator generator;
+  Tower? prepareTower;
+  List<List<Entity?>> board = [];
   List<Tower> towers = [];
   List<Enemy> enemies = [];
+  List<Energy> energies = [];
+  List<int> preMerges = [];
+  int playerMoveCount = 0;
+  int towerPower = 0;
+  int score = 0;
   GameState _currentState = GameState.ready;
-  math.Random _random = math.Random();
 
   GameManager(this.game) {
     for (var i = 0; i < 10; i++) {
-      var row = List<Enemy?>.filled(5, null);
+      var row = List<Entity?>.filled(5, null);
       board.add(row);
     }
   }
 
-  void setSize(Vector2 size) {
-    sizeConfig = SizeConfig(size);
+  void onLoad() {
+    sizeConfig = SizeConfig(game.size);
+    generator = Generator(this);
   }
 
   Vector2 get size => sizeConfig.size;
@@ -100,8 +69,8 @@ class GameManager {
 
   void startGame() {
     playerMoveCount = 0;
-    test();
-    addPrepareTower(4);
+    // test();
+    addPrepareTower(1);
     addRandomEnemy();
     _currentState = GameState.playerMove;
   }
@@ -131,9 +100,11 @@ class GameManager {
 
   Future<void> attackEnemy(int r, int c, int attack) async {
     log('attackEnemy $r, $c, $attack');
-    Enemy? enemy = board[r][c];
-    if (enemy != null) {
-      await enemy.takeDamage(attack);
+    var entity = board[r][c];
+    if (entity is Enemy) {
+      await entity.takeDamage(attack);
+    } else if (entity is Energy) {
+      await entity.takeDamage(attack);
     }
   }
 
@@ -148,28 +119,66 @@ class GameManager {
       }
       tasks.add(enemy.moveOneStep());
     }
+    for (var energy in energies) {
+      board[energy.r][energy.c] = null;
+      if (energy.r < 9) {
+        board[energy.r + 1][energy.c] = energy;
+      }
+      tasks.add(energy.moveOneStep());
+    }
     await Future.wait(tasks);
     addRandomEnemy();
   }
 
   void addRandomEnemy() {
     _currentState = GameState.enemyCreate;
+    var list = generator.generatorRow();
     for (var i = 0; i < 5; i++) {
-      if (board[0][i] == null) {
-        if (_random.nextInt(10) >= 6) {
-          addEnemy(0, i, _random.nextInt(1000), 1);
-        }
+      if (list[i] > 0) {
+        addEnemy(0, i, list[i], 1);
+      } else if (list[i] < 0) {
+        addEnergy(0, i, -list[i]);
       }
     }
+    mergePrepareTower();
     playerMove();
+  }
+
+  void addPreMerge(int value) {
+    preMerges.add(value);
+  }
+
+  void mergePrepareTower() {
+    if (preMerges.isEmpty) {
+      return;
+    }
+    int big = 0;
+    for (var m in preMerges) {
+      if (m > big) {
+        big = m;
+      }
+    }
+    Tower tower;
+    if (prepareTower is Tower) {
+      tower = prepareTower!;
+      if (tower.value >= big) {
+        return;
+      } else {
+        tower.setValue(big);
+      }
+    } else {
+      addPrepareTower(big);
+    }
   }
 
   void dead() {
     _currentState = GameState.dead;
   }
 
+  get prepareTowerPos => sizeConfig.getPrepareTowerPos();
+
   void addPrepareTower(int value) {
-    var pos = sizeConfig.getPrepareTowerPos();
+    var pos = prepareTowerPos;
     prepareTower = Tower(-1, -1, pos.x, pos.y, value);
     game.addContent(prepareTower);
     log('addPrepareTower $pos $value');
@@ -181,6 +190,48 @@ class GameManager {
     towers.add(tower);
     game.addContent(tower);
     log('addTower $pos $value');
+  }
+
+  void removeTower(Tower tower) {
+    if (tower == prepareTower) {
+      prepareTower = null;
+    } else {
+      towers.remove(tower);
+    }
+    tower.removeFromParent();
+  }
+
+  void moveTower(Tower tower, int r, int c) {
+    if (tower == prepareTower) {
+      prepareTower = null;
+      towers.add(tower);
+    }
+    var tp = sizeConfig.getTowerPos(r, c);
+    tower.pos.setFrom(tp);
+    tower.x = tp.x;
+    tower.y = tp.y;
+    tower.r = r;
+    tower.c = c;
+    startShooting();
+  }
+
+  Future<void> swapTower(Tower tower1, Tower tower2) async {
+    var tempR = tower1.r;
+    var tempC = tower1.c;
+    tower1.setPos(tower2.r, tower2.c);
+    tower2.setPos(tempR, tempC);
+    if (tower1 == prepareTower) {
+      prepareTower = tower2;
+      towers.remove(tower2);
+      towers.add(tower1);
+    }
+    startShooting();
+  }
+
+  void upgradeTower(Tower tower) {
+    towerPower += tower.value;
+    tower.upgrade();
+    startShooting();
   }
 
   void addEnemy(int r, int c, int value, int body) {
@@ -195,29 +246,42 @@ class GameManager {
     log('addEnemy ($r,$c) $pos $value');
   }
 
-  void removeEnemy(Enemy enemy) {
-    board[enemy.r][enemy.c] = null;
-    enemies.remove(enemy);
-    enemy.removeFromParent();
+  void removeBoardEntity(BoardEntity entity) {
+    board[entity.r][entity.c] = null;
+    if (entity is Enemy) {
+      enemies.remove(entity);
+    } else if (entity is Energy) {
+      energies.remove(entity);
+    }
+    entity.removeFromParent();
+  }
+
+  void addEnergy(int r, int c, int value) {
+    var pos = sizeConfig.getEnemyPos(r, c);
+    var energy = Energy(r, c, pos.x, pos.y, value);
+    energies.add(energy);
+    game.addContent(energy);
+    board[r][c] = energy;
+    log('addEnergy ($r,$c) $pos $value');
   }
 
   int getTowerTarget(int r, int c) {
     for (var i = 9; i >= 0; i--) {
-      if (board[i][c] is Enemy) {
+      if (board[i][c] != null) {
         return i;
       }
     }
     return -1;
   }
 
-  Tower? checkTowerByPos(double x, double y) {
+  (Tower?, (int, int)?) checkTowerByPos(double x, double y) {
     for (var tower in towers) {
       if (tower.pos.distanceToSquared(Vector2(x, y)) <
           GameConfig.snapLenSquare) {
-        return tower;
+        return (tower, (tower.r, tower.c));
       }
     }
-    return null;
+    return (null, sizeConfig.findNearTowerPos(x, y));
   }
 
   void handlePlayerMove() {

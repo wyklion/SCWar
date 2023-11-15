@@ -1,13 +1,18 @@
+import 'dart:async';
+import 'dart:developer';
+
 import 'package:flame/components.dart';
 import 'package:flutter/material.dart';
+import 'package:scwar/game_manager.dart';
+import '../game.dart';
 import '../game_config.dart';
 
-abstract class Entity extends PositionComponent {
+abstract class Entity extends PositionComponent with HasGameRef<SCWarGame> {
   int value;
-  bool isCircle;
   late TextComponent text;
+  late GameManager gameManager;
 
-  Entity(double x, double y, this.isCircle, this.value) {
+  Entity(double x, double y, this.value) {
     size.setAll(GameConfig.baseLen);
     (Color, double) nconfig = numberMap[value] ?? (Colors.white, 1);
     this.x = x;
@@ -21,6 +26,17 @@ abstract class Entity extends PositionComponent {
         scale: Vector2.all(nconfig.$2),
         size: Vector2.all(GameConfig.baseLen));
     add(text);
+  }
+
+  @override
+  FutureOr<void> onLoad() {
+    gameManager = gameRef.gameManager;
+    return super.onLoad();
+  }
+
+  void setValue(int value) {
+    this.value = value;
+    text.text = '$value';
   }
 
   void renderBg(Canvas canvas);
@@ -38,5 +54,30 @@ abstract class Entity extends PositionComponent {
     // )..layout();
     // textPainter.paint(
     //     canvas, Offset(x - textPainter.width / 2, y - textPainter.height / 2));
+  }
+}
+
+abstract class BoardEntity extends Entity {
+  int r;
+  int c;
+  BoardEntity(this.r, this.c, double x, double y, int value)
+      : super(x, y, value);
+
+  Future<bool> moveOneStep() async {
+    if (r + 1 == 10) {
+      log('entity move to die $r $c');
+      gameManager.removeBoardEntity(this);
+      return false;
+    }
+    r++;
+    var pos = gameManager.sizeConfig.getEnemyPos(r, c);
+    y = pos.y;
+    return true;
+  }
+
+  Future<void> takeDamage(int damage);
+
+  void dead() {
+    gameManager.removeBoardEntity(this);
   }
 }
