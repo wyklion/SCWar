@@ -13,7 +13,7 @@ class Energy extends BoardEntity {
     log('energy takeDamage $damage');
     var targetPos = gameManager.prepareTowerPos;
     gameManager.addPreMerge(value);
-    var moveEffect = MoveEffect.to(targetPos, EffectController(duration: 0.3),
+    var moveEffect = MoveToEffect(targetPos, EffectController(duration: 0.3),
         onComplete: () {
       dead();
     });

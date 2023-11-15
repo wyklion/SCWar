@@ -90,9 +90,12 @@ class Tower extends Entity with TapCallbacks, DragCallbacks {
         paint.color = Colors.lightBlue;
         mergingTower = tower;
         text.text = '${value * 2}';
+        log('on merge $value->${tower.value}');
       } else {
+        text.text = '$value';
         paint.color = Colors.blueGrey;
         swapTower = tower;
+        log('on swap $value->${tower.value}');
       }
     } else {
       text.text = '$value';
@@ -127,6 +130,7 @@ class Tower extends Entity with TapCallbacks, DragCallbacks {
     } else {
       goBack();
     }
+    priority = 0;
   }
 
   void goBack() {

@@ -158,6 +158,7 @@ class GameManager {
         big = m;
       }
     }
+    preMerges.clear();
     Tower tower;
     if (prepareTower is Tower) {
       tower = prepareTower!;
