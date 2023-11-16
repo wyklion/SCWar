@@ -8,5 +8,5 @@
 
 # 编译
 
-WEB：
-flutter build web -o public/web
+WEB(gh-page)：
+flutter build web -o docs --base-href=/SCWar/

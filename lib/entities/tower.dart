@@ -33,7 +33,7 @@ class Tower extends Entity with TapCallbacks, DragCallbacks {
         height: GameConfig.baseLen);
     pos.x = x;
     pos.y = y;
-    log(_rect.toString());
+    // log(_rect.toString());
   }
 
   void setPos(int r, int c) {
@@ -74,8 +74,12 @@ class Tower extends Entity with TapCallbacks, DragCallbacks {
     if (state != TowerState.moving) {
       return;
     }
-    movingPos.x += event.delta.x;
-    movingPos.y += event.delta.y;
+    final scale = gameRef.scale;
+    final deltaX = event.delta.x * scale;
+    final deltaY = event.delta.y * scale;
+
+    movingPos.x += deltaX;
+    movingPos.y += deltaY;
     var (tower, towerBlockPos) =
         gameManager.checkTowerByPos(movingPos.x, movingPos.y);
     x = movingPos.x;

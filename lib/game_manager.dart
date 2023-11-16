@@ -99,7 +99,7 @@ class GameManager {
   }
 
   Future<void> attackEnemy(int r, int c, int attack) async {
-    log('attackEnemy $r, $c, $attack');
+    // log('attackEnemy $r, $c, $attack');
     var entity = board[r][c];
     if (entity is Enemy) {
       await entity.takeDamage(attack);
@@ -182,7 +182,7 @@ class GameManager {
     var pos = prepareTowerPos;
     prepareTower = Tower(-1, -1, pos.x, pos.y, value);
     game.addContent(prepareTower);
-    log('addPrepareTower $pos $value');
+    // log('addPrepareTower $pos $value');
   }
 
   void addTower(int r, int c, int value) {
@@ -190,7 +190,7 @@ class GameManager {
     var tower = Tower(r, c, pos.x, pos.y, value);
     towers.add(tower);
     game.addContent(tower);
-    log('addTower $pos $value');
+    // log('addTower $pos $value');
   }
 
   void removeTower(Tower tower) {
@@ -244,7 +244,7 @@ class GameManager {
     enemies.add(enemy);
     game.addContent(enemy);
     board[r][c] = enemy;
-    log('addEnemy ($r,$c) $pos $value');
+    // log('addEnemy ($r,$c) $pos $value');
   }
 
   void removeBoardEntity(BoardEntity entity) {
@@ -263,7 +263,7 @@ class GameManager {
     energies.add(energy);
     game.addContent(energy);
     board[r][c] = energy;
-    log('addEnergy ($r,$c) $pos $value');
+    // log('addEnergy ($r,$c) $pos $value');
   }
 
   int getTowerTarget(int r, int c) {

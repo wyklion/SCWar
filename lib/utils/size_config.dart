@@ -7,36 +7,31 @@ import '../game_config.dart';
 class SizeConfig {
   late Vector2 size;
   double baseLen = 20;
-  SizeConfig(Vector2 size) {
-    var w = size.x;
-    var h = size.y - 100;
-    var rate = 500 / 800;
-    if (w / h > rate) {
-      w = h * rate;
-    } else {
-      h = w / rate;
-    }
-    this.size = Vector2(w, h);
-    baseLen = w / 8;
-    GameConfig.size = this.size.clone();
+  SizeConfig(Vector2 gameSize) {
+    size = Vector2(GameConfig.fixedWidth, GameConfig.fixedHeight);
+    baseLen = size.x / 8;
+    GameConfig.size = size.clone();
     GameConfig.baseLen = baseLen;
     GameConfig.snapLenSquare = (baseLen / 2) * (baseLen / 2);
-    log('originSize: $size, size ($w, $h) baseLen: $baseLen');
+    log('originSize: $gameSize, size (${size.x}, ${size.y}) baseLen: $baseLen');
   }
 
   Vector2 getPrepareTowerPos() {
-    return Vector2(size.x - baseLen, size.y - baseLen * 2);
+    return Vector2(
+        size.x - baseLen - size.x / 2, size.y - baseLen * 2 - size.y / 2);
   }
 
   Vector2 getTowerPos(int row, int column) {
     if (row == -1 && column == -1) {
       return getPrepareTowerPos();
     }
-    return Vector2(30 + baseLen * column, size.y - 30 - baseLen * row);
+    return Vector2(30 + baseLen * column - size.x / 2,
+        size.y - 30 - baseLen * row - size.y / 2);
   }
 
   Vector2 getEnemyPos(int row, int column) {
-    return Vector2(30 + baseLen * column, 30 + baseLen * row);
+    return Vector2(
+        30 + baseLen * column - size.x / 2, 30 + baseLen * row - size.y / 2);
   }
 
   double getTowerEnemyDistance(int towerRow, int enemyRow) {
