@@ -2,8 +2,10 @@ import 'dart:async';
 import 'dart:developer';
 import 'dart:ui';
 import 'package:flame/components.dart';
+import 'package:flame/flame.dart';
 import 'package:flame/game.dart';
 import 'package:flame/events.dart';
+import 'package:flame_audio/flame_audio.dart';
 import 'package:flutter/material.dart';
 import 'package:flame/extensions.dart';
 import 'package:scwar/entities/energy.dart';
@@ -25,6 +27,8 @@ class SCWarGame extends FlameGame with TapDetector, ScaleDetector {
 
   @override
   FutureOr<void> onLoad() async {
+    await Flame.images.loadAll(['blue.png']);
+    await FlameAudio.audioCache.load('pepSound3.ogg');
     gameManager.onLoad();
     gameManager.startGame();
     camera.viewport.add(GameMenu());

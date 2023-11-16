@@ -1,3 +1,7 @@
+import 'dart:async';
+
+import 'package:flame/flame.dart';
+import 'package:flame/components.dart';
 import 'package:flame/effects.dart';
 import 'package:flutter/material.dart';
 import '../game_config.dart';
@@ -6,7 +10,15 @@ import 'entity.dart';
 class Enemy extends BoardEntity {
   int body;
   Enemy(int r, int c, double x, double y, int value, this.body)
-      : super(r, c, x, y, value);
+      : super(r, c, x, y, value) {
+    var img = Flame.images.fromCache('blue.png');
+    final sprite = Sprite(img);
+    final size = Vector2.all(GameConfig.baseLen);
+    final player =
+        SpriteComponent(size: size, sprite: sprite, anchor: Anchor.center);
+    add(player);
+    player.priority = -1;
+  }
 
   @override
   Future<void> takeDamage(int damage) async {

@@ -1,6 +1,7 @@
 import 'dart:developer';
 import 'package:flame/components.dart';
 import 'package:flame/game.dart';
+import 'package:scwar/utils/sound_manager.dart';
 import 'entities/energy.dart';
 import 'entities/entity.dart';
 import 'entities/enemy.dart';
@@ -21,8 +22,6 @@ enum GameState {
 
 class GameManager {
   SCWarGame game;
-  late SizeConfig sizeConfig;
-  late Generator generator;
   Tower? prepareTower;
   List<List<Entity?>> board = [];
   List<Tower> towers = [];
@@ -33,6 +32,9 @@ class GameManager {
   int towerPower = 0;
   int score = 0;
   GameState _currentState = GameState.ready;
+  late SizeConfig sizeConfig;
+  late Generator generator;
+  SoundManager soundManager = SoundManager();
 
   GameManager(this.game) {
     for (var i = 0; i < 10; i++) {
@@ -95,7 +97,7 @@ class GameManager {
     }
     await Future.wait(tasks);
     await enemyMove();
-    dump();
+    // dump();
   }
 
   Future<void> attackEnemy(int r, int c, int attack) async {
@@ -203,6 +205,7 @@ class GameManager {
   }
 
   void moveTower(Tower tower, int r, int c) {
+    soundManager.playMove();
     if (tower == prepareTower) {
       prepareTower = null;
       towers.add(tower);
@@ -217,6 +220,7 @@ class GameManager {
   }
 
   Future<void> swapTower(Tower tower1, Tower tower2) async {
+    soundManager.playSwap();
     var tempR = tower1.r;
     var tempC = tower1.c;
     tower1.setPos(tower2.r, tower2.c);
