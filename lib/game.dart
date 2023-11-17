@@ -10,12 +10,14 @@ import 'package:flutter/material.dart';
 import 'package:flame/extensions.dart';
 import 'package:scwar/entities/energy.dart';
 import 'package:scwar/layers/game_menu.dart';
+import 'package:scwar/utils/sound_manager.dart';
 import 'game_config.dart';
 import 'game_manager.dart';
 
 class SCWarGame extends FlameGame with TapDetector, ScaleDetector {
   late GameManager gameManager;
   late PositionComponent container;
+  late GameMenu menu;
 
   SCWarGame()
       : super(
@@ -27,11 +29,8 @@ class SCWarGame extends FlameGame with TapDetector, ScaleDetector {
 
   @override
   FutureOr<void> onLoad() async {
-    await Flame.images.loadAll(['blue.png']);
-    await FlameAudio.audioCache.load('pepSound3.ogg');
-    gameManager.onLoad();
-    gameManager.startGame();
-    camera.viewport.add(GameMenu());
+    await gameManager.load();
+    overlays.add('main');
     return super.onLoad();
   }
 
@@ -53,12 +52,23 @@ class SCWarGame extends FlameGame with TapDetector, ScaleDetector {
   @override
   Color backgroundColor() => const Color.fromARGB(0, 0, 0, 0);
 
+  void start() {
+    overlays.remove('main');
+    gameManager.startGame();
+    camera.viewport.add(menu = GameMenu());
+  }
+
   void pause() {
     overlays.add('pause');
   }
 
   void resume() {
     overlays.remove('pause');
+  }
+
+  void end() {
+    overlays.add('main');
+    menu.removeFromParent();
   }
 
   @override
@@ -79,7 +89,19 @@ class SCWarWorld extends World with HasGameReference {
   }
 
   void addBg() {
-    final paint = Paint()..color = const Color.fromARGB(255, 222, 243, 33);
+    // const gradient = LinearGradient(
+    //   begin: Alignment.topCenter,
+    //   end: Alignment.bottomCenter,
+    //   colors: [Colors.blue, Colors.green],
+    // );
+    const radiusGradient = RadialGradient(
+      colors: [Colors.lightBlueAccent, Colors.blueGrey],
+      radius: 1,
+    );
+    final rect =
+        Rect.fromLTWH(0, 0, GameConfig.fixedWidth, GameConfig.fixedHeight);
+    final paint = Paint()..shader = radiusGradient.createShader(rect);
+    // final paint = Paint()..color = const Color.fromARGB(255, 222, 243, 33);
     var bg = RectangleComponent(
         anchor: Anchor.center,
         position: Vector2(0, 0),

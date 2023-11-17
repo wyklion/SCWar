@@ -1,9 +1,7 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:scwar/game.dart';
 
-Widget buidlMenuOverlayer(BuildContext buildContext, SCWarGame game) {
+Widget buidlMenuOverlay(BuildContext buildContext, SCWarGame game) {
   double scale = game.scale;
   return Center(
     child: Container(

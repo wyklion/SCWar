@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flame/game.dart';
-import 'package:scwar/layers/menu_overlayer.dart';
+import 'package:scwar/layers/main_overlay.dart';
+import 'package:scwar/layers/menu_overlay.dart';
 import 'game.dart';
 
 class SpaceShooterGame extends FlameGame {}
@@ -19,15 +20,18 @@ class AppWidget extends StatelessWidget {
       children: [
         Expanded(
             child: Container(
-          color: Colors.grey,
+          color: Colors.blueGrey,
           child: GameWidget(
             game: SCWarGame(),
-            overlayBuilderMap: const {'pause': buidlMenuOverlayer},
+            overlayBuilderMap: const {
+              'main': buidlMainOverlay,
+              'pause': buidlMenuOverlay,
+            },
           ),
         )),
         Container(
           height: 80,
-          color: Colors.grey,
+          color: Colors.blueGrey,
         ),
       ],
     );

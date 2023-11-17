@@ -1,6 +1,8 @@
 import 'dart:developer';
 import 'package:flame/components.dart';
+import 'package:flame/flame.dart';
 import 'package:flame/game.dart';
+import 'package:flame_audio/flame_audio.dart';
 import 'package:scwar/utils/sound_manager.dart';
 import 'entities/energy.dart';
 import 'entities/entity.dart';
@@ -43,9 +45,11 @@ class GameManager {
     }
   }
 
-  void onLoad() {
+  Future<void> load() async {
     sizeConfig = SizeConfig(game.size);
     generator = Generator(this);
+    await Flame.images.loadAll(['blue.png']);
+    await soundManager.load();
   }
 
   Vector2 get size => sizeConfig.size;

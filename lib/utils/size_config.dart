@@ -31,8 +31,8 @@ class SizeConfig {
   }
 
   double getTowerEnemyDistance(int towerRow, int enemyRow) {
-    var t = size.y - 30 - baseLen * towerRow;
-    var e = 30 + baseLen * enemyRow;
+    var t = size.y - baseLen * 0.6 - baseLen * towerRow;
+    var e = baseLen * 0.6 + baseLen * enemyRow;
     return t - e - baseLen;
   }
 
