@@ -14,7 +14,7 @@ import 'package:scwar/utils/sound_manager.dart';
 import 'game_config.dart';
 import 'game_manager.dart';
 
-class SCWarGame extends FlameGame with TapDetector, ScaleDetector {
+class SCWarGame extends FlameGame<SCWarWorld> with TapDetector, ScaleDetector {
   late GameManager gameManager;
   late PositionComponent container;
   late GameMenu menu;
@@ -56,6 +56,7 @@ class SCWarGame extends FlameGame with TapDetector, ScaleDetector {
     overlays.remove('main');
     gameManager.startGame();
     camera.viewport.add(menu = GameMenu());
+    world.startGame();
   }
 
   void pause() {
@@ -81,11 +82,23 @@ class SCWarGame extends FlameGame with TapDetector, ScaleDetector {
   }
 }
 
-class SCWarWorld extends World with HasGameReference {
+class SCWarWorld extends World with HasGameReference<SCWarGame> {
+  late RectangleComponent enemyBg;
+  late RectangleComponent towerBg;
   @override
   Future<void> onLoad() async {
     addBg();
     // log('addbg');
+  }
+
+  void startGame() {
+    addEnemyBg();
+    addTowerBg();
+  }
+
+  void endGame() {
+    enemyBg.removeFromParent();
+    towerBg.removeFromParent();
   }
 
   void addBg() {
@@ -102,11 +115,29 @@ class SCWarWorld extends World with HasGameReference {
         Rect.fromLTWH(0, 0, GameConfig.fixedWidth, GameConfig.fixedHeight);
     final paint = Paint()..shader = radiusGradient.createShader(rect);
     // final paint = Paint()..color = const Color.fromARGB(255, 222, 243, 33);
-    var bg = RectangleComponent(
+    var bg = enemyBg = RectangleComponent(
         anchor: Anchor.center,
         position: Vector2(0, 0),
         size: Vector2(GameConfig.fixedWidth, GameConfig.fixedHeight),
         paint: paint);
+    bg.priority = -2;
+    add(bg);
+  }
+
+  void addEnemyBg() {
+    final paint = Paint()..color = const Color.fromARGB(255, 33, 236, 243);
+    final enemyRect = game.gameManager.sizeConfig.getEnemyBgRect();
+    final enemyBg = RectangleComponent.fromRect(enemyRect,
+        anchor: Anchor.center, paint: paint);
+    enemyBg.priority = -1;
+    add(enemyBg);
+  }
+
+  void addTowerBg() {
+    final paint = Paint()..color = const Color.fromARGB(255, 160, 106, 200);
+    final rect = game.gameManager.sizeConfig.getTowerBgRect();
+    final bg = towerBg =
+        RectangleComponent.fromRect(rect, anchor: Anchor.center, paint: paint);
     bg.priority = -1;
     add(bg);
   }

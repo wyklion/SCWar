@@ -25,7 +25,9 @@ Map<int, (Color, double)> numberMap = {
 class GameConfig {
   static double fixedWidth = 540;
   static double fixedHeight = 960;
+  static double edge = 12;
+  static double baseBlockLen = 78;
   static double baseLen = 70;
   static Vector2 size = Vector2(540, 960);
-  static double snapLenSquare = 70 * 70;
+  static double snapLenSquare = 39 * 39;
 }
