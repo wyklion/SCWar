@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flame/game.dart';
+import 'package:scwar/layers/gameover_overlay.dart';
 import 'package:scwar/layers/main_overlay.dart';
-import 'package:scwar/layers/menu_overlay.dart';
+import 'package:scwar/layers/pause_overlay.dart';
 import 'game.dart';
 
 class SpaceShooterGame extends FlameGame {}
@@ -25,7 +26,8 @@ class AppWidget extends StatelessWidget {
             game: SCWarGame(),
             overlayBuilderMap: const {
               'main': buidlMainOverlay,
-              'pause': buidlMenuOverlay,
+              'pause': buidlPauseOverlay,
+              'gameover': buidlGameoverOverlay,
             },
           ),
         )),

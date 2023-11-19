@@ -47,15 +47,15 @@ class Tower extends Entity with TapCallbacks, DragCallbacks {
   @override
   bool containsLocalPoint(Vector2 point) => _rect.contains(point.toOffset());
 
-  @override
-  void onTapDown(TapDownEvent event) {
-    log('onTapDown');
-  }
+  // @override
+  // void onTapDown(TapDownEvent event) {
+  //   log('onTapDown');
+  // }
 
-  @override
-  void onTapUp(TapUpEvent event) {
-    log('onTapUp');
-  }
+  // @override
+  // void onTapUp(TapUpEvent event) {
+  //   log('onTapUp');
+  // }
 
   @override
   void onDragStart(DragStartEvent event) {
@@ -67,6 +67,7 @@ class Tower extends Entity with TapCallbacks, DragCallbacks {
     movingPos.x = pos.x;
     movingPos.y = pos.y;
     priority = 1;
+    paint.color = Colors.blueAccent;
   }
 
   @override
@@ -104,7 +105,7 @@ class Tower extends Entity with TapCallbacks, DragCallbacks {
     } else {
       text.text = '$value';
       mergingTower = null;
-      paint.color = Colors.blue;
+      paint.color = Colors.blueAccent;
       if (towerBlockPos != null) {
         var (tr, tc) = towerBlockPos;
         var tp = gameManager.sizeConfig.getTowerPos(tr, tc);
@@ -122,12 +123,12 @@ class Tower extends Entity with TapCallbacks, DragCallbacks {
     }
     state = TowerState.ready;
     super.onDragEnd(event);
+    // 还原颜色
+    paint.color = Colors.blue;
     if (mergingTower != null) {
       gameManager.upgradeTower(mergingTower!);
       gameManager.removeTower(this);
     } else if (swapTower != null) {
-      // 还原颜色
-      paint.color = Colors.blue;
       gameManager.swapTower(this, swapTower!);
     } else if (movePos != null) {
       gameManager.moveTower(this, movePos!.$1, movePos!.$2);
@@ -165,15 +166,11 @@ class Tower extends Entity with TapCallbacks, DragCallbacks {
     text.text = '$value';
   }
 
-  Future<void> shoot(int enemyRow, double dis) async {
-    var bullet = Bullet(value, dis);
-    add(bullet);
+  Future<void> shoot() async {
+    var bullet = Bullet(value, r, c);
+    game.addContent(bullet);
     await bullet.removed;
     // log('tower $r,$c bullet removed');
-    if (enemyRow != -1) {
-      await gameManager.attackEnemy(enemyRow, c, value);
-    }
-    // log('tower $r,$c attack finished');
   }
 
   @override

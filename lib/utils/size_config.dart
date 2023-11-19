@@ -20,7 +20,7 @@ class SizeConfig {
 
   Rect getEnemyBgRect() {
     return Rect.fromLTWH(edgeSize2 - size.x / 2, edgeSize2 - size.y / 2,
-        baseLen * 5, baseLen * 10);
+        baseLen * GameConfig.col, baseLen * GameConfig.row);
   }
 
   Rect getTowerBgRect() {
@@ -32,8 +32,8 @@ class SizeConfig {
   }
 
   Vector2 getPrepareTowerPos() {
-    return Vector2(
-        size.x - baseLen - size.x / 2, size.y - baseLen * 2 - size.y / 2);
+    return Vector2(size.x - baseLen - size.x / 2,
+        size.y - edgeSize - baseLen / 2 - size.y / 2);
   }
 
   Vector2 getTowerPos(int row, int column) {
@@ -57,7 +57,7 @@ class SizeConfig {
 
   (int, int)? findNearTowerPos(double x, double y) {
     for (var i = 0; i < 2; i++) {
-      for (var j = 0; j < 5; j++) {
+      for (var j = 0; j < GameConfig.col; j++) {
         var pos = getTowerPos(i, j);
         if (pos.distanceToSquared(Vector2(x, y)) < GameConfig.snapLenSquare) {
           return (i, j);

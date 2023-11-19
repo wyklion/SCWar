@@ -54,9 +54,9 @@ class SCWarGame extends FlameGame<SCWarWorld> with TapDetector, ScaleDetector {
 
   void start() {
     overlays.remove('main');
-    gameManager.startGame();
     camera.viewport.add(menu = GameMenu());
     world.startGame();
+    gameManager.startGame();
   }
 
   void pause() {
@@ -68,8 +68,20 @@ class SCWarGame extends FlameGame<SCWarWorld> with TapDetector, ScaleDetector {
   }
 
   void end() {
+    overlays.add('gameover');
+  }
+
+  void home() {
+    gameManager.clear();
+    world.clear();
+    overlays.clear();
     overlays.add('main');
     menu.removeFromParent();
+  }
+
+  void restart() {
+    overlays.clear();
+    gameManager.restartGame();
   }
 
   @override
@@ -96,7 +108,7 @@ class SCWarWorld extends World with HasGameReference<SCWarGame> {
     addTowerBg();
   }
 
-  void endGame() {
+  void clear() {
     enemyBg.removeFromParent();
     towerBg.removeFromParent();
   }
@@ -115,7 +127,7 @@ class SCWarWorld extends World with HasGameReference<SCWarGame> {
         Rect.fromLTWH(0, 0, GameConfig.fixedWidth, GameConfig.fixedHeight);
     final paint = Paint()..shader = radiusGradient.createShader(rect);
     // final paint = Paint()..color = const Color.fromARGB(255, 222, 243, 33);
-    var bg = enemyBg = RectangleComponent(
+    var bg = RectangleComponent(
         anchor: Anchor.center,
         position: Vector2(0, 0),
         size: Vector2(GameConfig.fixedWidth, GameConfig.fixedHeight),
@@ -127,7 +139,7 @@ class SCWarWorld extends World with HasGameReference<SCWarGame> {
   void addEnemyBg() {
     final paint = Paint()..color = const Color.fromARGB(255, 33, 236, 243);
     final enemyRect = game.gameManager.sizeConfig.getEnemyBgRect();
-    final enemyBg = RectangleComponent.fromRect(enemyRect,
+    enemyBg = RectangleComponent.fromRect(enemyRect,
         anchor: Anchor.center, paint: paint);
     enemyBg.priority = -1;
     add(enemyBg);
@@ -136,9 +148,9 @@ class SCWarWorld extends World with HasGameReference<SCWarGame> {
   void addTowerBg() {
     final paint = Paint()..color = const Color.fromARGB(255, 160, 106, 200);
     final rect = game.gameManager.sizeConfig.getTowerBgRect();
-    final bg = towerBg =
+    towerBg =
         RectangleComponent.fromRect(rect, anchor: Anchor.center, paint: paint);
-    bg.priority = -1;
-    add(bg);
+    towerBg.priority = -1;
+    add(towerBg);
   }
 }

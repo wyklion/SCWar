@@ -32,7 +32,7 @@ class PauseButton extends PositionComponent
 
   @override
   void onTapDown(TapDownEvent event) {
-    log('onTapDown');
+    // log('onTapDown');
     gameRef.pause();
   }
 

@@ -8,11 +8,12 @@ import '../game.dart';
 import '../game_config.dart';
 
 abstract class Entity extends PositionComponent with HasGameRef<SCWarGame> {
+  final int score;
   int value;
   late TextComponent text;
   late GameManager gameManager;
 
-  Entity(double x, double y, this.value) {
+  Entity(double x, double y, this.score) : value = score {
     size.setAll(GameConfig.baseLen);
     (Color, double) nconfig = numberMap[value] ?? (Colors.white, 1);
     this.x = x;
@@ -65,8 +66,7 @@ abstract class BoardEntity extends Entity {
 
   Future<bool> moveOneStep() async {
     if (r + 1 == 10) {
-      log('entity move to die $r $c');
-      gameManager.removeBoardEntity(this);
+      moveToEnd();
       return false;
     }
     r++;
@@ -76,6 +76,11 @@ abstract class BoardEntity extends Entity {
   }
 
   Future<void> takeDamage(int damage);
+
+  void moveToEnd() {
+    log('entity move to end $r $c');
+    gameManager.removeBoardEntity(this);
+  }
 
   void dead() {
     gameManager.removeBoardEntity(this);

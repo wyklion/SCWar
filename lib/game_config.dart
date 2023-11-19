@@ -30,4 +30,6 @@ class GameConfig {
   static double baseLen = 70;
   static Vector2 size = Vector2(540, 960);
   static double snapLenSquare = 39 * 39;
+  static int row = 10;
+  static int col = 5;
 }

@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:developer';
 
 import 'package:flame/flame.dart';
 import 'package:flame/components.dart';
@@ -32,6 +33,12 @@ class Enemy extends BoardEntity {
     });
     add(hurtEffect);
     await hurtEffect.removed;
+  }
+
+  @override
+  void moveToEnd() {
+    log('enemy move to die $r $c');
+    gameManager.dead();
   }
 
   @override

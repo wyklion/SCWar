@@ -1,8 +1,8 @@
+import 'dart:async';
 import 'dart:developer';
 import 'package:flame/components.dart';
 import 'package:flame/flame.dart';
 import 'package:flame/game.dart';
-import 'package:flame_audio/flame_audio.dart';
 import 'package:scwar/utils/sound_manager.dart';
 import 'entities/energy.dart';
 import 'entities/entity.dart';
@@ -25,7 +25,7 @@ enum GameState {
 class GameManager {
   SCWarGame game;
   Tower? prepareTower;
-  List<List<Entity?>> board = [];
+  List<List<BoardEntity?>> board = [];
   List<Tower> towers = [];
   List<Enemy> enemies = [];
   List<Energy> energies = [];
@@ -34,13 +34,15 @@ class GameManager {
   int towerPower = 0;
   int score = 0;
   GameState _currentState = GameState.ready;
+  int _attackCount = 0;
+  Completer? _attackCompleter;
   late SizeConfig sizeConfig;
   late Generator generator;
   SoundManager soundManager = SoundManager();
 
   GameManager(this.game) {
-    for (var i = 0; i < 10; i++) {
-      var row = List<Entity?>.filled(5, null);
+    for (var i = 0; i < GameConfig.row; i++) {
+      var row = List<BoardEntity?>.filled(GameConfig.col, null);
       board.add(row);
     }
   }
@@ -57,67 +59,143 @@ class GameManager {
   GameState get currentState => _currentState;
 
   void test() {
-    addTower(0, 0, 2);
-    addTower(0, 1, 4);
-    addTower(0, 2, 128);
-    addTower(0, 4, 1024);
-    addTower(1, 3, 2048);
-    addEnemy(0, 0, 4, 1);
-    addEnemy(8, 1, 7, 1);
-    addEnemy(1, 3, 1024, 1);
-    addEnemy(2, 2, 8, 1);
-    addEnemy(4, 3, 3252, 1);
-    addEnemy(6, 4, 253, 1);
-    addEnemy(7, 4, 253, 1);
-    addEnemy(8, 2, 524, 1);
-    addEnemy(9, 3, 235, 1);
+    // addTower(0, 0, 2);
+    // addTower(0, 1, 4);
+    // addTower(0, 2, 128);
+    // addTower(0, 4, 1024);
+    // addTower(1, 3, 2048);
+    // addEnemy(0, 0, 4, 1);
+    // addEnemy(8, 1, 7, 1);
+    // addEnemy(1, 3, 1024, 1);
+    // addEnemy(2, 2, 8, 1);
+    // addEnemy(4, 3, 3252, 1);
+    // addEnemy(6, 4, 253, 1);
+    // addEnemy(7, 4, 253, 1);
+    // addEnemy(8, 2, 524, 1);
+    // addEnemy(9, 3, 235, 1);
+  }
+
+  void setState(GameState status) {
+    var oldState = _currentState;
+    _currentState = status;
+    switch (status) {
+      case GameState.ready:
+        break;
+      case GameState.playerMove:
+        log('state playerMove...');
+        playerMove();
+      case GameState.shooting:
+        if (oldState == GameState.playerMove) {
+          log('state shooting...');
+          startShooting();
+        }
+      case GameState.enemyMove:
+        log('state evemyMove...');
+        enemyMove();
+      case GameState.enemyCreate:
+        break;
+      case GameState.dead:
+        dead();
+        break;
+    }
+  }
+
+  void clear() {
+    for (var i = 0; i < enemies.length; i++) {
+      enemies[i].removeFromParent();
+    }
+    enemies = [];
+    for (var i = 0; i < energies.length; i++) {
+      energies[i].removeFromParent();
+    }
+    energies = [];
+    for (var i = 0; i < towers.length; i++) {
+      towers[i].removeFromParent();
+    }
+    towers = [];
+    if (prepareTower != null) {
+      prepareTower!.removeFromParent();
+    }
+    for (var i = 0; i < GameConfig.row; i++) {
+      for (var j = 0; j < GameConfig.col; j++) {
+        board[i][j] = null;
+      }
+    }
+    preMerges.clear();
+    playerMoveCount = 0;
+    towerPower = 0;
+    score = 0;
+    game.menu.updateScore();
+    _currentState = GameState.ready;
+  }
+
+  void restartGame() {
+    clear();
+    startGame();
   }
 
   void startGame() {
     playerMoveCount = 0;
-    // test();
+    test();
     addPrepareTower(1);
     addRandomEnemy();
-    _currentState = GameState.playerMove;
+    setState(GameState.playerMove);
   }
 
-  void playerMove() {
-    log('state playerMove...');
-    _currentState = GameState.playerMove;
-  }
+  void playerMove() {}
 
   void startShooting() async {
-    if (_currentState != GameState.playerMove) {
-      return;
-    }
     playerMoveCount++;
-    log('state shooting...');
     _currentState = GameState.shooting;
     List<Future<void>> tasks = [];
+    var hasTarget = false;
     for (var tower in towers) {
-      var enemyRow = getTowerTarget(tower.r, tower.c);
-      var dis = sizeConfig.getTowerEnemyDistance(tower.r, enemyRow);
-      tasks.add(tower.shoot(enemyRow, dis));
+      if (!hasTarget) {
+        List<BoardEntity> entityCol = getColEnemys(tower.c);
+        if (entityCol.isNotEmpty) {
+          hasTarget = true;
+        }
+      }
+      tasks.add(tower.shoot());
+    }
+    if (hasTarget) {
+      _attackCount = 0;
+      _attackCompleter = Completer();
     }
     await Future.wait(tasks);
-    await enemyMove();
-    // dump();
+    if (hasTarget) {
+      await _attackCompleter!.future;
+    }
+    mergePrepareTower();
+    setState(GameState.enemyMove);
   }
 
   Future<void> attackEnemy(int r, int c, int attack) async {
     // log('attackEnemy $r, $c, $attack');
+    _attackCount++;
     var entity = board[r][c];
     if (entity is Enemy) {
       await entity.takeDamage(attack);
     } else if (entity is Energy) {
       await entity.takeDamage(attack);
     }
+    // log('attackEnemy $r, $c, $attack end.');
+    _attackCount--;
+    if (_attackCount == 0 && !_attackCompleter!.isCompleted) {
+      _attackCompleter!.complete();
+      // log('attackEnemy complete');
+    }
   }
 
   Future<void> enemyMove() async {
-    log('state evemyMove...');
     _currentState = GameState.enemyMove;
-    List<Future<void>> tasks = [];
+    for (var i = 0; i < GameConfig.col; i++) {
+      if (board[GameConfig.row - 1][i] is Enemy) {
+        setState(GameState.dead);
+        return;
+      }
+    }
+    List<Future<bool>> tasks = [];
     for (var enemy in enemies) {
       board[enemy.r][enemy.c] = null;
       if (enemy.r < 9) {
@@ -139,15 +217,14 @@ class GameManager {
   void addRandomEnemy() {
     _currentState = GameState.enemyCreate;
     var list = generator.generatorRow();
-    for (var i = 0; i < 5; i++) {
+    for (var i = 0; i < GameConfig.col; i++) {
       if (list[i] > 0) {
         addEnemy(0, i, list[i], 1);
       } else if (list[i] < 0) {
         addEnergy(0, i, -list[i]);
       }
     }
-    mergePrepareTower();
-    playerMove();
+    setState(GameState.playerMove);
   }
 
   void addPreMerge(int value) {
@@ -178,10 +255,6 @@ class GameManager {
     }
   }
 
-  void dead() {
-    _currentState = GameState.dead;
-  }
-
   get prepareTowerPos => sizeConfig.getPrepareTowerPos();
 
   void addPrepareTower(int value) {
@@ -208,6 +281,21 @@ class GameManager {
     tower.removeFromParent();
   }
 
+  // void towerAction(Tower tower, Tower? mergingTower, Tower? swapTower, Vector2? movePos){
+  //   if (mergingTower != null) {
+  //     upgradeTower(mergingTower!);
+  //     removeTower(this);
+  //   } else if (swapTower != null) {
+  //     // 还原颜色
+  //     paint.color = Colors.blue;
+  //     swapTower(this, swapTower!);
+  //   } else if (movePos != null) {
+  //     moveTower(this, movePos!.$1, movePos!.$2);
+  //   } else {
+  //     goBack();
+  //   }
+  // }
+
   void moveTower(Tower tower, int r, int c) {
     soundManager.playMove();
     if (tower == prepareTower) {
@@ -220,7 +308,7 @@ class GameManager {
     tower.y = tp.y;
     tower.r = r;
     tower.c = c;
-    startShooting();
+    setState(GameState.shooting);
   }
 
   Future<void> swapTower(Tower tower1, Tower tower2) async {
@@ -234,13 +322,13 @@ class GameManager {
       towers.remove(tower2);
       towers.add(tower1);
     }
-    startShooting();
+    setState(GameState.shooting);
   }
 
   void upgradeTower(Tower tower) {
     towerPower += tower.value;
     tower.upgrade();
-    startShooting();
+    setState(GameState.shooting);
   }
 
   void addEnemy(int r, int c, int value, int body) {
@@ -259,6 +347,9 @@ class GameManager {
     board[entity.r][entity.c] = null;
     if (entity is Enemy) {
       enemies.remove(entity);
+      // 杀怪加分
+      score += entity.score;
+      game.menu.updateScore();
     } else if (entity is Energy) {
       energies.remove(entity);
     }
@@ -274,6 +365,11 @@ class GameManager {
     // log('addEnergy ($r,$c) $pos $value');
   }
 
+  void dead() {
+    _currentState = GameState.dead;
+    game.end();
+  }
+
   int getTowerTarget(int r, int c) {
     for (var i = 9; i >= 0; i--) {
       if (board[i][c] != null) {
@@ -281,6 +377,16 @@ class GameManager {
       }
     }
     return -1;
+  }
+
+  List<BoardEntity> getColEnemys(int c) {
+    List<BoardEntity> result = [];
+    for (var i = 9; i >= 0; i--) {
+      if (board[i][c] != null) {
+        result.add(board[i][c]!);
+      }
+    }
+    return result;
   }
 
   (Tower?, (int, int)?) checkTowerByPos(double x, double y) {
@@ -300,8 +406,8 @@ class GameManager {
 
   void dump() {
     var s = '';
-    for (var i = 0; i < 10; i++) {
-      for (var j = 0; j < 5; j++) {
+    for (var i = 0; i < GameConfig.row; i++) {
+      for (var j = 0; j < GameConfig.col; j++) {
         s += board[i][j] != null ? '*' : '_';
       }
       s += '\n';
