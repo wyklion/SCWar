@@ -45,11 +45,11 @@ class GameManager {
       var row = List<BoardEntity?>.filled(GameConfig.col, null);
       board.add(row);
     }
+    generator = Generator(this);
   }
 
   Future<void> load() async {
     sizeConfig = SizeConfig(game.size);
-    generator = Generator(this);
     await Flame.images.loadAll(['blue.png']);
     await soundManager.load();
   }

@@ -1,10 +1,16 @@
 import 'dart:math' as math;
 
+import 'package:scwar/game_config.dart';
+
 import '../game_manager.dart';
 
 class Generator {
   GameManager gameManager;
   int _base = 1;
+  List<List<int>> queue = [
+    [0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0]
+  ];
   final math.Random _random = math.Random();
   Generator(this.gameManager);
 
