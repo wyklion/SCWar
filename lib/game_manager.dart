@@ -135,6 +135,7 @@ class GameManager {
   }
 
   void startGame() {
+    generator.init();
     playerMoveCount = 0;
     test();
     addPrepareTower(1);
@@ -216,14 +217,22 @@ class GameManager {
 
   void addRandomEnemy() {
     _currentState = GameState.enemyCreate;
-    var list = generator.generatorRow();
+    var row = generator.getNextRow();
     for (var i = 0; i < GameConfig.col; i++) {
-      if (list[i] > 0) {
-        addEnemy(0, i, list[i], 1);
-      } else if (list[i] < 0) {
-        addEnergy(0, i, -list[i]);
+      if (row[i].$1 > 0) {
+        addEnemy(0, i, row[i].$1, row[i].$2);
+      } else if (row[i].$1 < 0) {
+        addEnergy(0, i, -row[i].$1);
       }
     }
+    // var list = generator.generatorRow();
+    // for (var i = 0; i < GameConfig.col; i++) {
+    //   if (list[i] > 0) {
+    //     addEnemy(0, i, list[i], 1);
+    //   } else if (list[i] < 0) {
+    //     addEnergy(0, i, -list[i]);
+    //   }
+    // }
     setState(GameState.playerMove);
   }
 
@@ -301,6 +310,7 @@ class GameManager {
     if (tower == prepareTower) {
       prepareTower = null;
       towers.add(tower);
+      towerPower += tower.value;
     }
     var tp = sizeConfig.getTowerPos(r, c);
     tower.pos.setFrom(tp);
@@ -335,8 +345,8 @@ class GameManager {
     if (board[r][c] != null) {
       return;
     }
-    var pos = sizeConfig.getEnemyPos(r, c);
-    var enemy = Enemy(r, c, pos.x, pos.y, value, 1);
+    var pos = sizeConfig.getEnemyPos(r, c, body);
+    var enemy = Enemy(r, c, pos.x, pos.y, value, body);
     enemies.add(enemy);
     game.addContent(enemy);
     board[r][c] = enemy;
@@ -357,7 +367,7 @@ class GameManager {
   }
 
   void addEnergy(int r, int c, int value) {
-    var pos = sizeConfig.getEnemyPos(r, c);
+    var pos = sizeConfig.getEnemyPos(r, c, 1);
     var energy = Energy(r, c, pos.x, pos.y, value);
     energies.add(energy);
     game.addContent(energy);
@@ -384,6 +394,11 @@ class GameManager {
     for (var i = 9; i >= 0; i--) {
       if (board[i][c] != null) {
         result.add(board[i][c]!);
+      } else if (c > 0) {
+        var leftEntity = board[i][c - 1];
+        if (leftEntity is Enemy && leftEntity.body == 2) {
+          result.add(board[i][c - 1]!);
+        }
       }
     }
     return result;

@@ -9,12 +9,17 @@ import '../game_config.dart';
 import 'entity.dart';
 
 class Enemy extends BoardEntity {
-  int body;
-  Enemy(int r, int c, double x, double y, int value, this.body)
-      : super(r, c, x, y, value) {
+  late int target;
+  HurtEffect? hurtEffect;
+  Enemy(int r, int c, double x, double y, int value, int body)
+      : super(r, c, x, y, body, value) {
     var img = Flame.images.fromCache('blue.png');
+    target = value;
     final sprite = Sprite(img);
     final size = Vector2.all(GameConfig.baseLen);
+    if (body == 2) {
+      size.setAll(GameConfig.doubleBaseLen);
+    }
     final player =
         SpriteComponent(size: size, sprite: sprite, anchor: Anchor.center);
     add(player);
@@ -23,16 +28,27 @@ class Enemy extends BoardEntity {
 
   @override
   Future<void> takeDamage(int damage) async {
-    var target = value - damage;
+    target = target - damage;
     if (target < 0) target = 0;
-    var hurtEffect =
-        HurtEffect(target, EffectController(duration: 0.3), onComplete: () {
-      if (target == 0) {
-        dead();
-      }
-    });
-    add(hurtEffect);
-    await hurtEffect.removed;
+    if (hurtEffect != null) {
+      var currentHurtEffect = hurtEffect!;
+      currentHurtEffect.startValue = value;
+      currentHurtEffect.targetValue = target;
+      currentHurtEffect.reset();
+      return;
+    }
+    hurtEffect = HurtEffect(
+      target,
+      EffectController(duration: 0.3),
+      onComplete: () {
+        if (target == 0) {
+          dead();
+        }
+      },
+    );
+    add(hurtEffect!);
+    await hurtEffect!.removed;
+    hurtEffect = null;
   }
 
   @override
@@ -60,7 +76,7 @@ class Enemy extends BoardEntity {
 }
 
 class HurtEffect extends ComponentEffect<Enemy> {
-  final int targetValue;
+  int targetValue;
   int startValue = 0;
 
   HurtEffect(this.targetValue, super.controller, {super.onComplete});

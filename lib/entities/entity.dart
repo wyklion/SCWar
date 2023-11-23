@@ -61,7 +61,8 @@ abstract class Entity extends PositionComponent with HasGameRef<SCWarGame> {
 abstract class BoardEntity extends Entity {
   int r;
   int c;
-  BoardEntity(this.r, this.c, double x, double y, int value)
+  int body;
+  BoardEntity(this.r, this.c, double x, double y, this.body, int value)
       : super(x, y, value);
 
   Future<bool> moveOneStep() async {
@@ -70,7 +71,7 @@ abstract class BoardEntity extends Entity {
       return false;
     }
     r++;
-    var pos = gameManager.sizeConfig.getEnemyPos(r, c);
+    var pos = gameManager.sizeConfig.getEnemyPos(r, c, body);
     y = pos.y;
     return true;
   }

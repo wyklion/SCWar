@@ -28,6 +28,7 @@ class GameConfig {
   static double edge = 12;
   static double baseBlockLen = 78;
   static double baseLen = 70;
+  static double doubleBaseLen = 152;
   static Vector2 size = Vector2(540, 960);
   static double snapLenSquare = 39 * 39;
   static int row = 10;

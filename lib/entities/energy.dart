@@ -6,11 +6,11 @@ import 'entity.dart';
 
 class Energy extends BoardEntity {
   Energy(int r, int c, double x, double y, int value)
-      : super(r, c, x, y, value);
+      : super(r, c, x, y, 1, value);
 
   @override
   Future<void> takeDamage(int damage) async {
-    log('energy takeDamage $damage');
+    // log('energy takeDamage $damage');
     var targetPos = gameManager.prepareTowerPos;
     gameManager.addPreMerge(value);
     var moveEffect = MoveToEffect(targetPos, EffectController(duration: 0.3),

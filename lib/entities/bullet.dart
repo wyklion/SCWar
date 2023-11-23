@@ -32,15 +32,20 @@ class Bullet extends PositionComponent with HasGameRef<SCWarGame> {
     var remain = value;
     double y = position.y;
     for (var i = 0; i < list.length; i++) {
-      var nextPos = gameManager.sizeConfig.getEnemyPos(list[i].r, c);
+      var enemyR = list[i].r;
+      if (list[i].body == 2) {
+        enemyR += 1;
+      }
+      var nextPos = gameManager.sizeConfig.getEnemyPos(enemyR, c, 1);
       var nextY = nextPos.y + GameConfig.baseLen / 2;
       var d = (y - nextY) / GameConfig.baseLen / 10;
       y = nextY;
-      log('list $i, ${list[i].r}, ${list[i].value}');
+      // log('list $i, ${list[i].r}, ${list[i].value}');
       effects.add(MoveToEffect(
         Vector2(nextPos.x, nextY),
         EffectController(
-            duration: d, onMax: makeAttackCallback(list[i].r, c, remain)),
+            duration: d,
+            onMax: makeAttackCallback(list[i].r, list[i].c, remain)),
       ));
       if (list[i] is Enemy) {
         remain -= list[i].value;
@@ -50,7 +55,7 @@ class Bullet extends PositionComponent with HasGameRef<SCWarGame> {
       }
     }
     if (remain > 0) {
-      var nextPos = gameManager.sizeConfig.getEnemyPos(-1, c);
+      var nextPos = gameManager.sizeConfig.getEnemyPos(-1, c, 1);
       var nextY = nextPos.y + GameConfig.baseLen;
       var d = (y - nextY) / GameConfig.baseLen / 10;
       effects.add(MoveToEffect(

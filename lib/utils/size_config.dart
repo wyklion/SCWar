@@ -44,9 +44,14 @@ class SizeConfig {
         size.y - edgeSize - baseLen * row - size.y / 2);
   }
 
-  Vector2 getEnemyPos(int row, int column) {
-    return Vector2(edgeSize + baseLen * column - size.x / 2,
-        edgeSize + baseLen * row - size.y / 2);
+  Vector2 getEnemyPos(int row, int column, int body) {
+    double x = edgeSize + baseLen * column - size.x / 2;
+    double y = edgeSize + baseLen * row - size.y / 2;
+    if (body == 2) {
+      x += baseLen / 2;
+      y += baseLen / 2;
+    }
+    return Vector2(x, y);
   }
 
   double getTowerEnemyDistance(int towerRow, int enemyRow) {
