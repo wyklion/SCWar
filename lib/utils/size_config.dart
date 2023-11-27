@@ -54,6 +54,18 @@ class SizeConfig {
     return Vector2(x, y);
   }
 
+  double getBoardX(int column) {
+    double x = edgeSize + baseLen * column - size.x / 2;
+    return x;
+  }
+
+  double getTopY() {
+    return GameConfig.edge +
+        GameConfig.baseBlockLen -
+        GameConfig.baseLen -
+        size.y / 2;
+  }
+
   double getTowerEnemyDistance(int towerRow, int enemyRow) {
     var t = size.y - edgeSize - baseLen * towerRow;
     var e = edgeSize + baseLen * enemyRow;

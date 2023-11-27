@@ -13,6 +13,7 @@ class Bullet extends PositionComponent with HasGameRef<SCWarGame> {
   int r;
   int c;
   // double dis;
+  int hittedRow = 10;
   late Paint paint;
   List<Future<void>> tasks = [];
   Bullet(this.value, this.r, this.c /*,this.dis*/) {
@@ -27,13 +28,61 @@ class Bullet extends PositionComponent with HasGameRef<SCWarGame> {
     var pos = gameManager.sizeConfig.getTowerPos(r, c);
     position.x = pos.x;
     position.y = pos.y - GameConfig.baseLen / 2;
+    moveNext();
+    // List<BoardEntity> list = gameManager.getColEnemys(c);
+    // List<Effect> effects = [];
+    // var remain = value;
+    // double y = position.y;
+    // for (var i = 0; i < list.length; i++) {
+    //   var entity = list[i];
+    //   var enemyR = entity.r;
+    //   if (entity.body == 2) {
+    //     enemyR += 1;
+    //   }
+    //   var nextPos = gameManager.sizeConfig.getEnemyPos(enemyR, c, 1);
+    //   var nextY = nextPos.y + GameConfig.baseLen / 2;
+    //   var d = (y - nextY) / GameConfig.baseLen / 10;
+    //   y = nextY;
+    //   // log('list $i, ${list[i].r}, ${list[i].value}');
+    //   effects.add(MoveToEffect(
+    //     Vector2(nextPos.x, nextY),
+    //     EffectController(
+    //         duration: d,
+    //         onMax: makeAttackCallback(list[i].r, list[i].c, remain)),
+    //   ));
+    //   if (entity is Enemy) {
+    //     remain -= entity.target;
+    //   }
+    //   if (remain <= 0) {
+    //     break;
+    //   }
+    // }
+    // if (remain > 0) {
+    //   var nextPos = gameManager.sizeConfig.getEnemyPos(-1, c, 1);
+    //   var nextY = nextPos.y + GameConfig.baseLen;
+    //   var d = (y - nextY) / GameConfig.baseLen / 10;
+    //   effects.add(MoveToEffect(
+    //     Vector2(nextPos.x, nextY),
+    //     EffectController(duration: d),
+    //   ));
+    // }
+    // effects.add(RemoveEffect());
+    // add(SequenceEffect(effects));
+    return super.onLoad();
+  }
+
+  void moveNext() {
+    var gameManager = gameRef.gameManager;
     List<BoardEntity> list = gameManager.getColEnemys(c);
-    List<Effect> effects = [];
-    var remain = value;
     double y = position.y;
     for (var i = 0; i < list.length; i++) {
-      var enemyR = list[i].r;
-      if (list[i].body == 2) {
+      var entity = list[i];
+      var enemyR = entity.r;
+      if (enemyR >= hittedRow) {
+        continue;
+      }
+      hittedRow = enemyR;
+      if (entity.body == 2) {
         enemyR += 1;
       }
       var nextPos = gameManager.sizeConfig.getEnemyPos(enemyR, c, 1);
@@ -41,35 +90,39 @@ class Bullet extends PositionComponent with HasGameRef<SCWarGame> {
       var d = (y - nextY) / GameConfig.baseLen / 10;
       y = nextY;
       // log('list $i, ${list[i].r}, ${list[i].value}');
-      effects.add(MoveToEffect(
+      add(MoveToEffect(
         Vector2(nextPos.x, nextY),
         EffectController(
             duration: d,
-            onMax: makeAttackCallback(list[i].r, list[i].c, remain)),
+            onMax: makeAttackCallback(list[i].r, list[i].c, value)),
       ));
-      if (list[i] is Enemy) {
-        remain -= list[i].value;
-      }
-      if (remain <= 0) {
-        break;
-      }
+      return;
     }
-    if (remain > 0) {
-      var nextPos = gameManager.sizeConfig.getEnemyPos(-1, c, 1);
-      var nextY = nextPos.y + GameConfig.baseLen;
-      var d = (y - nextY) / GameConfig.baseLen / 10;
-      effects.add(MoveToEffect(
-        Vector2(nextPos.x, nextY),
+    var nextX = gameManager.sizeConfig.getBoardX(c);
+    var nextY = gameManager.sizeConfig.getTopY();
+    var d = (y - nextY) / GameConfig.baseLen / 10;
+    add(SequenceEffect([
+      MoveToEffect(
+        Vector2(nextX, nextY),
         EffectController(duration: d),
-      ));
-    }
-    effects.add(RemoveEffect());
-    add(SequenceEffect(effects));
-    return super.onLoad();
+      ),
+      RemoveEffect(),
+    ]));
   }
 
   VoidCallback makeAttackCallback(int r, int c, int value) {
-    return () => gameRef.gameManager.attackEnemy(r, c, value);
+    return () {
+      var entity = gameRef.gameManager.board[r][c];
+      if (entity is Enemy) {
+        this.value -= entity.target;
+      }
+      gameRef.gameManager.attackEnemy(r, c, value);
+      if (this.value <= 0) {
+        removeFromParent();
+      } else {
+        moveNext();
+      }
+    };
   }
 
   @override

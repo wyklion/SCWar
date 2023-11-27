@@ -9,16 +9,22 @@ Widget buidlMainOverlay(BuildContext buildContext, SCWarGame game) {
     child: Container(
       // color: const Color.fromARGB(255, 139, 104, 96),
       child: Center(
-        child: TextButton(
-          style: TextButton.styleFrom(
-            foregroundColor: Colors.white,
-            padding: const EdgeInsets.all(16.0),
-            textStyle: TextStyle(fontSize: 30 / scale),
-          ),
-          onPressed: () {
-            game.start();
-          },
-          child: const Text('Start'),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            TextButton(
+              style: TextButton.styleFrom(
+                foregroundColor: Colors.white,
+                padding: const EdgeInsets.all(16.0),
+                textStyle: TextStyle(fontSize: 30 / scale),
+              ),
+              onPressed: () {
+                game.start();
+              },
+              child: const Text('Start'),
+            ),
+            const Text('v0.0.1'),
+          ],
         ),
       ),
     ),

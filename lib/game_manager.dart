@@ -64,7 +64,8 @@ class GameManager {
     // addTower(0, 2, 128);
     // addTower(0, 4, 1024);
     // addTower(1, 3, 2048);
-    // addEnemy(0, 0, 4, 1);
+    // addEnemy(1, 1, 8, 1);
+    // addEnergy(2, 1, 2);
     // addEnemy(8, 1, 7, 1);
     // addEnemy(1, 3, 1024, 1);
     // addEnemy(2, 2, 8, 1);
@@ -335,8 +336,10 @@ class GameManager {
     setState(GameState.shooting);
   }
 
-  void upgradeTower(Tower tower) {
-    towerPower += tower.value;
+  void upgradeTower(Tower tower, bool fromPrepare) {
+    if (fromPrepare) {
+      towerPower += tower.value;
+    }
     tower.upgrade();
     setState(GameState.shooting);
   }

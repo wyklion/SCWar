@@ -28,6 +28,7 @@ class Enemy extends BoardEntity {
 
   @override
   Future<void> takeDamage(int damage) async {
+    if (target == 0) return;
     target = target - damage;
     if (target < 0) target = 0;
     if (hurtEffect != null) {

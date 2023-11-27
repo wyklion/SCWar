@@ -95,12 +95,12 @@ class Tower extends Entity with TapCallbacks, DragCallbacks {
         paint.color = Colors.lightBlue;
         mergingTower = tower;
         text.text = '${value * 2}';
-        log('on merge $value->${tower.value}');
+        // log('on merge $value->${tower.value}');
       } else {
         text.text = '$value';
         paint.color = Colors.blueGrey;
         swapTower = tower;
-        log('on swap $value->${tower.value}');
+        // log('on swap $value->${tower.value}');
       }
     } else {
       text.text = '$value';
@@ -126,11 +126,12 @@ class Tower extends Entity with TapCallbacks, DragCallbacks {
     // 还原颜色
     paint.color = Colors.blue;
     if (mergingTower != null) {
-      gameManager.upgradeTower(mergingTower!);
+      var isPrepare = this == gameManager.prepareTower;
       gameManager.removeTower(this);
+      gameManager.upgradeTower(mergingTower!, isPrepare);
     } else if (swapTower != null) {
       gameManager.swapTower(this, swapTower!);
-    } else if (movePos != null) {
+    } else if (movePos != null && movePos != (r, c)) {
       gameManager.moveTower(this, movePos!.$1, movePos!.$2);
     } else {
       goBack();
