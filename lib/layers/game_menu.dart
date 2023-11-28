@@ -51,12 +51,15 @@ class PauseButton extends PositionComponent
 class ScoreComponent extends PositionComponent with HasGameRef<SCWarGame> {
   late TextComponent label;
   late TextComponent score;
-  final textRenderer = TextPaint(
-      style: const TextStyle(
-          fontSize: 30, color: Color.fromARGB(196, 238, 97, 46)));
+  final labelStyle = const TextStyle(
+      fontSize: 30, fontWeight: FontWeight.bold, color: Color(0xFF1F4E79));
+  final scoreStyle = const TextStyle(
+      fontSize: 30,
+      fontWeight: FontWeight.bold,
+      color: Color.fromARGB(255, 121, 31, 121));
   ScoreComponent()
       : super(
-          position: Vector2(480, 120),
+          position: Vector2(470, 220),
           size: Vector2.all(180),
         );
 
@@ -64,17 +67,17 @@ class ScoreComponent extends PositionComponent with HasGameRef<SCWarGame> {
   Future<void> onLoad() async {
     label = TextComponent(
       anchor: Anchor.center,
-      text: 'Score',
-      textRenderer: textRenderer,
+      text: 'SCORE',
+      textRenderer: TextPaint(style: labelStyle),
       size: Vector2(180, 80),
     );
     add(label);
     score = TextComponent(
       anchor: Anchor.center,
       text: '0',
-      textRenderer: textRenderer,
+      textRenderer: TextPaint(style: scoreStyle),
       size: Vector2(380, 80),
-      position: Vector2(0, 80),
+      position: Vector2(0, 50),
     );
     add(score);
     return super.onLoad();

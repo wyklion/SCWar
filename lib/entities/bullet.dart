@@ -8,15 +8,16 @@ import 'package:scwar/entities/entity.dart';
 import 'package:scwar/game.dart';
 import '../game_config.dart';
 
-class Bullet extends PositionComponent with HasGameRef<SCWarGame> {
+class Bullet extends CircleComponent with HasGameRef<SCWarGame> {
   int value;
   int r;
   int c;
   // double dis;
   int hittedRow = 10;
-  late Paint paint;
+  // late Paint paint;
   List<Future<void>> tasks = [];
-  Bullet(this.value, this.r, this.c /*,this.dis*/) {
+  Bullet(this.value, this.r, this.c /*,this.dis*/)
+      : super(radius: GameConfig.baseLen / 10, anchor: Anchor.center) {
     scale.setAll(1 + 0.1 * math.log(value));
     paint = Paint()..color = Colors.red;
     priority = 2;
@@ -125,13 +126,13 @@ class Bullet extends PositionComponent with HasGameRef<SCWarGame> {
     };
   }
 
-  @override
-  void render(Canvas canvas) {
-    canvas.drawCircle(Offset.zero, GameConfig.baseLen / 10, paint);
-  }
+  // @override
+  // void render(Canvas canvas) {
+  //   canvas.drawCircle(Offset.zero, GameConfig.baseLen / 10, paint);
+  // }
 
-  @override
-  void update(double dt) {
-    // 处理敌人的逻辑，比如移动等
-  }
+  // @override
+  // void update(double dt) {
+  //   // 处理敌人的逻辑，比如移动等
+  // }
 }

@@ -16,12 +16,12 @@ Widget buidlMainOverlay(BuildContext buildContext, SCWarGame game) {
               style: TextButton.styleFrom(
                 foregroundColor: Colors.white,
                 padding: const EdgeInsets.all(16.0),
-                textStyle: TextStyle(fontSize: 30 / scale),
+                textStyle: TextStyle(fontSize: 60 / scale),
               ),
               onPressed: () {
                 game.start();
               },
-              child: const Text('Start'),
+              child: const Text('START'),
             ),
             const Text('v0.0.1'),
           ],

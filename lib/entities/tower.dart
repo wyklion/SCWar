@@ -25,7 +25,7 @@ class Tower extends Entity with TapCallbacks, DragCallbacks {
   Tower? mergingTower;
   Tower? swapTower;
   (int, int)? movePos;
-  Paint paint = Paint()..color = Colors.blue;
+  Paint paint = Paint()..color = ColorMap.tower;
   Tower(this.r, this.c, double x, double y, int value) : super(x, y, value) {
     _rect = Rect.fromCenter(
         center: Offset.zero,
@@ -67,7 +67,7 @@ class Tower extends Entity with TapCallbacks, DragCallbacks {
     movingPos.x = pos.x;
     movingPos.y = pos.y;
     priority = 1;
-    paint.color = Colors.blueAccent;
+    paint.color = ColorMap.towerMove;
   }
 
   @override
@@ -85,33 +85,45 @@ class Tower extends Entity with TapCallbacks, DragCallbacks {
         gameManager.checkTowerByPos(movingPos.x, movingPos.y);
     x = movingPos.x;
     y = movingPos.y;
-    mergingTower = null;
-    swapTower = null;
-    movePos = null;
     if (tower != this && tower is Tower) {
+      movePos = null;
       x = tower.pos.x;
       y = tower.pos.y;
       if (tower.value == value) {
-        paint.color = Colors.lightBlue;
+        if (mergingTower != tower) {
+          gameManager.soundManager.playSnap();
+        }
+        paint.color = ColorMap.towerMerge;
         mergingTower = tower;
+        swapTower = null;
         text.text = '${value * 2}';
         // log('on merge $value->${tower.value}');
       } else {
+        if (swapTower != tower) {
+          gameManager.soundManager.playSnap();
+        }
         text.text = '$value';
-        paint.color = Colors.blueGrey;
+        paint.color = ColorMap.towerSwap;
         swapTower = tower;
+        mergingTower = null;
         // log('on swap $value->${tower.value}');
       }
     } else {
       text.text = '$value';
       mergingTower = null;
-      paint.color = Colors.blueAccent;
+      swapTower = null;
+      paint.color = ColorMap.towerMove;
       if (towerBlockPos != null) {
+        if (movePos != towerBlockPos) {
+          gameManager.soundManager.playSnap();
+        }
         var (tr, tc) = towerBlockPos;
         var tp = gameManager.sizeConfig.getTowerPos(tr, tc);
         x = tp.x;
         y = tp.y;
         movePos = towerBlockPos;
+      } else {
+        movePos = null;
       }
     }
   }
@@ -124,7 +136,7 @@ class Tower extends Entity with TapCallbacks, DragCallbacks {
     state = TowerState.ready;
     super.onDragEnd(event);
     // 还原颜色
-    paint.color = Colors.blue;
+    paint.color = ColorMap.tower;
     if (mergingTower != null) {
       var isPrepare = this == gameManager.prepareTower;
       gameManager.removeTower(this);
@@ -142,7 +154,7 @@ class Tower extends Entity with TapCallbacks, DragCallbacks {
   void goBack() {
     state = TowerState.backing;
     mergingTower = null;
-    paint.color = Colors.blue;
+    paint.color = ColorMap.tower;
     final effect = MoveToEffect(
       pos,
       EffectController(

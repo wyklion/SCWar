@@ -22,6 +22,22 @@ Map<int, (Color, double)> numberMap = {
   131072: (Colors.white, 0.8),
 };
 
+final Map<String, Paint> paintMap = {
+  'bg': Paint()..color = const Color(0xFF7FB3D5),
+  'enemyBg': Paint()..color = const Color(0xFFD2E8E8),
+  'towerBg': Paint()..color = const Color(0xFFA8DADC),
+  'energy': Paint()..color = const Color(0xFF9bcb3c),
+};
+
+final class ColorMap {
+  static Color tower = const Color(0xFF20B2AA);
+  static Color towerMove = const Color(0xFF48C9B0);
+  static Color towerMerge = const Color(0xFF2ECC71);
+  static Color towerSwap = const Color(0xFF008080);
+  static Color enemy = const Color(0xFF3282b8);
+  static Color enemy2 = const Color(0xFF0f4c75);
+}
+
 class GameConfig {
   static double fixedWidth = 540;
   static double fixedHeight = 960;

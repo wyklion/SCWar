@@ -59,12 +59,13 @@ class GameManager {
   GameState get currentState => _currentState;
 
   void test() {
-    // addTower(0, 0, 2);
-    // addTower(0, 1, 4);
+    score = 3523511;
+    addTower(0, 0, 2);
+    addTower(0, 1, 4);
     // addTower(0, 2, 128);
     // addTower(0, 4, 1024);
     // addTower(1, 3, 2048);
-    // addEnemy(1, 1, 8, 1);
+    addEnemy(3, 1, 8, 2);
     // addEnergy(2, 1, 2);
     // addEnemy(8, 1, 7, 1);
     // addEnemy(1, 3, 1024, 1);
@@ -147,6 +148,7 @@ class GameManager {
   void playerMove() {}
 
   void startShooting() async {
+    soundManager.playShoot();
     playerMoveCount++;
     _currentState = GameState.shooting;
     List<Future<void>> tasks = [];
@@ -177,8 +179,10 @@ class GameManager {
     _attackCount++;
     var entity = board[r][c];
     if (entity is Enemy) {
+      soundManager.playHurt();
       await entity.takeDamage(attack);
     } else if (entity is Energy) {
+      soundManager.playEnergy();
       await entity.takeDamage(attack);
     }
     // log('attackEnemy $r, $c, $attack end.');
@@ -337,6 +341,7 @@ class GameManager {
   }
 
   void upgradeTower(Tower tower, bool fromPrepare) {
+    soundManager.playMerge();
     if (fromPrepare) {
       towerPower += tower.value;
     }

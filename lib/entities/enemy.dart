@@ -11,19 +11,21 @@ import 'entity.dart';
 class Enemy extends BoardEntity {
   late int target;
   HurtEffect? hurtEffect;
+  Paint paint = Paint();
   Enemy(int r, int c, double x, double y, int value, int body)
       : super(r, c, x, y, body, value) {
-    var img = Flame.images.fromCache('blue.png');
     target = value;
-    final sprite = Sprite(img);
     final size = Vector2.all(GameConfig.baseLen);
     if (body == 2) {
       size.setAll(GameConfig.doubleBaseLen);
     }
-    final player =
-        SpriteComponent(size: size, sprite: sprite, anchor: Anchor.center);
-    add(player);
-    player.priority = -1;
+    // var img = Flame.images.fromCache('blue.png');
+    // final sprite = Sprite(img);
+    // final player =
+    //     SpriteComponent(size: size, sprite: sprite, anchor: Anchor.center);
+    // add(player);
+    // player.priority = -1;
+    paint.color = body == 1 ? ColorMap.enemy : ColorMap.enemy2;
   }
 
   @override
@@ -61,13 +63,10 @@ class Enemy extends BoardEntity {
   @override
   void renderBg(Canvas canvas) {
     // 绘制敌人
-    final paint = Paint()..color = Colors.red;
+    // final paint = Paint()..color = Colors.red;
+    var len = body == 1 ? GameConfig.baseLen : GameConfig.doubleBaseLen;
     canvas.drawRect(
-        Rect.fromCenter(
-            center: Offset.zero,
-            width: GameConfig.baseLen,
-            height: GameConfig.baseLen),
-        paint);
+        Rect.fromCenter(center: Offset.zero, width: len, height: len), paint);
   }
 
   @override

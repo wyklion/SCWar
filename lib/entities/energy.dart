@@ -24,7 +24,7 @@ class Energy extends BoardEntity {
   @override
   void renderBg(Canvas canvas) {
     // 绘制敌人
-    final paint = Paint()..color = Colors.green;
-    canvas.drawCircle(Offset.zero, GameConfig.baseLen / 3, paint);
+    // final paint = Paint()..color = Colors.green;
+    canvas.drawCircle(Offset.zero, GameConfig.baseLen / 3, paintMap['energy']!);
   }
 }

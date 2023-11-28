@@ -119,37 +119,42 @@ class SCWarWorld extends World with HasGameReference<SCWarGame> {
     //   end: Alignment.bottomCenter,
     //   colors: [Colors.blue, Colors.green],
     // );
-    const radiusGradient = RadialGradient(
-      colors: [Colors.lightBlueAccent, Colors.blueGrey],
-      radius: 1,
-    );
-    final rect =
-        Rect.fromLTWH(0, 0, GameConfig.fixedWidth, GameConfig.fixedHeight);
-    final paint = Paint()..shader = radiusGradient.createShader(rect);
-    // final paint = Paint()..color = const Color.fromARGB(255, 222, 243, 33);
+    // const radiusGradient = RadialGradient(
+    //   colors: [Color(0xFFB2D7D5), Color(0xFFC2C2C2)],
+    //   radius: 1,
+    // );
+    // final rect =
+    //     Rect.fromLTWH(0, 0, GameConfig.fixedWidth, GameConfig.fixedHeight);
+    // final paint = Paint()..shader = radiusGradient.createShader(rect);
+    // var bg = RectangleComponent(
+    //     anchor: Anchor.center,
+    //     position: Vector2(0, 0),
+    //     size: Vector2(GameConfig.fixedWidth, GameConfig.fixedHeight),
+    //     paint: paint);
+    // final paint = Paint()..color = const Color(0xFF7FB3D5);
     var bg = RectangleComponent(
         anchor: Anchor.center,
         position: Vector2(0, 0),
         size: Vector2(GameConfig.fixedWidth, GameConfig.fixedHeight),
-        paint: paint);
+        paint: paintMap['bg']);
     bg.priority = -2;
     add(bg);
   }
 
   void addEnemyBg() {
-    final paint = Paint()..color = const Color.fromARGB(255, 33, 236, 243);
+    // final paint =  Paint()..color = const Color(0xFFD2E8E8);
     final enemyRect = game.gameManager.sizeConfig.getEnemyBgRect();
     enemyBg = RectangleComponent.fromRect(enemyRect,
-        anchor: Anchor.center, paint: paint);
+        anchor: Anchor.center, paint: paintMap['enemyBg']);
     enemyBg.priority = -1;
     add(enemyBg);
   }
 
   void addTowerBg() {
-    final paint = Paint()..color = const Color.fromARGB(255, 160, 106, 200);
+    // final paint = Paint()..color = const Color(0xFFA8DADC);
     final rect = game.gameManager.sizeConfig.getTowerBgRect();
-    towerBg =
-        RectangleComponent.fromRect(rect, anchor: Anchor.center, paint: paint);
+    towerBg = RectangleComponent.fromRect(rect,
+        anchor: Anchor.center, paint: paintMap['towerBg']);
     towerBg.priority = -1;
     add(towerBg);
   }

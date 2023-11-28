@@ -3,27 +3,50 @@ import 'package:flame_audio/flame_audio.dart';
 class SoundManager {
   late AudioPool pool;
   Future<void> load() async {
-    await FlameAudio.audioCache.loadAll(['pepSound3.ogg', 'drop_002.mp3']);
+    await FlameAudio.audioCache.loadAll([
+      'drop_001.ogg',
+      'drop_002.ogg',
+      'drop_003.ogg',
+      'drop_004.ogg',
+      'laser5.ogg',
+      'back_002.ogg',
+      'powerUp9.ogg',
+      'pepSound2.mp3',
+      'pepSound3.ogg',
+      'drop_002.mp3',
+    ]);
     // pool = await FlameAudio.createPool('drop_002.mp3', maxPlayers: 5);
   }
 
-  void playSnap() {}
+  void playSnap() {
+    // FlameAudio.play('drop_003.ogg');
+  }
 
   void playMerge() {
-    FlameAudio.play('drop_002.mp3');
+    FlameAudio.play('powerUp9.ogg');
     // pool.start();
   }
 
   void playSwap() {
-    FlameAudio.play('drop_002.mp3');
+    FlameAudio.play('pepSound2.mp3');
   }
 
   void playMove() {
     FlameAudio.play('drop_002.mp3');
   }
 
-  void playShoot() {}
-  void playHurt() {}
+  void playShoot() {
+    FlameAudio.play('laser5.ogg');
+  }
+
+  void playHurt() {
+    // FlameAudio.play('bong_001.ogg');
+    FlameAudio.play('glass_001.ogg');
+  }
+
+  void playEnergy() {
+    FlameAudio.play('drop_004.ogg');
+  }
 
   void playPrepare() {}
 }
