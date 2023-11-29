@@ -1,7 +1,7 @@
 import 'package:flame_audio/flame_audio.dart';
 
 class SoundManager {
-  late AudioPool pool;
+  late AudioPool hurtPool;
   Future<void> load() async {
     await FlameAudio.audioCache.loadAll([
       'drop_001.ogg',
@@ -14,8 +14,13 @@ class SoundManager {
       'pepSound2.mp3',
       'pepSound3.ogg',
       'drop_002.mp3',
+      // 'glass_001.ogg',
     ]);
-    // pool = await FlameAudio.createPool('drop_002.mp3', maxPlayers: 5);
+    hurtPool = await FlameAudio.createPool(
+      'glass_001.ogg',
+      minPlayers: 3,
+      maxPlayers: 5,
+    );
   }
 
   void playSnap() {
@@ -41,7 +46,8 @@ class SoundManager {
 
   void playHurt() {
     // FlameAudio.play('bong_001.ogg');
-    FlameAudio.play('glass_001.ogg');
+    hurtPool.start();
+    // FlameAudio.play('glass_001.ogg');
   }
 
   void playEnergy() {

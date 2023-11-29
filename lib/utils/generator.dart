@@ -11,6 +11,7 @@ class Generator {
   GameManager gameManager;
   int _base = 1;
   int enemyCount = 0;
+  int afterEnergyCount = 0;
   late List<List<EnemyInfo>> queue;
   final math.Random _random = math.Random();
   Generator(this.gameManager) {
@@ -41,22 +42,28 @@ class Generator {
     }
   }
 
-  /// 生成怪值：基础分的3倍到6倍之间，如果是大怪，6倍-12倍之间。
+  /// 生成怪基础分：炮塔总分除以5取整。
+  /// 生成怪值：基础分的1倍到3倍之间，如果是大怪，4倍-8倍之间。
+  /// 每5个怪出一个双倍分的怪。
   int getNextEnemyValue({int? size = 1}) {
     // int r = _random.nextInt(3);
-    var b = size == 1 ? _base : _base * 2;
-    b *= 3;
+    int base = ((gameManager.towerPower + 1) / 5).ceil();
+    var b = size == 1 ? base : base * 4;
+    // b *= 2;
     enemyCount++;
-    if (enemyCount % 3 == 0) {
-      b *= 3;
+    afterEnergyCount++;
+    if (enemyCount % 5 == 0) {
+      b *= 2;
     }
-    int result = b + _random.nextInt(b);
+    int result = b + _random.nextInt(b * 2);
+    // log('power:${gameManager.towerPower}, base:$base, b:$b, result: $result');
     // int result = _base * math.pow(2, r).toInt();
     return result;
   }
 
   /// 资源值生成：基础分的1倍或2倍。
   int getNextEnegyValue() {
+    afterEnergyCount = 0;
     int r = _random.nextInt(2);
     int result = _base * (1 + r);
     return result;
@@ -135,8 +142,10 @@ class Generator {
 
   /// 先生成大怪，在大怪数上限内，50%机率生成大怪。
   /// 还需生成的次数是：一行怪最多占几格减去大怪数*2
-  ///   如果可以生成，至少生成一个
+  ///   如果可以生成且剩三个格及以上，至少生成一个
   ///   之后50%机率生成，其中1/3机率生成炮资源，2/3机率生成怪。
+  ///     连续生成3个怪及以内不会生成资源。连续10个怪后必出资源。
+  /// 指定生成多少个资源的，剩下的60%都是怪。
   void generateNextRow({int energy = 0}) {
     var b4 = getEmpty4Block();
     var max4 = getMaxBlock4Count();
@@ -184,8 +193,9 @@ class Generator {
         var idx = _random.nextInt(row.length);
         var col = row[idx];
         row.removeAt(idx);
-        if (i == 0 || _random.nextInt(2) == 1) {
-          if (_random.nextInt(3) == 1) {
+        if ((i == 0 && tryCount >= 3) || _random.nextInt(2) == 1) {
+          if (afterEnergyCount >= 3 &&
+              (afterEnergyCount >= 10 || _random.nextInt(3) == 1)) {
             queue[1][col] = (-getNextEnegyValue(), 1);
           } else {
             queue[1][col] = (getNextEnemyValue(), 1);

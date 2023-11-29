@@ -50,7 +50,7 @@ class GameManager {
 
   Future<void> load() async {
     sizeConfig = SizeConfig(game.size);
-    await Flame.images.loadAll(['blue.png']);
+    await Flame.images.loadAll(['blue.png', 'pause_icon.png']);
     await soundManager.load();
   }
 
@@ -59,13 +59,14 @@ class GameManager {
   GameState get currentState => _currentState;
 
   void test() {
-    score = 3523511;
-    addTower(0, 0, 2);
-    addTower(0, 1, 4);
+    // score = 3523511;
+    // game.menu.updateScore();
+    // addTower(0, 0, 2);
+    // addTower(0, 1, 4);
     // addTower(0, 2, 128);
     // addTower(0, 4, 1024);
     // addTower(1, 3, 2048);
-    addEnemy(3, 1, 8, 2);
+    // addEnemy(3, 1, 8, 2);
     // addEnergy(2, 1, 2);
     // addEnemy(8, 1, 7, 1);
     // addEnemy(1, 3, 1024, 1);
@@ -249,8 +250,10 @@ class GameManager {
     if (preMerges.isEmpty) {
       return;
     }
+    int s = 0;
     int big = 0;
     for (var m in preMerges) {
+      s += m;
       if (m > big) {
         big = m;
       }
@@ -259,11 +262,17 @@ class GameManager {
     Tower tower;
     if (prepareTower is Tower) {
       tower = prepareTower!;
+      s += tower.value;
       if (tower.value >= big) {
-        return;
-      } else {
-        tower.setValue(big);
+        big = tower.value;
       }
+    }
+    // 合并资源
+    while (big * 2 <= s) {
+      big *= 2;
+    }
+    if (prepareTower is Tower) {
+      prepareTower!.setValue(big);
     } else {
       addPrepareTower(big);
     }
@@ -333,6 +342,7 @@ class GameManager {
     tower1.setPos(tower2.r, tower2.c);
     tower2.setPos(tempR, tempC);
     if (tower1 == prepareTower) {
+      towerPower += (tower1.value - tower2.value);
       prepareTower = tower2;
       towers.remove(tower2);
       towers.add(tower1);
@@ -383,8 +393,8 @@ class GameManager {
     // log('addEnergy ($r,$c) $pos $value');
   }
 
-  void dead() {
-    _currentState = GameState.dead;
+  void dead() async {
+    await Future.delayed(const Duration(seconds: 1));
     game.end();
   }
 

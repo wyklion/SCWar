@@ -23,7 +23,7 @@ Widget buidlMainOverlay(BuildContext buildContext, SCWarGame game) {
               },
               child: const Text('START'),
             ),
-            const Text('v0.0.1'),
+            const Text('v0.0.3'),
           ],
         ),
       ),

@@ -1,5 +1,6 @@
 import 'package:flame/components.dart';
 import 'package:flame/events.dart';
+import 'package:flame/flame.dart';
 import 'package:flutter/material.dart';
 import 'dart:developer';
 import 'package:scwar/game.dart';
@@ -22,12 +23,14 @@ class GameMenu extends Component with HasGameRef<SCWarGame> {
 
 class PauseButton extends PositionComponent
     with HasGameRef<SCWarGame>, TapCallbacks {
-  final textRenderer =
-      TextPaint(style: const TextStyle(fontSize: 40, color: Colors.brown));
+  // final textRenderer = TextPaint(
+  //     style: const TextStyle(
+  //         fontSize: 40, fontWeight: FontWeight.w900, color: Color(0xFF3B5998)));
   PauseButton()
       : super(
-          position: Vector2(500, 20),
-          size: Vector2.all(80),
+          position: Vector2(470, 5),
+          size: Vector2.all(64),
+          // anchor: Anchor.center,
         );
 
   @override
@@ -38,12 +41,20 @@ class PauseButton extends PositionComponent
 
   @override
   Future<void> onLoad() async {
-    final pauseText = TextComponent(
-      text: '||',
-      textRenderer: textRenderer,
-      size: Vector2.all(80),
+    var img = Flame.images.fromCache('pause_icon.png');
+    final sprite = Sprite(img);
+    final btn = SpriteComponent(
+      size: Vector2.all(64),
+      sprite: sprite,
+      // anchor: Anchor.center,
     );
-    add(pauseText);
+    add(btn);
+    // final pauseText = TextComponent(
+    //   text: '||',
+    //   textRenderer: textRenderer,
+    //   size: Vector2.all(80),
+    // );
+    // add(pauseText);
     return super.onLoad();
   }
 }
@@ -52,11 +63,9 @@ class ScoreComponent extends PositionComponent with HasGameRef<SCWarGame> {
   late TextComponent label;
   late TextComponent score;
   final labelStyle = const TextStyle(
-      fontSize: 30, fontWeight: FontWeight.bold, color: Color(0xFF1F4E79));
+      fontSize: 30, fontWeight: FontWeight.bold, color: Color(0xFF0f4c75));
   final scoreStyle = const TextStyle(
-      fontSize: 30,
-      fontWeight: FontWeight.bold,
-      color: Color.fromARGB(255, 121, 31, 121));
+      fontSize: 30, fontWeight: FontWeight.bold, color: Color(0xFFFFE9A3));
   ScoreComponent()
       : super(
           position: Vector2(470, 220),

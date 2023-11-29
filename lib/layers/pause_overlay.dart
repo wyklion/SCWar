@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:scwar/game.dart';
+import 'package:scwar/layers/layer_util.dart';
 
 Widget buidlPauseOverlay(BuildContext buildContext, SCWarGame game) {
   double scale = game.scale;
@@ -12,55 +13,38 @@ Widget buidlPauseOverlay(BuildContext buildContext, SCWarGame game) {
           child: Container(
             width: 300 / scale,
             height: 400 / scale,
-            color: Color.fromARGB(255, 62, 205, 233),
+            color: Color(0xFF7FB3D5),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Flexible(
-                  child: Center(
-                    child: Text(
-                      'Paused',
-                      style: TextStyle(fontSize: 30 / scale),
+                  child: Container(
+                    height: 120 / scale,
+                    child: Center(
+                      child: Text(
+                        'Paused',
+                        style: TextStyle(
+                            color: Color(0xFF5C5C5C),
+                            fontSize: 30 / scale,
+                            fontWeight: FontWeight.w500),
+                      ),
                     ),
                   ),
                 ),
                 Expanded(
                   child: Center(
                     child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        TextButton(
-                          style: TextButton.styleFrom(
-                            foregroundColor: Colors.white,
-                            padding: const EdgeInsets.all(16.0),
-                            textStyle: TextStyle(fontSize: 30 / scale),
-                          ),
-                          onPressed: () {
-                            game.restart();
-                          },
-                          child: const Text('Restart'),
-                        ),
-                        TextButton(
-                          style: TextButton.styleFrom(
-                            foregroundColor: Colors.white,
-                            padding: const EdgeInsets.all(16.0),
-                            textStyle: TextStyle(fontSize: 30 / scale),
-                          ),
-                          onPressed: () {
-                            game.home();
-                          },
-                          child: const Text('Home'),
-                        ),
-                        TextButton(
-                          style: TextButton.styleFrom(
-                            foregroundColor: Colors.white,
-                            padding: const EdgeInsets.all(16.0),
-                            textStyle: TextStyle(fontSize: 30 / scale),
-                          ),
-                          onPressed: () {
-                            game.resume();
-                          },
-                          child: const Text('Resume'),
-                        ),
+                        makeTextButton(game, 'Restart', () {
+                          game.restart();
+                        }),
+                        makeTextButton(game, 'Home', () {
+                          game.home();
+                        }),
+                        makeTextButton(game, 'Resume', () {
+                          game.resume();
+                        }),
                       ],
                     ),
                   ),
