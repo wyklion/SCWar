@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'dart:developer';
-
 import 'package:flame/components.dart';
 import 'package:flutter/material.dart';
 import 'package:scwar/game_manager.dart';

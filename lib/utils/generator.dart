@@ -1,8 +1,6 @@
 import 'dart:developer';
 import 'dart:math' as math;
-
 import 'package:scwar/game_config.dart';
-
 import '../game_manager.dart';
 
 typedef EnemyInfo = (int value, int size);

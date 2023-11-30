@@ -4,10 +4,8 @@ import 'package:scwar/game.dart';
 Widget buidlMainOverlay(BuildContext buildContext, SCWarGame game) {
   double scale = game.scale;
   return Center(
-      child: AspectRatio(
-    aspectRatio: 9 / 16,
-    child: Container(
-      // color: const Color.fromARGB(255, 139, 104, 96),
+    child: AspectRatio(
+      aspectRatio: 9 / 16,
       child: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -28,5 +26,5 @@ Widget buidlMainOverlay(BuildContext buildContext, SCWarGame game) {
         ),
       ),
     ),
-  ));
+  );
 }

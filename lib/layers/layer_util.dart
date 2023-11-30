@@ -7,7 +7,7 @@ Widget makeTextButton(SCWarGame game, String name, VoidCallback onClick) {
     style: TextButton.styleFrom(
       foregroundColor: const Color(0xFFF7E7CE),
       padding: const EdgeInsets.all(16.0),
-      shadowColor: Color(0xFFf99f9f),
+      shadowColor: const Color(0xFFf99f9f),
       textStyle: TextStyle(fontSize: 30 / scale),
     ),
     onPressed: () {
@@ -15,7 +15,7 @@ Widget makeTextButton(SCWarGame game, String name, VoidCallback onClick) {
     },
     child: Text(
       name,
-      style: TextStyle(fontWeight: FontWeight.w500),
+      style: const TextStyle(fontWeight: FontWeight.w500),
     ),
   );
   // return ClipRRect(
