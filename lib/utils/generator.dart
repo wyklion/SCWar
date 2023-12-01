@@ -80,7 +80,7 @@ class Generator {
     initRow();
   }
 
-  /// 基础分，10炮平均分在32开始基础分升到2，平均64，基础分到4。生成资源按概率生成1-3倍。
+  /// 资源基础分：10炮平均分在32开始基础分升到2，平均64，基础分到4。生成资源按概率生成1-3倍。
   void _refreshBase() {
     double power = gameManager.towerPower / 320;
     while (_base <= power) {
@@ -107,12 +107,12 @@ class Generator {
     return result;
   }
 
-  /// 资源值生成：基础分的1倍或2倍。
+  /// 资源值生成：60%基础分的1倍，30%基础分2倍，10%基础分4倍。
   int getNextEnegyValue() {
     afterEnergyCount = 0;
     int result = _base;
     int r = _random.nextInt(10);
-    if (r >= 5 && r <= 7) {
+    if (r >= 6 && r <= 8) {
       result = _base * 2;
     } else if (r >= 9) {
       result = _base * 4;
@@ -241,8 +241,8 @@ class Generator {
         }
       }
     }
-    log('towerPower:${gameManager.towerPower} base:${_base.toString()}');
-    log('queue[1]: ${queue[1].toString()}');
+    // log('towerPower:${gameManager.towerPower} base:${_base.toString()}');
+    // log('queue[1]: ${queue[1].toString()}');
   }
 
   (List<int>, List<int>) getRandomCols(List<int> row, int count, int rate) {
