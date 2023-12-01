@@ -90,7 +90,7 @@ class SCWarGame extends FlameGame<SCWarWorld> with TapDetector, ScaleDetector {
 
 class SCWarWorld extends World with HasGameReference<SCWarGame> {
   late RectangleComponent enemyBg;
-  late RectangleComponent towerBg;
+  late Component towerBg;
   @override
   Future<void> onLoad() async {
     addBg();
@@ -145,11 +145,21 @@ class SCWarWorld extends World with HasGameReference<SCWarGame> {
   }
 
   void addTowerBg() {
-    // final paint = Paint()..color = const Color(0xFFA8DADC);
-    final rect = game.gameManager.sizeConfig.getTowerBgRect();
-    towerBg = RectangleComponent.fromRect(rect,
-        anchor: Anchor.center, paint: paintMap['towerBg']);
+    towerBg = Component();
     towerBg.priority = -1;
     add(towerBg);
+    // final paint = Paint()..color = const Color(0xFFA8DADC);
+    final rect = game.gameManager.sizeConfig.getTowerBgRect();
+    towerBg.add(RectangleComponent.fromRect(rect,
+        anchor: Anchor.center, paint: paintMap['towerBg']));
+    for (var i = 0; i < 2; i++) {
+      for (var j = 0; j < GameConfig.col; j++) {
+        towerBg.add(CircleComponent(
+            anchor: Anchor.center,
+            radius: GameConfig.baseBlockLen / 2,
+            paint: paintMap['towerBlock'],
+            position: game.gameManager.sizeConfig.getTowerPos(i, j)));
+      }
+    }
   }
 }

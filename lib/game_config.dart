@@ -1,6 +1,13 @@
 import 'package:flame/game.dart';
 import 'package:flutter/material.dart';
 
+enum EntityType {
+  empty,
+  enemy,
+  energy,
+  energyMultiply,
+}
+
 Map<int, (Color, double)> numberMap = {
   1: (Colors.white, 1),
   2: (Colors.white, 1),
@@ -26,7 +33,9 @@ final Map<String, Paint> paintMap = {
   'bg': Paint()..color = const Color(0xFF7FB3D5),
   'enemyBg': Paint()..color = const Color(0xFFD2E8E8),
   'towerBg': Paint()..color = const Color(0xFFA8DADC),
+  'towerBlock': Paint()..color = const Color(0xFF9ED9D2),
   'energy': Paint()..color = const Color(0xFF9bcb3c),
+  'energyMultiply': Paint()..color = const Color(0xFF7F00FF),
 };
 
 final class ColorMap {
@@ -36,6 +45,7 @@ final class ColorMap {
   static Color towerSwap = const Color(0xFF008080);
   static Color enemy = const Color(0xFF3282b8);
   static Color enemy2 = const Color(0xFF0f4c75);
+  static Color bullet = const Color(0xFFFF8A00);
 }
 
 class GameConfig {

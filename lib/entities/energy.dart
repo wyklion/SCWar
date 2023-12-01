@@ -1,30 +1,59 @@
 import 'dart:developer';
+import 'dart:js_util';
 import 'package:flame/effects.dart';
 import 'package:flutter/rendering.dart';
 import '../game_config.dart';
 import 'entity.dart';
 
 class Energy extends BoardEntity {
-  Energy(int r, int c, double x, double y, int value)
-      : super(r, c, x, y, 1, value);
+  Energy(int r, int c, double x, double y, int value, EntityType type)
+      : super(r, c, x, y, 1, value) {
+    this.type = type;
+  }
+
+  @override
+  String getDisplay() {
+    if (type == EntityType.energyMultiply) {
+      return 'x$value';
+    }
+    return super.getDisplay();
+  }
 
   @override
   Future<void> takeDamage(int damage) async {
     // log('energy takeDamage $damage');
-    var targetPos = gameManager.prepareTowerPos;
-    gameManager.addPreMerge(value);
-    var moveEffect = MoveToEffect(targetPos, EffectController(duration: 0.3),
+    if (type == EntityType.energy) {
+      var targetPos = gameManager.prepareTowerPos;
+      gameManager.addPreMerge(value);
+      var moveEffect = MoveToEffect(targetPos, EffectController(duration: 0.3),
+          onComplete: () {
+        dead();
+      });
+      this.add(moveEffect);
+      await moveEffect.removed;
+    } else if (type == EntityType.energyMultiply) {
+      var l = gameManager.towers.length;
+      var randomTower = gameManager.towers[gameManager.random.nextInt(l)];
+      var moveEffect = MoveToEffect(
+        randomTower.position,
+        EffectController(duration: 0.3),
         onComplete: () {
-      dead();
-    });
-    add(moveEffect);
-    await moveEffect.removed;
+          gameManager.doubleTower(randomTower);
+          dead();
+        },
+      );
+      this.add(moveEffect);
+      await moveEffect.removed;
+    }
   }
 
   @override
   void renderBg(Canvas canvas) {
     // 绘制敌人
     // final paint = Paint()..color = Colors.green;
-    canvas.drawCircle(Offset.zero, GameConfig.baseLen / 3, paintMap['energy']!);
+    var paint = type == EntityType.energy
+        ? paintMap['energy']!
+        : paintMap['energyMultiply']!;
+    canvas.drawCircle(Offset.zero, GameConfig.baseLen / 3, paint);
   }
 }

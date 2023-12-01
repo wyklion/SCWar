@@ -9,29 +9,34 @@ import '../game_config.dart';
 abstract class Entity extends PositionComponent with HasGameRef<SCWarGame> {
   final int score;
   int value;
+  late EntityType type;
   late TextComponent text;
   late GameManager gameManager;
 
   Entity(double x, double y, this.score) : value = score {
     size.setAll(GameConfig.baseLen);
-    (Color, double) nconfig = numberMap[value] ?? (Colors.white, 1);
     this.x = x;
     this.y = y;
+  }
+
+  @override
+  FutureOr<void> onLoad() {
+    (Color, double) nconfig = numberMap[value] ?? (Colors.white, 1);
     final renderer =
         TextPaint(style: TextStyle(fontSize: 20, color: nconfig.$1));
     text = TextComponent(
-        text: '$value',
+        text: getDisplay(),
         anchor: Anchor.center,
         textRenderer: renderer,
         scale: Vector2.all(nconfig.$2),
         size: Vector2.all(GameConfig.baseLen));
     add(text);
-  }
-
-  @override
-  FutureOr<void> onLoad() {
     gameManager = gameRef.gameManager;
     return super.onLoad();
+  }
+
+  String getDisplay() {
+    return '$value';
   }
 
   void setValue(int value) {

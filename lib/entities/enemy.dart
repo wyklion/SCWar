@@ -2,7 +2,9 @@ import 'dart:async';
 import 'dart:developer';
 import 'package:flame/components.dart';
 import 'package:flame/effects.dart';
+import 'package:flame/particles.dart';
 import 'package:flutter/material.dart';
+import 'package:scwar/utils/particles.dart';
 import '../game_config.dart';
 import 'entity.dart';
 
@@ -38,6 +40,13 @@ class Enemy extends BoardEntity {
       currentHurtEffect.reset();
       return;
     }
+    add(gameManager.particles.createRectExplode());
+    add(RotateEffect.by(
+      0.2,
+      ZigzagEffectController(
+        period: 0.1,
+      ),
+    ));
     hurtEffect = HurtEffect(
       target,
       EffectController(duration: 0.3),

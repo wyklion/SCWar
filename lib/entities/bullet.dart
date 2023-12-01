@@ -19,7 +19,7 @@ class Bullet extends CircleComponent with HasGameRef<SCWarGame> {
   Bullet(this.value, this.r, this.c /*,this.dis*/)
       : super(radius: GameConfig.baseLen / 10, anchor: Anchor.center) {
     scale.setAll(1 + 0.1 * math.log(value));
-    paint = Paint()..color = Colors.red;
+    paint = Paint()..color = ColorMap.bullet;
     priority = 2;
   }
 
@@ -87,7 +87,7 @@ class Bullet extends CircleComponent with HasGameRef<SCWarGame> {
         enemyR += 1;
       }
       var nextPos = gameManager.sizeConfig.getEnemyPos(enemyR, c, 1);
-      var nextY = nextPos.y + GameConfig.baseLen / 2;
+      var nextY = nextPos.y; // + GameConfig.baseLen / 2;
       var d = (y - nextY) / GameConfig.baseLen / 10;
       y = nextY;
       // log('list $i, ${list[i].r}, ${list[i].value}');

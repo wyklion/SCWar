@@ -180,6 +180,15 @@ class Tower extends Entity with TapCallbacks, DragCallbacks {
   }
 
   Future<void> shoot() async {
+    add(
+      ScaleEffect.to(
+        Vector2.all(1.2),
+        SequenceEffectController([
+          LinearEffectController(0.1),
+          ReverseLinearEffectController(0.1),
+        ]),
+      ),
+    );
     var bullet = Bullet(value, r, c);
     game.addContent(bullet);
     await bullet.removed;

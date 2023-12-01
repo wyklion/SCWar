@@ -1,8 +1,10 @@
 import 'dart:async';
 import 'dart:developer';
+import 'dart:math' as math;
 import 'package:flame/components.dart';
 import 'package:flame/flame.dart';
 import 'package:flame/game.dart';
+import 'package:scwar/utils/particles.dart';
 import 'package:scwar/utils/sound_manager.dart';
 import 'entities/energy.dart';
 import 'entities/entity.dart';
@@ -38,6 +40,8 @@ class GameManager {
   Completer? _attackCompleter;
   late SizeConfig sizeConfig;
   late Generator generator;
+  final math.Random random = math.Random();
+  final Particles particles = Particles();
   SoundManager soundManager = SoundManager();
 
   GameManager(this.game) {
@@ -225,10 +229,13 @@ class GameManager {
     _currentState = GameState.enemyCreate;
     var row = generator.getNextRow();
     for (var i = 0; i < GameConfig.col; i++) {
-      if (row[i].$1 > 0) {
-        addEnemy(0, i, row[i].$1, row[i].$2);
-      } else if (row[i].$1 < 0) {
-        addEnergy(0, i, -row[i].$1);
+      var info = row[i];
+      if (info.type == EntityType.enemy) {
+        if (info.value > 0) {
+          addEnemy(0, i, info.value, info.size);
+        }
+      } else if (info.type != EntityType.empty) {
+        addEnergy(0, i, info.value, info.type);
       }
     }
     // var list = generator.generatorRow();
@@ -350,6 +357,12 @@ class GameManager {
     setState(GameState.shooting);
   }
 
+  void doubleTower(Tower tower) {
+    soundManager.playMerge();
+    towerPower += tower.value;
+    tower.upgrade();
+  }
+
   void upgradeTower(Tower tower, bool fromPrepare) {
     soundManager.playMerge();
     if (fromPrepare) {
@@ -384,9 +397,9 @@ class GameManager {
     entity.removeFromParent();
   }
 
-  void addEnergy(int r, int c, int value) {
+  void addEnergy(int r, int c, int value, EntityType type) {
     var pos = sizeConfig.getEnemyPos(r, c, 1);
-    var energy = Energy(r, c, pos.x, pos.y, value);
+    var energy = Energy(r, c, pos.x, pos.y, value, type);
     energies.add(energy);
     game.addContent(energy);
     board[r][c] = energy;

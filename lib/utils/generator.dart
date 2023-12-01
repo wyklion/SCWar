@@ -1,23 +1,71 @@
 import 'dart:developer';
 import 'dart:math' as math;
+import 'package:scwar/entities/energy.dart';
 import 'package:scwar/game_config.dart';
 import '../game_manager.dart';
 
-typedef EnemyInfo = (int value, int size);
+class EntityInfo {
+  int value;
+  int size;
+  EntityType type;
+  EntityInfo(this.value, this.size, this.type);
+
+  EntityInfo clone() {
+    return EntityInfo(value, size, type);
+  }
+
+  setEnemy(int value, int size) {
+    type = EntityType.enemy;
+    this.value = value;
+    this.size = size;
+  }
+
+  setEnergy(int value, EntityType type) {
+    this.type = type;
+    this.value = value;
+    size = 1;
+  }
+
+  setEmpty() {
+    value = 0;
+    size = 0;
+    type = EntityType.empty;
+  }
+
+  copyFrom(EntityInfo info) {
+    value = info.value;
+    size = info.size;
+    type = info.type;
+  }
+
+  @override
+  String toString() {
+    if (type == EntityType.empty) {
+      return 'empty';
+    } else if (type == EntityType.enemy) {
+      return 'em[$value($size)]';
+    } else if (type == EntityType.energy) {
+      return 'en[$value]';
+    } else {
+      return 'en2[$value]';
+    }
+  }
+}
 
 class Generator {
   GameManager gameManager;
   int _base = 1;
   int enemyCount = 0;
   int afterEnergyCount = 0;
-  late List<List<EnemyInfo>> queue;
-  final math.Random _random = math.Random();
+  late List<List<EntityInfo>> queue;
+  late math.Random _random;
   Generator(this.gameManager) {
+    _random = gameManager.random;
     queue = [];
     for (var i = 0; i < GameConfig.row; i++) {
       queue.add([]);
       for (var j = 0; j < GameConfig.col; j++) {
-        queue[i].add((0, 0));
+        queue[i].add(EntityInfo(0, 0, EntityType.empty));
       }
     }
   }
@@ -26,16 +74,16 @@ class Generator {
     _base = 1;
     for (var i = 0; i < GameConfig.row; i++) {
       for (var j = 0; j < GameConfig.col; j++) {
-        queue[i][j] = (0, 0);
+        queue[i][j].setEmpty();
       }
     }
     initRow();
   }
 
-  /// 基础分，比炮总分/20大一点的最小的2的幂
+  /// 基础分，10炮平均分在32开始基础分升到2，平均64，基础分到4。生成资源按概率生成1-3倍。
   void _refreshBase() {
-    double power = gameManager.towerPower / 20;
-    while (_base < power) {
+    double power = gameManager.towerPower / 320;
+    while (_base <= power) {
       _base *= 2;
     }
   }
@@ -62,8 +110,13 @@ class Generator {
   /// 资源值生成：基础分的1倍或2倍。
   int getNextEnegyValue() {
     afterEnergyCount = 0;
-    int r = _random.nextInt(2);
-    int result = _base * (1 + r);
+    int result = _base;
+    int r = _random.nextInt(10);
+    if (r >= 5 && r <= 7) {
+      result = _base * 2;
+    } else if (r >= 9) {
+      result = _base * 4;
+    }
     return result;
     // int a = _base;
     // int r = _random.nextInt(1024);
@@ -77,26 +130,6 @@ class Generator {
     // }
     // return a;
   }
-
-  // List<int> generatorRow() {
-  //   _refreshBase();
-  //   var board = gameManager.board;
-  //   List<int> result = [];
-  //   for (var i = 0; i < 5; i++) {
-  //     var add = 0;
-  //     if (board[0][i] == null) {
-  //       if (_random.nextInt(10) >= 6) {
-  //         if (_random.nextInt(2) == 1) {
-  //           add = getNextEnemyValue();
-  //         } else {
-  //           add = -getNextEnegyValue();
-  //         }
-  //       }
-  //     }
-  //     result.add(add);
-  //   }
-  //   return result;
-  // }
 
   // 一行最多几个大怪，炮塔分4分以下没有，100分以下1个，以上2个。
   int getMaxBlock4Count() {
@@ -125,7 +158,7 @@ class Generator {
   List<int> getEmpty4Block() {
     var result = [1, 1, 1, 1];
     for (var i = 0; i < GameConfig.col; i++) {
-      if (queue[0][i].$2 != 0) {
+      if (queue[0][i].type != EntityType.empty) {
         if (i == 0) {
           result[i] = 0;
         } else if (i == GameConfig.col - 1) {
@@ -141,8 +174,10 @@ class Generator {
   /// 先生成大怪，在大怪数上限内，50%机率生成大怪。
   /// 还需生成的次数是：一行怪最多占几格减去大怪数*2
   ///   如果可以生成且剩三个格及以上，至少生成一个
-  ///   之后50%机率生成，其中1/3机率生成炮资源，2/3机率生成怪。
-  ///     连续生成3个怪及以内不会生成资源。连续10个怪后必出资源。
+  ///   之后50%机率生成东西
+  ///     其中1/3机率生成炮资源（连续生成3个怪及以内不会生成资源。连续10个怪后必出资源）
+  ///       资源中1/3出随机2倍，2/3出普通资源
+  ///     2/3机率生成怪。
   /// 指定生成多少个资源的，剩下的60%都是怪。
   void generateNextRow({int energy = 0}) {
     var b4 = getEmpty4Block();
@@ -161,8 +196,8 @@ class Generator {
           if (i < b4.length - 1) {
             b4[i + 1] = 0;
           }
-          queue[1][i] = (getNextEnemyValue(), 2);
-          queue[1][i + 1] = (0, 2);
+          queue[1][i].setEnemy(getNextEnemyValue(), 2);
+          queue[1][i + 1].setEnemy(0, 2);
           count4++;
         }
       }
@@ -173,13 +208,13 @@ class Generator {
       var (makeRow, leftRow) = getRandomCols(row, 1, 10);
       row = leftRow;
       for (var i = 0; i < makeRow.length; i++) {
-        queue[1][makeRow[i]] = (-getNextEnegyValue(), 1);
+        queue[1][makeRow[i]].setEnergy(getNextEnegyValue(), EntityType.energy);
       }
       count -= energy;
       if (count > 0) {
         var (makeEnemy, _) = getRandomCols(row, count, 7);
         for (var i = 0; i < makeEnemy.length; i++) {
-          queue[1][makeEnemy[i]] = (getNextEnemyValue(), 1);
+          queue[1][makeEnemy[i]].setEnemy(getNextEnemyValue(), 1);
         }
       }
     } else {
@@ -194,16 +229,20 @@ class Generator {
         if ((i == 0 && tryCount >= 3) || _random.nextInt(2) == 1) {
           if (afterEnergyCount >= 3 &&
               (afterEnergyCount >= 10 || _random.nextInt(3) == 1)) {
-            queue[1][col] = (-getNextEnegyValue(), 1);
+            if (_random.nextInt(3) == 1) {
+              queue[1][col].setEnergy(2, EntityType.energyMultiply);
+            } else {
+              queue[1][col].setEnergy(getNextEnegyValue(), EntityType.energy);
+            }
           } else {
-            queue[1][col] = (getNextEnemyValue(), 1);
+            queue[1][col].setEnemy(getNextEnemyValue(), 1);
           }
           count--;
         }
       }
     }
-    // log('towerPower:${gameManager.towerPower} base:${_base.toString()}');
-    // log('queue[1]: ${queue[1].toString()}');
+    log('towerPower:${gameManager.towerPower} base:${_base.toString()}');
+    log('queue[1]: ${queue[1].toString()}');
   }
 
   (List<int>, List<int>) getRandomCols(List<int> row, int count, int rate) {
@@ -235,13 +274,13 @@ class Generator {
     getNextRow();
   }
 
-  List<EnemyInfo> getNextRow() {
+  List<EntityInfo> getNextRow() {
     _refreshBase();
-    List<EnemyInfo> row = [];
+    List<EntityInfo> row = [];
     for (var i = 0; i < GameConfig.col; i++) {
-      row.add(queue[0][i]);
-      queue[0][i] = queue[1][i];
-      queue[1][i] = (0, 0);
+      row.add(queue[0][i].clone());
+      queue[0][i].copyFrom(queue[1][i]);
+      queue[1][i].setEmpty();
     }
     generateNextRow();
     // log('queue[1]: ${queue[1].toString()}');
