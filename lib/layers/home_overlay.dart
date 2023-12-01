@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:scwar/game.dart';
 
-Widget buidlMainOverlay(BuildContext buildContext, SCWarGame game) {
+Widget buidlHomeOverlay(BuildContext buildContext, SCWarGame game) {
   double scale = game.scale;
   return Center(
     child: AspectRatio(
@@ -21,7 +21,7 @@ Widget buidlMainOverlay(BuildContext buildContext, SCWarGame game) {
               },
               child: const Text('START'),
             ),
-            const Text('v0.0.4'),
+            const Text('v0.0.5'),
           ],
         ),
       ),

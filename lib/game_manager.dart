@@ -65,11 +65,11 @@ class GameManager {
   void test() {
     // score = 3523511;
     // game.menu.updateScore();
-    // addTower(0, 0, 2);
-    // addTower(0, 1, 4);
-    // addTower(0, 2, 128);
-    // addTower(0, 4, 1024);
-    // addTower(1, 3, 2048);
+    // addTower(0, 0, 262144);
+    // addTower(0, 1, 131072);
+    // addTower(0, 2, 65536);
+    // addTower(0, 4, 524288);
+    // addTower(1, 3, 524288);
     // addEnemy(3, 1, 8, 2);
     // addEnergy(2, 1, 2);
     // addEnemy(8, 1, 7, 1);
@@ -298,6 +298,7 @@ class GameManager {
     var pos = sizeConfig.getTowerPos(r, c);
     var tower = Tower(r, c, pos.x, pos.y, value);
     towers.add(tower);
+    towerPower += value;
     game.addContent(tower);
     // log('addTower $pos $value');
   }

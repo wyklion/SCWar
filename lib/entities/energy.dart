@@ -2,6 +2,7 @@ import 'dart:developer';
 import 'dart:js_util';
 import 'package:flame/effects.dart';
 import 'package:flutter/rendering.dart';
+import 'package:scwar/utils/unit_util.dart';
 import '../game_config.dart';
 import 'entity.dart';
 
@@ -12,11 +13,12 @@ class Energy extends BoardEntity {
   }
 
   @override
-  String getDisplay() {
+  String getDisplay({int? value}) {
+    var v = this.value;
     if (type == EntityType.energyMultiply) {
-      return 'x$value';
+      return 'x$v';
     }
-    return super.getDisplay();
+    return UnitUtil.convertValue(v, 0);
   }
 
   @override

@@ -3,6 +3,7 @@ import 'dart:developer';
 import 'package:flame/components.dart';
 import 'package:flutter/material.dart';
 import 'package:scwar/game_manager.dart';
+import 'package:scwar/utils/unit_util.dart';
 import '../game.dart';
 import '../game_config.dart';
 
@@ -35,13 +36,18 @@ abstract class Entity extends PositionComponent with HasGameRef<SCWarGame> {
     return super.onLoad();
   }
 
-  String getDisplay() {
-    return '$value';
+  String getDisplay({int? value}) {
+    var v = value ?? this.value;
+    return UnitUtil.convertValue(v, 1);
   }
 
   void setValue(int value) {
     this.value = value;
-    text.text = '$value';
+    text.text = getDisplay();
+  }
+
+  void setTextValue(int value) {
+    text.text = getDisplay(value: value);
   }
 
   void renderBg(Canvas canvas);

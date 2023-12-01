@@ -97,14 +97,13 @@ class HurtEffect extends ComponentEffect<Enemy> {
   @override
   void apply(double progress) {
     final dProgress = progress - previousProgress;
-    target.value -= ((startValue - targetValue) * dProgress).toInt();
-    target.text.text = '${target.value}';
+    var value = target.value - ((startValue - targetValue) * dProgress).toInt();
+    target.setValue(value);
   }
 
   @override
   void onFinish() {
-    target.value = targetValue;
-    target.text.text = '$targetValue';
+    target.setValue(targetValue);
     super.onFinish();
   }
 }

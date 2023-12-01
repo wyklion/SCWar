@@ -4,10 +4,11 @@ import 'package:flame/flame.dart';
 import 'package:flutter/material.dart';
 import 'dart:developer';
 import 'package:scwar/game.dart';
+import 'package:scwar/utils/unit_util.dart';
 
-class GameMenu extends Component with HasGameRef<SCWarGame> {
+class GameUI extends Component with HasGameRef<SCWarGame> {
   late ScoreComponent scoreComponent;
-  GameMenu();
+  GameUI();
 
   @override
   Future<void> onLoad() async {
@@ -93,6 +94,11 @@ class ScoreComponent extends PositionComponent with HasGameRef<SCWarGame> {
   }
 
   void updateScore() {
-    score.text = '${gameRef.gameManager.score}';
+    var v = gameRef.gameManager.score;
+    if (v < 99999999) {
+      score.text = '$v';
+    } else {
+      score.text = UnitUtil.convertValue(gameRef.gameManager.score, 3);
+    }
   }
 }

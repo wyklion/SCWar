@@ -4,14 +4,14 @@ import 'package:flame/components.dart';
 import 'package:flame/game.dart';
 import 'package:flame/events.dart';
 import 'package:flame/extensions.dart';
-import 'package:scwar/layers/game_menu.dart';
+import 'package:scwar/layers/game_ui.dart';
 import 'game_config.dart';
 import 'game_manager.dart';
 
 class SCWarGame extends FlameGame<SCWarWorld> with TapDetector, ScaleDetector {
   late GameManager gameManager;
   late PositionComponent container;
-  late GameMenu menu;
+  late GameUI menu;
 
   SCWarGame()
       : super(
@@ -48,7 +48,7 @@ class SCWarGame extends FlameGame<SCWarWorld> with TapDetector, ScaleDetector {
 
   void start() {
     overlays.remove('main');
-    camera.viewport.add(menu = GameMenu());
+    camera.viewport.add(menu = GameUI());
     world.startGame();
     gameManager.startGame();
   }
