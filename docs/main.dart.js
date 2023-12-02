@@ -13317,7 +13317,7 @@ $1(a){var s=$.b2
 s=(s==null?$.b2=A.cR(self.window.flutterConfiguration):s).b
 if(s==null)s=null
 else{s=s.canvasKitBaseUrl
-if(s==null)s=null}return(s==null?"assets/canvaskit/":s)+a},
+if(s==null)s=null}return(s==null?"canvaskit/":s)+a},
 $S:35}
 A.QX.prototype={
 $1(a){this.a.remove()
