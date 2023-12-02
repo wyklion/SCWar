@@ -32,11 +32,11 @@ jobs:
      steps:
       # 配置git
       - name: Config git
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          git config --global user.name   wyklion
-          git config --global user.email  wyklion@qq.com  
-      - name: Push Code
-        run: |
-            git add .
-            git commit -m "update build web"
-            git push
+          git config --global user.name  "wyklion"
+          git config --global user.email  "wyklion@qq.com"  
+          git add .
+          git commit -m "update build web"
+          git push
