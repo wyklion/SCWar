@@ -11,6 +11,9 @@ https://wyklion.github.io/SCWar/
 WEB(gh-page)：
 flutter build web -o docs --base-href=/SCWar/ --web-renderer canvaskit --dart-define=FLUTTER_WEB_CANVASKIT_URL=canvaskit/
 
+WEB(vercel)：
+flutter build web -o docs --web-renderer canvaskit --dart-define=FLUTTER_WEB_CANVASKIT_URL=canvaskit/
+
 # 规则说明
 
 ### 初始状态
