@@ -85,9 +85,8 @@ class Tower extends Entity with TapCallbacks, DragCallbacks {
     if (state != TowerState.moving) {
       return;
     }
-    final scale = gameRef.scale;
-    final deltaX = event.delta.x * scale;
-    final deltaY = event.delta.y * scale;
+    final deltaX = event.localDelta.x;
+    final deltaY = event.localDelta.y;
 
     movingPos.x += deltaX;
     movingPos.y += deltaY;

@@ -29,6 +29,7 @@ Widget buidlHomeOverlay(BuildContext buildContext, SCWarGame game) {
                     ),
                   ),
                   onPressed: () {
+                    game.gameManager.soundManager.playCick();
                     game.start();
                   },
                   child: const Text('PLAY'),

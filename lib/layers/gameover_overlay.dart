@@ -52,9 +52,11 @@ Widget buidlGameoverOverlay(BuildContext buildContext, SCWarGame game) {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         makeTextButton(game, 'Restart', () {
+                          game.gameManager.soundManager.playCick();
                           game.restart();
                         }),
                         makeTextButton(game, 'Home', () {
+                          game.gameManager.soundManager.playCick();
                           game.home();
                         }),
                       ],

@@ -4,23 +4,26 @@ class SoundManager {
   late AudioPool hurtPool;
   Future<void> load() async {
     await FlameAudio.audioCache.loadAll([
-      'drop_001.ogg',
-      'drop_002.ogg',
-      'drop_003.ogg',
-      'drop_004.ogg',
-      'laser5.ogg',
-      'back_002.ogg',
-      'powerUp9.ogg',
-      'pepSound2.mp3',
-      'pepSound3.ogg',
+      'bong_001.ogg',
       'drop_002.mp3',
+      'drop_004.ogg',
       'glass_001.ogg',
+      'laser5.ogg',
+      // 'back_002.ogg',
+      'powerUp9.ogg',
+      'pepSound2.ogg',
+      // 'pepSound3.ogg',
     ]);
     // hurtPool = await FlameAudio.createPool(
     //   'glass_001.ogg',
     //   minPlayers: 3,
     //   maxPlayers: 5,
     // );
+  }
+
+  void playCick() {
+    FlameAudio.play('bong_001.ogg');
+    // FlameAudio.play('drop_003.ogg');
   }
 
   void playSnap() {
@@ -33,7 +36,7 @@ class SoundManager {
   }
 
   void playSwap() {
-    FlameAudio.play('pepSound2.mp3');
+    FlameAudio.play('pepSound2.ogg');
   }
 
   void playMove() {
@@ -45,7 +48,6 @@ class SoundManager {
   }
 
   void playHurt() {
-    // FlameAudio.play('bong_001.ogg');
     // hurtPool.start();
     FlameAudio.play('glass_001.ogg');
   }
