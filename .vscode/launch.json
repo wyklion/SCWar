@@ -7,7 +7,13 @@
         {
             "name": "SCWar",
             "request": "launch",
-            "type": "dart"
+            "type": "dart",
+            "args": [
+                "-d",
+                "chrome",
+                "--web-renderer",
+                "canvaskit",
+            ]
         },
         {
             "name": "SCWar (profile mode)",

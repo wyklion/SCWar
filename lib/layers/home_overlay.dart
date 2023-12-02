@@ -6,28 +6,59 @@ Widget buidlHomeOverlay(BuildContext buildContext, SCWarGame game) {
   return Center(
     child: AspectRatio(
       aspectRatio: 9 / 16,
-      child: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            TextButton(
-              style: TextButton.styleFrom(
-                foregroundColor: const Color(0xFFa7f2a7),
-                padding: const EdgeInsets.all(16.0),
-                textStyle: TextStyle(
-                    fontSize: 80 / scale, fontWeight: FontWeight.bold),
+      child: Stack(
+        children: [
+          Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                TextButton(
+                  style: TextButton.styleFrom(
+                    foregroundColor: const Color(0xFFa7f2a7),
+                    padding: const EdgeInsets.all(16.0),
+                    textStyle: TextStyle(
+                      fontSize: 80 / scale,
+                      fontWeight: FontWeight.bold,
+                      shadows: const [
+                        Shadow(
+                          blurRadius: 7,
+                          color: Color(0xff003333),
+                          offset: Offset(3, 3),
+                        ),
+                      ],
+                    ),
+                  ),
+                  onPressed: () {
+                    game.start();
+                  },
+                  child: const Text('PLAY'),
+                ),
+              ],
+            ),
+          ),
+          Align(
+            alignment: Alignment.bottomCenter,
+            child: Container(
+              height: 100 / scale,
+              child: Column(
+                children: [
+                  Text(
+                    'HighScore: not yet',
+                    style: TextStyle(
+                      color: const Color.fromARGB(255, 248, 229, 13),
+                      fontSize: 30 / scale,
+                    ),
+                  ),
+                  const SizedBox(height: 20),
+                  const Text(
+                    'v0.0.8',
+                    style: TextStyle(color: Colors.black87),
+                  ),
+                ],
               ),
-              onPressed: () {
-                game.start();
-              },
-              child: const Text('PLAY'),
             ),
-            const Text(
-              'v0.0.7',
-              style: TextStyle(color: Colors.black87),
-            ),
-          ],
-        ),
+          ),
+        ],
       ),
     ),
   );
