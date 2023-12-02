@@ -1,15 +1,17 @@
 # SCWar 方圆大战
 
 用Flutter + Flame开发。
-https://wyklion.github.io/SCWar/
+https://scwar.netlify.app/
   
 # 开发日志（2023）
 不写了。。。
 
 # 编译
+本机测试
+python3 -m http.server
 
-WEB(gh-page)：
-flutter build web -o docs --base-href=/SCWar/ --web-renderer canvaskit --dart-define=FLUTTER_WEB_CANVASKIT_URL=canvaskit/
+<!-- WEB(gh-page)：
+flutter build web -o docs --base-href=/SCWar/ --web-renderer canvaskit --dart-define=FLUTTER_WEB_CANVASKIT_URL=canvaskit/ -->
 
 WEB(vercel)：
 flutter build web -o docs --web-renderer canvaskit --dart-define=FLUTTER_WEB_CANVASKIT_URL=canvaskit/

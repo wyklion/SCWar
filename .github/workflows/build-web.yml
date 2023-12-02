@@ -1,0 +1,38 @@
+# main.yml
+
+# 工作流程的名字
+name: Build WEB
+
+# 工作流程触发的时机，这里是当一个版本标签推送到仓库时触发
+on:
+  push:
+    branches:
+      - 'main'
+
+# 这个工作流程需要执行的任务
+jobs:
+  process:
+    name: all process
+    runs-on: ubuntu-latest
+    # 这个任务的步骤
+    steps:
+      # 拉取项目代码
+      - uses: actions/checkout@v3
+      # 建立 Flutter 环境
+      - name: Flutter action
+        uses: subosito/flutter-action@v2
+        with:
+          channel: "stable"
+          flutter-version: "3.13.9"
+      # 下载项目依赖
+      - run: flutter pub get
+      # 执行测试
+      - run: flutter test
+      # 打包 APK
+      - run: flutter build web -o docs --web-renderer canvaskit --dart-define=FLUTTER_WEB_CANVASKIT_URL=canvaskit/
+      # 发布到 Release
+      - name: Push Code
+        run: |
+            git add .
+            git commit -m "update build web"
+            git push
