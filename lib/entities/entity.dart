@@ -3,13 +3,13 @@ import 'dart:developer';
 import 'package:flame/components.dart';
 import 'package:flutter/material.dart';
 import 'package:scwar/game_manager.dart';
-import 'package:scwar/utils/unit_util.dart';
+import 'package:scwar/utils/number_util.dart';
 import '../game.dart';
 import '../game_config.dart';
 
 abstract class Entity extends PositionComponent with HasGameRef<SCWarGame> {
-  final int score;
-  int value;
+  final double score;
+  double value;
   late EntityType type;
   late TextComponent text;
   late GameManager gameManager;
@@ -36,17 +36,17 @@ abstract class Entity extends PositionComponent with HasGameRef<SCWarGame> {
     return super.onLoad();
   }
 
-  String getDisplay({int? value}) {
+  String getDisplay({double? value}) {
     var v = value ?? this.value;
-    return UnitUtil.convertValue(v, 1);
+    return NumberUtil.convertValue(v, 1);
   }
 
-  void setValue(int value) {
+  void setValue(double value) {
     this.value = value;
     text.text = getDisplay();
   }
 
-  void setTextValue(int value) {
+  void setTextValue(double value) {
     text.text = getDisplay(value: value);
   }
 
@@ -72,7 +72,7 @@ abstract class BoardEntity extends Entity {
   int r;
   int c;
   int body;
-  BoardEntity(this.r, this.c, double x, double y, this.body, int value)
+  BoardEntity(this.r, this.c, double x, double y, this.body, double value)
       : super(x, y, value);
 
   Future<bool> moveOneStep() async {
@@ -86,7 +86,7 @@ abstract class BoardEntity extends Entity {
     return true;
   }
 
-  Future<void> takeDamage(int damage);
+  Future<void> takeDamage(double damage);
 
   void moveToEnd() {
     log('entity move to end $r $c');

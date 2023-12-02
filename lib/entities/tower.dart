@@ -4,7 +4,7 @@ import 'package:flame/effects.dart';
 import 'package:flutter/material.dart';
 import 'package:flame/events.dart';
 import 'package:scwar/game_manager.dart';
-import 'package:scwar/utils/unit_util.dart';
+import 'package:scwar/utils/number_util.dart';
 import '../game_config.dart';
 import 'bullet.dart';
 import 'entity.dart';
@@ -27,7 +27,7 @@ class Tower extends Entity with TapCallbacks, DragCallbacks {
   Tower? swapTower;
   (int, int)? movePos;
   Paint paint = Paint()..color = ColorMap.tower;
-  Tower(this.r, this.c, double x, double y, int value) : super(x, y, value) {
+  Tower(this.r, this.c, double x, double y, double value) : super(x, y, value) {
     _rect = Rect.fromCenter(
         center: Offset.zero,
         width: GameConfig.baseLen,
@@ -38,12 +38,12 @@ class Tower extends Entity with TapCallbacks, DragCallbacks {
   }
 
   @override
-  String getDisplay({int? value}) {
+  String getDisplay({double? value}) {
     var v = value ?? this.value;
     if (v < 16384) {
-      return '$v';
+      return '${v.toInt()}';
     }
-    return UnitUtil.convertValue(v, 0);
+    return NumberUtil.convertValue(v, 0);
   }
 
   void setPos(int r, int c) {
@@ -99,7 +99,7 @@ class Tower extends Entity with TapCallbacks, DragCallbacks {
       movePos = null;
       x = tower.pos.x;
       y = tower.pos.y;
-      if (tower.value == value) {
+      if (NumberUtil.nearlyEqual(tower.value, value)) {
         if (mergingTower != tower) {
           gameManager.soundManager.playSnap();
         }
@@ -183,7 +183,7 @@ class Tower extends Entity with TapCallbacks, DragCallbacks {
     if (!down) {
       value *= 2;
     } else {
-      value ~/= 2;
+      value /= 2;
     }
     // 更新炮塔外观或其他操作
     setTextValue(value);

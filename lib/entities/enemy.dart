@@ -9,10 +9,10 @@ import '../game_config.dart';
 import 'entity.dart';
 
 class Enemy extends BoardEntity {
-  late int target;
+  late double target;
   HurtEffect? hurtEffect;
   Paint paint = Paint();
-  Enemy(int r, int c, double x, double y, int value, int body)
+  Enemy(int r, int c, double x, double y, double value, int body)
       : super(r, c, x, y, body, value) {
     target = value;
     final size = Vector2.all(GameConfig.baseLen);
@@ -29,8 +29,8 @@ class Enemy extends BoardEntity {
   }
 
   @override
-  Future<void> takeDamage(int damage) async {
-    if (target == 0) return;
+  Future<void> takeDamage(double damage) async {
+    if (target <= 0) return;
     target = target - damage;
     if (target < 0) target = 0;
     if (hurtEffect != null) {
@@ -51,7 +51,7 @@ class Enemy extends BoardEntity {
       target,
       EffectController(duration: 0.3),
       onComplete: () {
-        if (target == 0) {
+        if (target <= 0) {
           dead();
         }
       },
@@ -83,8 +83,8 @@ class Enemy extends BoardEntity {
 }
 
 class HurtEffect extends ComponentEffect<Enemy> {
-  int targetValue;
-  int startValue = 0;
+  double targetValue;
+  double startValue = 0;
 
   HurtEffect(this.targetValue, super.controller, {super.onComplete});
 

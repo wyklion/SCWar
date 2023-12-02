@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:scwar/game.dart';
 import 'package:scwar/layers/layer_util.dart';
+import 'package:scwar/utils/number_util.dart';
 
 Widget buidlGameoverOverlay(BuildContext buildContext, SCWarGame game) {
   double scale = game.scale;
@@ -34,7 +35,7 @@ Widget buidlGameoverOverlay(BuildContext buildContext, SCWarGame game) {
                           ),
                           const SizedBox(height: 20),
                           Text(
-                            'Score: ${game.gameManager.score}',
+                            'Score: ${NumberUtil.getScoreString(game.gameManager.score)}',
                             style: TextStyle(
                               fontSize: 25 / scale,
                               color: const Color(0xFFFC5C5C),

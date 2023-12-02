@@ -31,10 +31,11 @@ class GameManager {
   List<Tower> towers = [];
   List<Enemy> enemies = [];
   List<Energy> energies = [];
-  List<int> preMerges = [];
+  List<double> preMerges = [];
   int playerMoveCount = 0;
-  int towerPower = 0;
-  int score = 0;
+  double towerPower = 0;
+  double bigTower = 0;
+  double score = 0;
   GameState _currentState = GameState.ready;
   int _attackCount = 0;
   Completer? _attackCompleter;
@@ -65,12 +66,23 @@ class GameManager {
   void test() {
     // score = 3523511;
     // game.menu.updateScore();
+    // addTower(0, 0, 4);
+    // addTower(0, 1, 2048);
+    // addTower(0, 2, 8);
+    // addTower(0, 3, 2);
+    // addTower(0, 4, 8);
     // addTower(0, 0, 262144);
     // addTower(0, 1, 131072);
-    // addTower(0, 2, 65536);
-    // addTower(0, 4, 524288);
+    // addTower(0, 2, 8192);
+    // addTower(0, 4, 16384);
     // addTower(1, 3, 524288);
-    // addEnemy(3, 1, 8, 2);
+    // addTower(1, 0, 1.2e32);
+    // addTower(1, 1, 1.2e90);
+    // addTower(1, 2, 1.2e168);
+    // addEnergy(2, 0, 2, EntityType.energy);
+    // addEnemy(3, 0, 8, 1);
+    // addEnergy(4, 0, 2, EntityType.energy);
+    // addEnemy(5, 0, 1, 1);
     // addEnergy(2, 1, 2);
     // addEnemy(8, 1, 7, 1);
     // addEnemy(1, 3, 1024, 1);
@@ -131,6 +143,7 @@ class GameManager {
     preMerges.clear();
     playerMoveCount = 0;
     towerPower = 0;
+    bigTower = 0;
     score = 0;
     game.menu.updateScore();
     _currentState = GameState.ready;
@@ -179,7 +192,7 @@ class GameManager {
     setState(GameState.enemyMove);
   }
 
-  Future<void> attackEnemy(int r, int c, int attack) async {
+  Future<void> attackEnemy(int r, int c, double attack) async {
     // log('attackEnemy $r, $c, $attack');
     _attackCount++;
     var entity = board[r][c];
@@ -205,22 +218,42 @@ class GameManager {
         setState(GameState.dead);
         return;
       }
+      if (board[GameConfig.row - 2][i] is Enemy) {
+        Enemy enemy = board[GameConfig.row - 2][i] as Enemy;
+        if (enemy.body == 2) {
+          setState(GameState.dead);
+          return;
+        }
+      }
     }
     List<Future<bool>> tasks = [];
-    for (var enemy in enemies) {
-      board[enemy.r][enemy.c] = null;
-      if (enemy.r < 9) {
-        board[enemy.r + 1][enemy.c] = enemy;
+    for (var j = 0; j < GameConfig.col; j++) {
+      for (var i = GameConfig.row - 1; i >= 0; i--) {
+        var entity = board[i][j];
+        if (entity != null) {
+          board[i][j] = null;
+          if (i < 9) {
+            board[i + 1][j] = entity;
+          }
+          tasks.add(entity.moveOneStep());
+        }
       }
-      tasks.add(enemy.moveOneStep());
     }
-    for (var energy in energies) {
-      board[energy.r][energy.c] = null;
-      if (energy.r < 9) {
-        board[energy.r + 1][energy.c] = energy;
-      }
-      tasks.add(energy.moveOneStep());
-    }
+    // List<Future<bool>> tasks = [];
+    // for (var enemy in enemies) {
+    //   board[enemy.r][enemy.c] = null;
+    //   if (enemy.r < 9) {
+    //     board[enemy.r + 1][enemy.c] = enemy;
+    //   }
+    //   tasks.add(enemy.moveOneStep());
+    // }
+    // for (var energy in energies) {
+    //   board[energy.r][energy.c] = null;
+    //   if (energy.r < 9) {
+    //     board[energy.r + 1][energy.c] = energy;
+    //   }
+    //   tasks.add(energy.moveOneStep());
+    // }
     await Future.wait(tasks);
     addRandomEnemy();
   }
@@ -249,7 +282,7 @@ class GameManager {
     setState(GameState.playerMove);
   }
 
-  void addPreMerge(int value) {
+  void addPreMerge(double value) {
     preMerges.add(value);
   }
 
@@ -257,8 +290,8 @@ class GameManager {
     if (preMerges.isEmpty) {
       return;
     }
-    int s = 0;
-    int big = 0;
+    double s = 0;
+    double big = 0;
     for (var m in preMerges) {
       s += m;
       if (m > big) {
@@ -287,18 +320,21 @@ class GameManager {
 
   get prepareTowerPos => sizeConfig.getPrepareTowerPos();
 
-  void addPrepareTower(int value) {
+  void addPrepareTower(double value) {
     var pos = prepareTowerPos;
     prepareTower = Tower(-1, -1, pos.x, pos.y, value);
     game.addContent(prepareTower);
     // log('addPrepareTower $pos $value');
   }
 
-  void addTower(int r, int c, int value) {
+  void addTower(int r, int c, double value) {
     var pos = sizeConfig.getTowerPos(r, c);
     var tower = Tower(r, c, pos.x, pos.y, value);
     towers.add(tower);
     towerPower += value;
+    if (value > bigTower) {
+      bigTower = value;
+    }
     game.addContent(tower);
     // log('addTower $pos $value');
   }
@@ -333,6 +369,9 @@ class GameManager {
       prepareTower = null;
       towers.add(tower);
       towerPower += tower.value;
+      if (tower.value > bigTower) {
+        bigTower = tower.value;
+      }
     }
     var tp = sizeConfig.getTowerPos(r, c);
     tower.pos.setFrom(tp);
@@ -354,6 +393,15 @@ class GameManager {
       prepareTower = tower2;
       towers.remove(tower2);
       towers.add(tower1);
+      // 这种交换情况重算一下
+      if (tower1.value < tower2.value) {
+        bigTower = 0;
+        for (var i = 0; i < towers.length; i++) {
+          if (towers[i].value > bigTower) {
+            bigTower = towers[i].value;
+          }
+        }
+      }
     }
     setState(GameState.shooting);
   }
@@ -362,6 +410,9 @@ class GameManager {
     soundManager.playMerge();
     towerPower += tower.value;
     tower.upgrade();
+    if (tower.value > bigTower) {
+      bigTower = tower.value;
+    }
   }
 
   void upgradeTower(Tower tower, bool fromPrepare) {
@@ -370,10 +421,13 @@ class GameManager {
       towerPower += tower.value;
     }
     tower.upgrade();
+    if (tower.value > bigTower) {
+      bigTower = tower.value;
+    }
     setState(GameState.shooting);
   }
 
-  void addEnemy(int r, int c, int value, int body) {
+  void addEnemy(int r, int c, double value, int body) {
     if (board[r][c] != null) {
       return;
     }
@@ -398,7 +452,7 @@ class GameManager {
     entity.removeFromParent();
   }
 
-  void addEnergy(int r, int c, int value, EntityType type) {
+  void addEnergy(int r, int c, double value, EntityType type) {
     var pos = sizeConfig.getEnemyPos(r, c, 1);
     var energy = Energy(r, c, pos.x, pos.y, value, type);
     energies.add(energy);

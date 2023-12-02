@@ -5,7 +5,7 @@ import 'package:scwar/game_config.dart';
 import '../game_manager.dart';
 
 class EntityInfo {
-  int value;
+  double value;
   int size;
   EntityType type;
   EntityInfo(this.value, this.size, this.type);
@@ -14,13 +14,13 @@ class EntityInfo {
     return EntityInfo(value, size, type);
   }
 
-  setEnemy(int value, int size) {
+  setEnemy(double value, int size) {
     type = EntityType.enemy;
     this.value = value;
     this.size = size;
   }
 
-  setEnergy(int value, EntityType type) {
+  setEnergy(double value, EntityType type) {
     this.type = type;
     this.value = value;
     size = 1;
@@ -54,7 +54,7 @@ class EntityInfo {
 
 class Generator {
   GameManager gameManager;
-  int _base = 1;
+  double _base = 1;
   int enemyCount = 0;
   int afterEnergyCount = 0;
   late List<List<EntityInfo>> queue;
@@ -89,28 +89,38 @@ class Generator {
   }
 
   /// 生成怪基础分：炮塔总分除以5取整。
-  /// 生成怪值：基础分的1倍到3倍之间，如果是大怪，4倍-8倍之间。
-  /// 每5个怪出一个双倍分的怪。
-  int getNextEnemyValue({int? size = 1}) {
-    // int r = _random.nextInt(3);
-    int base = ((gameManager.towerPower + 1) / 5).ceil();
-    var b = size == 1 ? base : base * 4;
-    // b *= 2;
-    enemyCount++;
-    afterEnergyCount++;
-    if (enemyCount % 5 == 0) {
-      b *= 2;
+  /// 生成怪值：基础分的1倍到3倍之间，如果是大怪，最大炮塔的2倍-3倍之间。
+  /// 每5个小怪出一个双倍分小怪。
+  double getNextEnemyValue({int? size = 1}) {
+    double base = (gameManager.towerPower + 1) / 5;
+    if (base < 1) {
+      base = 1;
     }
-    int result = b + _random.nextInt(b * 2);
+    double result;
+    if (size == 1) {
+      result = base + _random.nextDouble() * (base * 2);
+      enemyCount++;
+      if (enemyCount % 5 == 0) {
+        enemyCount = 0;
+        result *= 2;
+      }
+    } else {
+      base = gameManager.bigTower;
+      result = base * 2 + _random.nextDouble() * base;
+    }
+    afterEnergyCount++;
     // log('power:${gameManager.towerPower}, base:$base, b:$b, result: $result');
     // int result = _base * math.pow(2, r).toInt();
+    if (result < 99999999) {
+      result = result.floorToDouble();
+    }
     return result;
   }
 
   /// 资源值生成：60%基础分的1倍，30%基础分2倍，10%基础分4倍。
-  int getNextEnegyValue() {
+  double getNextEnegyValue() {
     afterEnergyCount = 0;
-    int result = _base;
+    double result = _base;
     int r = _random.nextInt(10);
     if (r >= 6 && r <= 8) {
       result = _base * 2;
@@ -196,7 +206,7 @@ class Generator {
           if (i < b4.length - 1) {
             b4[i + 1] = 0;
           }
-          queue[1][i].setEnemy(getNextEnemyValue(), 2);
+          queue[1][i].setEnemy(getNextEnemyValue(size: 2), 2);
           queue[1][i + 1].setEnemy(0, 2);
           count4++;
         }

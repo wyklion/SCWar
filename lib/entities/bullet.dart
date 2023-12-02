@@ -6,10 +6,11 @@ import 'package:flutter/material.dart';
 import 'package:scwar/entities/enemy.dart';
 import 'package:scwar/entities/entity.dart';
 import 'package:scwar/game.dart';
+import 'package:scwar/utils/number_util.dart';
 import '../game_config.dart';
 
 class Bullet extends CircleComponent with HasGameRef<SCWarGame> {
-  int value;
+  double value;
   int r;
   int c;
   // double dis;
@@ -18,7 +19,7 @@ class Bullet extends CircleComponent with HasGameRef<SCWarGame> {
   List<Future<void>> tasks = [];
   Bullet(this.value, this.r, this.c /*,this.dis*/)
       : super(radius: GameConfig.baseLen / 10, anchor: Anchor.center) {
-    scale.setAll(1 + 0.1 * math.log(value));
+    scale.setAll(NumberUtil.getScale(value));
     paint = Paint()..color = ColorMap.bullet;
     priority = 2;
   }
@@ -30,45 +31,6 @@ class Bullet extends CircleComponent with HasGameRef<SCWarGame> {
     position.x = pos.x;
     position.y = pos.y - GameConfig.baseLen / 2;
     moveNext();
-    // List<BoardEntity> list = gameManager.getColEnemys(c);
-    // List<Effect> effects = [];
-    // var remain = value;
-    // double y = position.y;
-    // for (var i = 0; i < list.length; i++) {
-    //   var entity = list[i];
-    //   var enemyR = entity.r;
-    //   if (entity.body == 2) {
-    //     enemyR += 1;
-    //   }
-    //   var nextPos = gameManager.sizeConfig.getEnemyPos(enemyR, c, 1);
-    //   var nextY = nextPos.y + GameConfig.baseLen / 2;
-    //   var d = (y - nextY) / GameConfig.baseLen / 10;
-    //   y = nextY;
-    //   // log('list $i, ${list[i].r}, ${list[i].value}');
-    //   effects.add(MoveToEffect(
-    //     Vector2(nextPos.x, nextY),
-    //     EffectController(
-    //         duration: d,
-    //         onMax: makeAttackCallback(list[i].r, list[i].c, remain)),
-    //   ));
-    //   if (entity is Enemy) {
-    //     remain -= entity.target;
-    //   }
-    //   if (remain <= 0) {
-    //     break;
-    //   }
-    // }
-    // if (remain > 0) {
-    //   var nextPos = gameManager.sizeConfig.getEnemyPos(-1, c, 1);
-    //   var nextY = nextPos.y + GameConfig.baseLen;
-    //   var d = (y - nextY) / GameConfig.baseLen / 10;
-    //   effects.add(MoveToEffect(
-    //     Vector2(nextPos.x, nextY),
-    //     EffectController(duration: d),
-    //   ));
-    // }
-    // effects.add(RemoveEffect());
-    // add(SequenceEffect(effects));
     return super.onLoad();
   }
 
@@ -111,7 +73,7 @@ class Bullet extends CircleComponent with HasGameRef<SCWarGame> {
     ]));
   }
 
-  VoidCallback makeAttackCallback(int r, int c, int value) {
+  VoidCallback makeAttackCallback(int r, int c, double value) {
     return () {
       var entity = gameRef.gameManager.board[r][c];
       if (entity is Enemy) {

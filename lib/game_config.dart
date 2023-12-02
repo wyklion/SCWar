@@ -33,7 +33,8 @@ final Map<String, Paint> paintMap = {
   'bg': Paint()..color = const Color(0xFF7FB3D5),
   'enemyBg': Paint()..color = const Color(0xFFD2E8E8),
   'towerBg': Paint()..color = const Color(0xFFA8DADC),
-  'towerBlock': Paint()..color = const Color(0xFF9ED9D2),
+  'towerBlock': Paint()..color = const Color(0xFF98DACC),
+  'preTowerBlock': Paint()..color = const Color(0xFF8FC3E5),
   'energy': Paint()..color = const Color(0xFF9bcb3c),
   'energyMultiply': Paint()..color = const Color(0xFF7F00FF),
 };

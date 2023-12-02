@@ -156,10 +156,15 @@ class SCWarWorld extends World with HasGameReference<SCWarGame> {
       for (var j = 0; j < GameConfig.col; j++) {
         towerBg.add(CircleComponent(
             anchor: Anchor.center,
-            radius: GameConfig.baseBlockLen / 2,
+            radius: GameConfig.baseLen / 2,
             paint: paintMap['towerBlock'],
             position: game.gameManager.sizeConfig.getTowerPos(i, j)));
       }
     }
+    towerBg.add(CircleComponent(
+        anchor: Anchor.center,
+        radius: GameConfig.baseLen / 2,
+        paint: paintMap['preTowerBlock'],
+        position: game.gameManager.sizeConfig.getPrepareTowerPos()));
   }
 }

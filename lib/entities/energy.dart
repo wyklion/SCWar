@@ -2,27 +2,27 @@ import 'dart:developer';
 import 'dart:js_util';
 import 'package:flame/effects.dart';
 import 'package:flutter/rendering.dart';
-import 'package:scwar/utils/unit_util.dart';
+import 'package:scwar/utils/number_util.dart';
 import '../game_config.dart';
 import 'entity.dart';
 
 class Energy extends BoardEntity {
-  Energy(int r, int c, double x, double y, int value, EntityType type)
+  Energy(int r, int c, double x, double y, double value, EntityType type)
       : super(r, c, x, y, 1, value) {
     this.type = type;
   }
 
   @override
-  String getDisplay({int? value}) {
+  String getDisplay({double? value}) {
     var v = this.value;
     if (type == EntityType.energyMultiply) {
-      return 'x$v';
+      return 'x${v.toInt()}';
     }
-    return UnitUtil.convertValue(v, 0);
+    return NumberUtil.convertValue(v, 0);
   }
 
   @override
-  Future<void> takeDamage(int damage) async {
+  Future<void> takeDamage(double damage) async {
     // log('energy takeDamage $damage');
     if (type == EntityType.energy) {
       var targetPos = gameManager.prepareTowerPos;
