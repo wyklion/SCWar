@@ -29,6 +29,12 @@ jobs:
       # 打包 APK
       - run: flutter build web -o docs --web-renderer canvaskit --dart-define=FLUTTER_WEB_CANVASKIT_URL=canvaskit/
       # 发布到 Release
+     steps:
+      # 配置git
+      - name: Config git
+        run: |
+          git config --global user.name   wyklion
+          git config --global user.email  wyklion@qq.com  
       - name: Push Code
         run: |
             git add .
