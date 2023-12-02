@@ -212,7 +212,6 @@ class GameManager {
   }
 
   Future<void> enemyMove() async {
-    _currentState = GameState.enemyMove;
     for (var i = 0; i < GameConfig.col; i++) {
       if (board[GameConfig.row - 1][i] is Enemy) {
         setState(GameState.dead);
@@ -226,7 +225,7 @@ class GameManager {
         }
       }
     }
-    List<Future<bool>> tasks = [];
+    List<Future<void>> tasks = [];
     for (var j = 0; j < GameConfig.col; j++) {
       for (var i = GameConfig.row - 1; i >= 0; i--) {
         var entity = board[i][j];
@@ -254,23 +253,25 @@ class GameManager {
     //   }
     //   tasks.add(energy.moveOneStep());
     // }
+    tasks.add(addRandomEnemy());
     await Future.wait(tasks);
-    addRandomEnemy();
   }
 
-  void addRandomEnemy() {
+  Future<void> addRandomEnemy() async {
     _currentState = GameState.enemyCreate;
     var row = generator.getNextRow();
+    List<Future<void>> tasks = [];
     for (var i = 0; i < GameConfig.col; i++) {
       var info = row[i];
       if (info.type == EntityType.enemy) {
         if (info.value > 0) {
-          addEnemy(0, i, info.value, info.size);
+          tasks.add(addEnemy(0, i, info.value, info.size));
         }
       } else if (info.type != EntityType.empty) {
-        addEnergy(0, i, info.value, info.type);
+        tasks.add(addEnergy(0, i, info.value, info.type));
       }
     }
+    await Future.wait(tasks);
     // var list = generator.generatorRow();
     // for (var i = 0; i < GameConfig.col; i++) {
     //   if (list[i] > 0) {
@@ -427,7 +428,7 @@ class GameManager {
     setState(GameState.shooting);
   }
 
-  void addEnemy(int r, int c, double value, int body) {
+  Future<void> addEnemy(int r, int c, double value, int body) async {
     if (board[r][c] != null) {
       return;
     }
@@ -436,6 +437,7 @@ class GameManager {
     enemies.add(enemy);
     game.addContent(enemy);
     board[r][c] = enemy;
+    await enemy.createShow();
     // log('addEnemy ($r,$c) $pos $value');
   }
 
@@ -452,12 +454,13 @@ class GameManager {
     entity.removeFromParent();
   }
 
-  void addEnergy(int r, int c, double value, EntityType type) {
+  Future<void> addEnergy(int r, int c, double value, EntityType type) async {
     var pos = sizeConfig.getEnemyPos(r, c, 1);
     var energy = Energy(r, c, pos.x, pos.y, value, type);
     energies.add(energy);
     game.addContent(energy);
     board[r][c] = energy;
+    await energy.createShow();
     // log('addEnergy ($r,$c) $pos $value');
   }
 

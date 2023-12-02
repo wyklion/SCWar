@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:developer';
 import 'package:flame/components.dart';
+import 'package:flame/effects.dart';
 import 'package:flutter/material.dart';
 import 'package:scwar/game_manager.dart';
 import 'package:scwar/utils/number_util.dart';
@@ -75,15 +76,35 @@ abstract class BoardEntity extends Entity {
   BoardEntity(this.r, this.c, double x, double y, this.body, double value)
       : super(x, y, value);
 
-  Future<bool> moveOneStep() async {
+  Future<void> createShow() async {
+    scale.setAll(0);
+    final effect = ScaleEffect.to(
+      Vector2.all(1),
+      EffectController(
+        duration: 0.3,
+        curve: Curves.easeIn,
+      ),
+    );
+    add(effect);
+    await effect.removed;
+  }
+
+  Future<void> moveOneStep() async {
     if (r + 1 == 10) {
       moveToEnd();
-      return false;
+      return;
     }
     r++;
     var pos = gameManager.sizeConfig.getEnemyPos(r, c, body);
-    y = pos.y;
-    return true;
+    final effect = MoveToEffect(
+      pos,
+      EffectController(
+        duration: 0.3,
+        curve: Curves.bounceOut,
+      ),
+    );
+    add(effect);
+    await effect.removed;
   }
 
   Future<void> takeDamage(double damage);
