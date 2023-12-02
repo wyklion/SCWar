@@ -25,11 +25,11 @@ jobs:
           channel: "stable"
           flutter-version: "3.13.9"
       # 下载项目依赖
-      - run: flutter pub get
-      # 打包 APK
-      - run: flutter build web -o docs --web-renderer canvaskit --dart-define=FLUTTER_WEB_CANVASKIT_URL=canvaskit/
-      # 发布到 Release
-     steps:
+      - name: Flutter pub get
+        run: flutter pub get
+      # 打包web
+      - name: build web
+        run: flutter build web -o docs --web-renderer canvaskit --dart-define=FLUTTER_WEB_CANVASKIT_URL=canvaskit/
       # 配置git
       - name: Config git
         env:
