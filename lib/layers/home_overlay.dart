@@ -23,7 +23,7 @@ Widget buidlHomeOverlay(BuildContext buildContext, SCWarGame game) {
               child: const Text('PLAY'),
             ),
             const Text(
-              'v0.0.6',
+              'v0.0.7',
               style: TextStyle(color: Colors.black87),
             ),
           ],

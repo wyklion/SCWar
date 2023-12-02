@@ -9,7 +9,7 @@ https://wyklion.github.io/SCWar/
 # 编译
 
 WEB(gh-page)：
-flutter build web -o docs --base-href=/SCWar/ --web-renderer canvaskit
+flutter build web -o docs --base-href=/SCWar/ --web-renderer canvaskit --dart-define=FLUTTER_WEB_CANVASKIT_URL=assets/canvaskit/
 
 # 规则说明
 

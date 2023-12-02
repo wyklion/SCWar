@@ -13317,7 +13317,7 @@ $1(a){var s=$.b2
 s=(s==null?$.b2=A.cR(self.window.flutterConfiguration):s).b
 if(s==null)s=null
 else{s=s.canvasKitBaseUrl
-if(s==null)s=null}return(s==null?"https://www.gstatic.com/flutter-canvaskit/0545f8705df301877d787107bac1a6e9fc9ee1ad/":s)+a},
+if(s==null)s=null}return(s==null?"assets/canvaskit/":s)+a},
 $S:35}
 A.QX.prototype={
 $1(a){this.a.remove()
@@ -43282,7 +43282,7 @@ B.Ce=new A.k(!0,B.h,null,"Roboto",null,null,null,null,null,null,null,null,null,n
 B.BS=new A.k(!0,B.h,null,"Roboto",null,null,null,null,null,null,null,null,null,null,null,null,null,B.e,null,null,null,"whiteMountainView labelSmall",null,null,null,null)
 B.CY=new A.ci(B.BB,B.CH,B.Cr,B.Ag,B.Cm,B.Bu,B.CL,B.AH,B.Bc,B.Ch,B.A9,B.Ct,B.Ck,B.Ce,B.BS)
 B.By=new A.k(!0,B.k,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null)
-B.CZ=new A.kB("v0.0.6",B.By,null)
+B.CZ=new A.kB("v0.0.7",B.By,null)
 B.D_=new A.kB("PLAY",null,null)
 B.oQ=new A.N5(0,"clamp")
 B.dm=new A.nO(0,"ready")
