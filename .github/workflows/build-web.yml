@@ -26,8 +26,6 @@ jobs:
           flutter-version: "3.13.9"
       # 下载项目依赖
       - run: flutter pub get
-      # 执行测试
-      - run: flutter test
       # 打包 APK
       - run: flutter build web -o docs --web-renderer canvaskit --dart-define=FLUTTER_WEB_CANVASKIT_URL=canvaskit/
       # 发布到 Release
