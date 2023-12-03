@@ -1,61 +1,16 @@
 import 'dart:developer';
 import 'dart:math' as math;
 import 'package:scwar/entities/energy.dart';
+import 'package:scwar/entities/entity_info.dart';
 import 'package:scwar/game_config.dart';
 import '../game_manager.dart';
-
-class EntityInfo {
-  double value;
-  int size;
-  EntityType type;
-  EntityInfo(this.value, this.size, this.type);
-
-  EntityInfo clone() {
-    return EntityInfo(value, size, type);
-  }
-
-  setEnemy(double value, int size) {
-    type = EntityType.enemy;
-    this.value = value;
-    this.size = size;
-  }
-
-  setEnergy(double value, EntityType type) {
-    this.type = type;
-    this.value = value;
-    size = 1;
-  }
-
-  setEmpty() {
-    value = 0;
-    size = 0;
-    type = EntityType.empty;
-  }
-
-  copyFrom(EntityInfo info) {
-    value = info.value;
-    size = info.size;
-    type = info.type;
-  }
-
-  @override
-  String toString() {
-    if (type == EntityType.empty) {
-      return 'empty';
-    } else if (type == EntityType.enemy) {
-      return 'em[$value($size)]';
-    } else if (type == EntityType.energy) {
-      return 'en[$value]';
-    } else {
-      return 'en2[$value]';
-    }
-  }
-}
 
 class Generator {
   GameManager gameManager;
   double _base = 1;
+  int count = 0;
   int enemyCount = 0;
+  int afterBigEnemyCount = 0;
   int afterEnergyCount = 0;
   late List<List<EntityInfo>> queue;
   late math.Random _random;
@@ -72,12 +27,16 @@ class Generator {
 
   void init() {
     _base = 1;
+    count = 0;
+    enemyCount = 0;
+    afterBigEnemyCount = 0;
+    afterEnergyCount = 10;
     for (var i = 0; i < GameConfig.row; i++) {
       for (var j = 0; j < GameConfig.col; j++) {
         queue[i][j].setEmpty();
       }
     }
-    initRow();
+    // initRow();
   }
 
   /// 资源基础分：10炮平均分在32开始基础分升到2，平均64，基础分到4。生成资源按概率生成1-3倍。
@@ -89,9 +48,11 @@ class Generator {
   }
 
   /// 生成怪基础分：炮塔总分除以5取整。
-  /// 生成怪值：基础分的1倍到3倍之间，如果是大怪，最大炮塔的2倍-3倍之间。
+  /// 小怪值：基础分的1倍到3倍之间
+  /// 大怪值：取最大炮塔和基础分3倍的平均值为基础，生成基础的2到3倍之间。
   /// 每5个小怪出一个双倍分小怪。
   double getNextEnemyValue({int? size = 1}) {
+    count++;
     double base = (gameManager.towerPower + 1) / 5;
     if (base < 1) {
       base = 1;
@@ -101,12 +62,13 @@ class Generator {
       result = base + _random.nextDouble() * (base * 2);
       enemyCount++;
       if (enemyCount % 5 == 0) {
-        enemyCount = 0;
-        result *= 2;
+        // result *= 2;
       }
+      afterBigEnemyCount++;
     } else {
-      base = gameManager.bigTower;
-      result = base * 2 + _random.nextDouble() * base;
+      afterBigEnemyCount = 0;
+      base = (base * 3 + gameManager.bigTower) / 2;
+      result = base + _random.nextDouble() * base;
     }
     afterEnergyCount++;
     // log('power:${gameManager.towerPower}, base:$base, b:$b, result: $result');
@@ -119,7 +81,7 @@ class Generator {
 
   /// 资源值生成：60%基础分的1倍，30%基础分2倍，10%基础分4倍。
   double getNextEnegyValue() {
-    afterEnergyCount = 0;
+    count++;
     double result = _base;
     int r = _random.nextInt(10);
     if (r >= 6 && r <= 8) {
@@ -158,7 +120,7 @@ class Generator {
       return 2;
     } else if (gameManager.towerPower < 64) {
       return 3;
-    } else if (gameManager.towerPower < 128) {
+    } else if (gameManager.towerPower < 1024) {
       return 4;
     } else {
       return 5;
@@ -181,50 +143,50 @@ class Generator {
     return result;
   }
 
-  /// 先生成大怪，在大怪数上限内，50%机率生成大怪。
-  /// 还需生成的次数是：一行怪最多占几格减去大怪数*2
-  ///   如果可以生成且剩三个格及以上，至少生成一个
-  ///   之后50%机率生成东西
-  ///     其中1/3机率生成炮资源（连续生成3个怪及以内不会生成资源。连续10个怪后必出资源）
-  ///       资源中1/3出随机2倍，2/3出普通资源
-  ///     2/3机率生成怪。
-  /// 指定生成多少个资源的，剩下的60%都是怪。
-  void generateNextRow({int energy = 0}) {
+  void makeBigEnemy() {
     var b4 = getEmpty4Block();
     var max4 = getMaxBlock4Count();
     var count4 = 0;
-    var row = [0, 1, 2, 3, 4];
     for (var i = 0; i < b4.length; i++) {
       if (count4 >= max4) {
         break;
       }
       if (b4[i] == 1) {
-        var make4 = _random.nextBool();
-        if (make4) {
-          row.remove(i);
-          row.remove(i + 1);
+        if (_random.nextInt(3) == 1) {
           if (i < b4.length - 1) {
             b4[i + 1] = 0;
           }
           queue[1][i].setEnemy(getNextEnemyValue(size: 2), 2);
           queue[1][i + 1].setEnemy(0, 2);
+          queue[0][i].setEnemy(0, 2);
+          queue[0][i + 1].setEnemy(0, 2);
           count4++;
         }
       }
     }
+  }
+
+  void makeSmallEntity({int energy = 0}) {
     var count = getMaxCount();
-    count -= count4 * 2;
+    var row = [0, 1, 2, 3, 4];
+    for (var i = 0; i < GameConfig.col; i++) {
+      if (queue[0][i].type == EntityType.enemy) {
+        row.remove(i);
+        count--;
+      }
+    }
     if (energy > 0) {
       var (makeRow, leftRow) = getRandomCols(row, 1, 10);
       row = leftRow;
       for (var i = 0; i < makeRow.length; i++) {
-        queue[1][makeRow[i]].setEnergy(getNextEnegyValue(), EntityType.energy);
+        queue[0][makeRow[i]].setEnergy(getNextEnegyValue(), EntityType.energy);
       }
+      afterEnergyCount = 0;
       count -= energy;
       if (count > 0) {
         var (makeEnemy, _) = getRandomCols(row, count, 7);
         for (var i = 0; i < makeEnemy.length; i++) {
-          queue[1][makeEnemy[i]].setEnemy(getNextEnemyValue(), 1);
+          queue[0][makeEnemy[i]].setEnemy(getNextEnemyValue(), 1);
         }
       }
     } else {
@@ -237,20 +199,43 @@ class Generator {
         var col = row[idx];
         row.removeAt(idx);
         if ((i == 0 && tryCount >= 3) || _random.nextInt(2) == 1) {
-          if (afterEnergyCount >= 3 &&
+          if (afterEnergyCount >= 2 &&
               (afterEnergyCount >= 10 || _random.nextInt(3) == 1)) {
+            afterEnergyCount = 0;
             if (_random.nextInt(3) == 1) {
-              queue[1][col].setEnergy(2, EntityType.energyMultiply);
+              queue[0][col].setEnergy(2, EntityType.energyMultiply);
             } else {
-              queue[1][col].setEnergy(getNextEnegyValue(), EntityType.energy);
+              queue[0][col].setEnergy(getNextEnegyValue(), EntityType.energy);
             }
           } else {
-            queue[1][col].setEnemy(getNextEnemyValue(), 1);
+            queue[0][col].setEnemy(getNextEnemyValue(), 1);
           }
           count--;
         }
       }
     }
+  }
+
+  void generateNextRow({int energy = 0}) {
+    makeBigEnemy();
+    // for (var i = 0; i < 4; i++) {
+    //   if (count4 >= max4) {
+    //     break;
+    //   }
+    //   for (var i = 0; i < max4; i++) {
+    //     if (afterEnergyCount >= 10 || _random.nextInt(3) == 1) {
+    //       row.remove(i);
+    //       row.remove(i + 1);
+    //       if (i < b4.length - 1) {
+    //         b4[i + 1] = 0;
+    //       }
+    //       queue[1][i].setEnemy(getNextEnemyValue(size: 2), 2);
+    //       queue[1][i + 1].setEnemy(0, 2);
+    //       count4++;
+    //     }
+    //   }
+    // }
+    makeSmallEntity(energy: energy);
     // log('towerPower:${gameManager.towerPower} base:${_base.toString()}');
     // log('queue[1]: ${queue[1].toString()}');
   }
@@ -268,31 +253,42 @@ class Generator {
     return (result, row);
   }
 
-  /// 初始行必有一个资源。
-  void initRow() {
-    // int x = 1 + _random.nextInt(2);
-    // var row = [0, 1, 2, 3, 4];
-    // while (x > 0) {
-    //   x--;
-    //   var idx = _random.nextInt(row.length);
-    //   var c = row[idx];
-    //   row.removeAt(idx);
-    //   var value = 1 + _random.nextInt(4);
-    //   queue[0][c] = (value, 1);
-    // }
-    generateNextRow(energy: 1);
-    getNextRow();
-  }
+  // /// 初始行必有一个资源。
+  // void initRow() {
+  //   // int x = 1 + _random.nextInt(2);
+  //   // var row = [0, 1, 2, 3, 4];
+  //   // while (x > 0) {
+  //   //   x--;
+  //   //   var idx = _random.nextInt(row.length);
+  //   //   var c = row[idx];
+  //   //   row.removeAt(idx);
+  //   //   var value = 1 + _random.nextInt(4);
+  //   //   queue[0][c] = (value, 1);
+  //   // }
+  //   makeSmallEntity(energy: 1);
+  //   // getNextRow();
+  // }
 
+  /// 先生成大怪，在大怪数上限内，1/3机率生成大怪。
+  /// 还需生成的次数是：一行怪最多占几格减去大怪数*2
+  ///   如果可以生成且剩三个格及以上，至少生成一个
+  ///   之后50%机率生成东西
+  ///     其中1/3机率生成炮资源（连续生成3个怪及以内不会生成资源。连续10个怪后必出资源）
+  ///       资源中1/3出随机2倍，2/3出普通资源
+  ///     2/3机率生成怪。
+  /// 指定生成多少个资源的，剩下的60%都是怪。
   List<EntityInfo> getNextRow() {
     _refreshBase();
+    makeSmallEntity();
     List<EntityInfo> row = [];
     for (var i = 0; i < GameConfig.col; i++) {
-      row.add(queue[0][i].clone());
-      queue[0][i].copyFrom(queue[1][i]);
+      var e = queue[0][i];
+      row.add(e.clone());
+      e.copyFrom(queue[1][i]);
       queue[1][i].setEmpty();
     }
-    generateNextRow();
+    makeBigEnemy();
+    // generateNextRow();
     // log('queue[1]: ${queue[1].toString()}');
     // log('queue[0]: ${queue[0].toString()}');
     // log('new row: ${row.toString()}');
