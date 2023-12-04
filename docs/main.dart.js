@@ -40173,7 +40173,7 @@ r=(r*3+s.y)/2
 s=p.w
 s===$&&A.e()
 q=r+s.ie()*r}++p.f
-return q<=1000?Math.floor(q):q},
+return q<99999999?Math.floor(q):q},
 rW(){return this.rX(1)},
 rV(){var s,r,q,p=this;++p.c
 s=p.b
