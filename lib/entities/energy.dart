@@ -1,5 +1,4 @@
 import 'dart:developer';
-import 'dart:js_util';
 import 'package:flame/effects.dart';
 import 'package:flutter/rendering.dart';
 import 'package:scwar/utils/number_util.dart';
@@ -31,7 +30,7 @@ class Energy extends BoardEntity {
           onComplete: () {
         dead();
       });
-      this.add(moveEffect);
+      add(moveEffect);
       await moveEffect.removed;
     } else if (type == EntityType.energyMultiply) {
       var l = gameManager.towers.length;
@@ -44,7 +43,7 @@ class Energy extends BoardEntity {
           dead();
         },
       );
-      this.add(moveEffect);
+      add(moveEffect);
       await moveEffect.removed;
     }
   }

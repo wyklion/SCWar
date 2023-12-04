@@ -85,8 +85,8 @@ class LocalStorage {
     return setBool('sound', on);
   }
 
-  double? getHighScore() {
-    return getDouble('highScore');
+  double getHighScore() {
+    return getDouble('highScore') ?? 0;
   }
 
   Future<bool> setHighScore(double score) {

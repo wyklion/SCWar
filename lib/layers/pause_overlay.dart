@@ -1,6 +1,5 @@
 import 'dart:developer';
 
-import 'package:flame/game.dart';
 import 'package:flutter/material.dart';
 import 'package:scwar/game.dart';
 import 'package:scwar/layers/layer_util.dart';
@@ -10,10 +9,10 @@ class SoundSwitchButton extends StatefulWidget {
   const SoundSwitchButton({Key? key, required this.game}) : super(key: key);
 
   @override
-  _SoundSwitchButtonState createState() => _SoundSwitchButtonState();
+  SoundSwitchButtonState createState() => SoundSwitchButtonState();
 }
 
-class _SoundSwitchButtonState extends State<SoundSwitchButton> {
+class SoundSwitchButtonState extends State<SoundSwitchButton> {
   bool isSoundOn = true;
 
   @override

@@ -31,7 +31,7 @@ class NumberUtil {
       return '$v';
     }
     int x = 0;
-    while (v > 1000) {
+    while (v >= 1000) {
       v /= 1000;
       x++;
     }

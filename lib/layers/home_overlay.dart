@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:scwar/game.dart';
+import 'package:scwar/utils/number_util.dart';
 
 Widget buidlHomeOverlay(BuildContext buildContext, SCWarGame game) {
   double scale = game.scale;
@@ -39,12 +40,12 @@ Widget buidlHomeOverlay(BuildContext buildContext, SCWarGame game) {
           ),
           Align(
             alignment: Alignment.bottomCenter,
-            child: Container(
+            child: SizedBox(
               height: 100 / scale,
               child: Column(
                 children: [
                   Text(
-                    'HighScore: ${game.gameManager.localStorage.getHighScore() ?? 0}',
+                    'HighScore: ${NumberUtil.getScoreString(game.gameManager.localStorage.getHighScore())}',
                     style: TextStyle(
                       color: const Color.fromARGB(255, 248, 229, 13),
                       fontSize: 30 / scale,

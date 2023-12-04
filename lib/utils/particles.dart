@@ -7,8 +7,8 @@ import 'package:scwar/game_config.dart';
 
 class RectComponent extends Component {
   @override
-  void render(Canvas c) {
-    c.drawRect(Rect.fromCenter(center: Offset.zero, width: 10, height: 10),
+  void render(Canvas canvas) {
+    canvas.drawRect(Rect.fromCenter(center: Offset.zero, width: 10, height: 10),
         Paint()..color = Colors.lightBlue);
   }
 

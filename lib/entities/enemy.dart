@@ -2,9 +2,7 @@ import 'dart:async';
 import 'dart:developer';
 import 'package:flame/components.dart';
 import 'package:flame/effects.dart';
-import 'package:flame/particles.dart';
 import 'package:flutter/material.dart';
-import 'package:scwar/utils/particles.dart';
 import '../game_config.dart';
 import 'entity.dart';
 
@@ -33,6 +31,9 @@ class Enemy extends BoardEntity {
     if (target <= 0) return;
     target = target - damage;
     if (target < 0) target = 0;
+    if (target < 1000) {
+      target = target.floorToDouble();
+    }
     if (hurtEffect != null) {
       var currentHurtEffect = hurtEffect!;
       currentHurtEffect.startValue = value;

@@ -1,6 +1,5 @@
 import 'dart:developer';
 import 'dart:math' as math;
-import 'package:scwar/entities/energy.dart';
 import 'package:scwar/entities/entity_info.dart';
 import 'package:scwar/game_config.dart';
 import '../game_manager.dart';
@@ -38,9 +37,9 @@ class Generator {
     }
   }
 
-  /// 资源基础分：10炮平均分在32开始基础分升到2，平均64，基础分到4。生成资源按概率生成1-3倍。
+  /// 资源基础分：炮总分80（5炮平均分16）以上开始基础分升到2，5炮平均32，基础分到4。生成资源按概率生成1-3倍。
   void _refreshBase() {
-    double power = gameManager.towerPower / 320;
+    double power = gameManager.towerPower / 80;
     while (_base <= power) {
       _base *= 2;
     }
@@ -72,7 +71,7 @@ class Generator {
     afterEnergyCount++;
     // log('power:${gameManager.towerPower}, base:$base, b:$b, result: $result');
     // int result = _base * math.pow(2, r).toInt();
-    if (result < 99999999) {
+    if (result <= 1000) {
       result = result.floorToDouble();
     }
     return result;
