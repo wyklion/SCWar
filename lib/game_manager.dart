@@ -1,9 +1,11 @@
 import 'dart:async';
+import 'dart:convert';
 import 'dart:developer';
 import 'dart:math' as math;
 import 'package:flame/components.dart';
 import 'package:flame/flame.dart';
 import 'package:flame/game.dart';
+import 'package:scwar/utils/local_storage.dart';
 import 'package:scwar/utils/particles.dart';
 import 'package:scwar/utils/sound_manager.dart';
 import 'entities/energy.dart';
@@ -21,7 +23,7 @@ enum GameState {
   shooting,
   enemyMove,
   enemyCreate,
-  dead,
+  gameOver,
 }
 
 class GameManager {
@@ -44,6 +46,7 @@ class GameManager {
   final math.Random random = math.Random();
   final Particles particles = Particles();
   SoundManager soundManager = SoundManager();
+  late LocalStorage localStorage;
 
   GameManager(this.game) {
     for (var i = 0; i < GameConfig.row; i++) {
@@ -55,8 +58,85 @@ class GameManager {
 
   Future<void> load() async {
     sizeConfig = SizeConfig(game.size);
-    await Flame.images.loadAll(['blue.png', 'pause_icon.png']);
+    await Flame.images.loadAll([
+      // 'blue.png',
+      'pause_icon.png',
+    ]);
+    await loadStorage();
     await soundManager.load();
+    setSoundOn(localStorage.getSoundOn());
+  }
+
+  void setSoundOn(bool on) {
+    soundManager.soundOn = on;
+    localStorage.setSoundOn(on);
+  }
+
+  Future<void> loadStorage() async {
+    localStorage = await LocalStorage.getInstance();
+  }
+
+  void saveGame() {
+    var j = toJson();
+    localStorage.setGameJson(j);
+  }
+
+  Map<String, dynamic> toJson() {
+    dynamic json = {
+      'score': score,
+      'moveCount': score,
+      'preTower': prepareTower == null ? 0 : prepareTower!.value,
+      'towers': [],
+      'board': [],
+    };
+    for (var i = 0; i < towers.length; i++) {
+      var t = towers[i];
+      json['towers'].add([t.r, t.c, t.value]);
+    }
+    for (var i = 0; i < board.length; i++) {
+      for (var j = 0; j < board[i].length; j++) {
+        var b = board[i][j];
+        if (b is Enemy) {
+          json['board'].add([b.r, b.c, 1, b.value, b.body]);
+        } else if (b is Energy) {
+          int et = b.type == EntityType.energy ? 2 : 3;
+          json['board'].add([b.r, b.c, et, b.value]);
+        }
+      }
+    }
+    return json;
+  }
+
+  bool loadGame() {
+    final json = localStorage.getGameJson();
+    if (json == null) {
+      return false;
+    }
+    clear();
+    score = json['score'];
+    game.menu.updateScore();
+    playerMoveCount = json['moveCount'];
+    var preT = json['preTower'];
+    if (preT > 0) {
+      addPrepareTower(preT);
+    }
+    var jboard = json['board'];
+    for (var i = 0; i < jboard.length; i++) {
+      var b = jboard[i];
+      if (b[2] == 1) {
+        addEnemy(b[0], b[1], b[3], b[4]);
+      } else if (b[2] == 2 || b[2] == 3) {
+        addEnergy(b[0], b[1], b[3],
+            b[2] == 2 ? EntityType.energy : EntityType.energyMultiply);
+      }
+    }
+    var jtowers = json['towers'];
+    for (var i = 0; i < jtowers.length; i++) {
+      var t = jtowers[i];
+      addTower(t[0], t[1], t[2]);
+    }
+    _currentState = GameState.playerMove;
+    return true;
   }
 
   Vector2 get size => sizeConfig.size;
@@ -113,8 +193,8 @@ class GameManager {
         enemyMove();
       case GameState.enemyCreate:
         break;
-      case GameState.dead:
-        dead();
+      case GameState.gameOver:
+        gameOver();
         break;
     }
   }
@@ -150,20 +230,26 @@ class GameManager {
   }
 
   void restartGame() {
+    localStorage.removeGame();
     clear();
-    startGame();
+    startGame(newGame: true);
   }
 
-  void startGame() {
+  void startGame({bool newGame = false}) {
     generator.init();
-    playerMoveCount = 0;
+    // 加载之前游戏
+    if (!newGame && loadGame()) {
+      return;
+    }
+    // 新游戏
     test();
     addPrepareTower(1);
     addRandomEnemy();
-    setState(GameState.playerMove);
   }
 
-  void playerMove() {}
+  void playerMove() {
+    saveGame();
+  }
 
   void startShooting() async {
     soundManager.playShoot();
@@ -212,20 +298,27 @@ class GameManager {
   }
 
   Future<void> enemyMove() async {
+    List<Enemy> beatEnemies = [];
     for (var i = 0; i < GameConfig.col; i++) {
       if (board[GameConfig.row - 1][i] is Enemy) {
-        setState(GameState.dead);
-        return;
+        beatEnemies.add(board[GameConfig.row - 1][i] as Enemy);
       }
       if (board[GameConfig.row - 2][i] is Enemy) {
         Enemy enemy = board[GameConfig.row - 2][i] as Enemy;
         if (enemy.body == 2) {
-          setState(GameState.dead);
-          return;
+          beatEnemies.add(enemy);
         }
       }
     }
     List<Future<void>> tasks = [];
+    if (beatEnemies.isNotEmpty) {
+      for (var i = 0; i < beatEnemies.length; i++) {
+        tasks.add(beatEnemies[i].beat());
+      }
+      await Future.wait(tasks);
+      setState(GameState.gameOver);
+      return;
+    }
     for (var j = 0; j < GameConfig.col; j++) {
       for (var i = GameConfig.row - 1; i >= 0; i--) {
         var entity = board[i][j];
@@ -464,8 +557,14 @@ class GameManager {
     // log('addEnergy ($r,$c) $pos $value');
   }
 
-  void dead() async {
-    await Future.delayed(const Duration(seconds: 1));
+  void gameOver() async {
+    soundManager.playDead();
+    localStorage.removeGame();
+    var high = localStorage.getHighScore();
+    if (high == null || score > high) {
+      localStorage.setHighScore(score);
+    }
+    await Future.delayed(const Duration(milliseconds: 500));
     game.end();
   }
 

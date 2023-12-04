@@ -1,6 +1,45 @@
+import 'dart:developer';
+
+import 'package:flame/game.dart';
 import 'package:flutter/material.dart';
 import 'package:scwar/game.dart';
 import 'package:scwar/layers/layer_util.dart';
+
+class SoundSwitchButton extends StatefulWidget {
+  final SCWarGame game;
+  const SoundSwitchButton({Key? key, required this.game}) : super(key: key);
+
+  @override
+  _SoundSwitchButtonState createState() => _SoundSwitchButtonState();
+}
+
+class _SoundSwitchButtonState extends State<SoundSwitchButton> {
+  bool isSoundOn = true;
+
+  @override
+  Widget build(BuildContext context) {
+    isSoundOn = widget.game.gameManager.soundManager.soundOn;
+    return makeTextButton(widget.game, isSoundOn ? 'Sound On' : 'Sound Off',
+        () {
+      widget.game.gameManager.setSoundOn(!isSoundOn);
+      setState(() {
+        isSoundOn = !isSoundOn;
+      });
+    }, color: isSoundOn ? const Color(0xFFF7E7CE) : const Color(0xFF444444));
+    // return IconButton(
+    //   icon: Icon(
+    //     isSoundOn ? Icons.volume_up : Icons.volume_off,
+    //     color: isSoundOn ? Colors.green : Colors.red,
+    //   ),
+    //   onPressed: () {
+    //     setState(() {
+    //       isSoundOn = !isSoundOn;
+    //       widget.onToggle(isSoundOn);
+    //     });
+    //   },
+    // );
+  }
+}
 
 Widget buidlPauseOverlay(BuildContext buildContext, SCWarGame game) {
   double scale = game.scale;
@@ -19,7 +58,7 @@ Widget buidlPauseOverlay(BuildContext buildContext, SCWarGame game) {
               children: [
                 Flexible(
                   child: SizedBox(
-                    height: 120 / scale,
+                    height: 100 / scale,
                     child: Center(
                       child: Text(
                         'Paused',
@@ -36,6 +75,7 @@ Widget buidlPauseOverlay(BuildContext buildContext, SCWarGame game) {
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
+                        SoundSwitchButton(game: game),
                         makeTextButton(game, 'Restart', () {
                           game.gameManager.soundManager.playCick();
                           game.restart();

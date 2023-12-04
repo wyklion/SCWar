@@ -44,7 +44,7 @@ Widget buidlHomeOverlay(BuildContext buildContext, SCWarGame game) {
               child: Column(
                 children: [
                   Text(
-                    'HighScore: not yet',
+                    'HighScore: ${game.gameManager.localStorage.getHighScore() ?? 0}',
                     style: TextStyle(
                       color: const Color.fromARGB(255, 248, 229, 13),
                       fontSize: 30 / scale,
@@ -52,7 +52,7 @@ Widget buidlHomeOverlay(BuildContext buildContext, SCWarGame game) {
                   ),
                   const SizedBox(height: 20),
                   const Text(
-                    'v0.0.8',
+                    'v0.0.9',
                     style: TextStyle(color: Colors.black87),
                   ),
                 ],

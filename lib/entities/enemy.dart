@@ -61,10 +61,16 @@ class Enemy extends BoardEntity {
     hurtEffect = null;
   }
 
-  @override
-  void moveToEnd() {
-    log('enemy move to die $r $c');
-    gameManager.dead();
+  Future<void> beat() async {
+    var beatEffect = RotateEffect.by(
+      0.2,
+      ZigzagEffectController(
+        period: 0.1,
+      ),
+    );
+    add(beatEffect);
+    await beatEffect.removed;
+    paint.color = Colors.black;
   }
 
   @override

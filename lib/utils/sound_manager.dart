@@ -1,17 +1,18 @@
 import 'package:flame_audio/flame_audio.dart';
 
 class SoundManager {
+  bool soundOn = true;
   late AudioPool hurtPool;
   Future<void> load() async {
     await FlameAudio.audioCache.loadAll([
-      'bong_001.ogg',
-      'drop_002.mp3',
-      'drop_004.ogg',
-      'glass_001.ogg',
-      'laser5.ogg',
-      // 'back_002.ogg',
-      'powerUp9.ogg',
-      'pepSound2.ogg',
+      'click.ogg',
+      'move.mp3',
+      'energy.ogg',
+      'hurt.ogg',
+      'shoot.ogg',
+      'dead.ogg',
+      'merge.ogg',
+      // 'pepSound2.ogg',
       // 'pepSound3.ogg',
     ]);
     // hurtPool = await FlameAudio.createPool(
@@ -22,38 +23,51 @@ class SoundManager {
   }
 
   void playCick() {
-    FlameAudio.play('bong_001.ogg');
+    if (!soundOn) return;
+    FlameAudio.play('click.ogg');
     // FlameAudio.play('drop_003.ogg');
   }
 
   void playSnap() {
+    if (!soundOn) return;
     // FlameAudio.play('drop_003.ogg');
   }
 
   void playMerge() {
-    FlameAudio.play('powerUp9.ogg');
+    if (!soundOn) return;
+    FlameAudio.play('merge.ogg');
     // pool.start();
   }
 
   void playSwap() {
-    FlameAudio.play('pepSound2.ogg');
+    if (!soundOn) return;
+    FlameAudio.play('move.ogg');
   }
 
   void playMove() {
-    FlameAudio.play('drop_002.mp3');
+    if (!soundOn) return;
+    FlameAudio.play('move.mp3');
   }
 
   void playShoot() {
-    FlameAudio.play('laser5.ogg');
+    if (!soundOn) return;
+    FlameAudio.play('shoot.ogg');
   }
 
   void playHurt() {
+    if (!soundOn) return;
     // hurtPool.start();
-    FlameAudio.play('glass_001.ogg');
+    FlameAudio.play('hurt.ogg');
   }
 
   void playEnergy() {
-    FlameAudio.play('drop_004.ogg');
+    if (!soundOn) return;
+    FlameAudio.play('energy.ogg');
+  }
+
+  void playDead() {
+    if (!soundOn) return;
+    FlameAudio.play('dead.ogg');
   }
 
   void playPrepare() {}

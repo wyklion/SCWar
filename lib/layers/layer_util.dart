@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:scwar/game.dart';
 
-Widget makeTextButton(SCWarGame game, String name, VoidCallback onClick) {
+Widget makeTextButton(SCWarGame game, String name, VoidCallback onClick,
+    {Color color = const Color(0xFFF7E7CE)}) {
   double scale = game.scale;
   return TextButton(
     style: TextButton.styleFrom(
-      foregroundColor: const Color(0xFFF7E7CE),
-      padding: const EdgeInsets.all(16.0),
+      foregroundColor: color,
+      padding: const EdgeInsets.all(12.0),
       shadowColor: const Color(0xFFf99f9f),
       textStyle: TextStyle(fontSize: 30 / scale),
     ),

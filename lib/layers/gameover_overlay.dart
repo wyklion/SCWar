@@ -20,7 +20,7 @@ Widget buidlGameoverOverlay(BuildContext buildContext, SCWarGame game) {
               children: [
                 Flexible(
                   child: SizedBox(
-                    height: 120 / scale,
+                    height: 200 / scale,
                     child: Center(
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
@@ -38,7 +38,7 @@ Widget buidlGameoverOverlay(BuildContext buildContext, SCWarGame game) {
                             'Score: ${NumberUtil.getScoreString(game.gameManager.score)}',
                             style: TextStyle(
                               fontSize: 25 / scale,
-                              color: const Color(0xFFFC5C5C),
+                              color: const Color(0xFFFFCD6A),
                             ),
                           ),
                         ],

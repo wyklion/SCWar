@@ -8,8 +8,8 @@ import 'game.dart';
 class SpaceShooterGame extends FlameGame {}
 
 void main() {
-  runApp(const AppWidget());
-  // runApp(GameWidget(game: SCWarGame()));
+  var app = const AppWidget();
+  runApp(app);
 }
 
 class AppWidget extends StatelessWidget {
