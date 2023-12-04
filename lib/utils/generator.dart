@@ -71,7 +71,7 @@ class Generator {
     afterEnergyCount++;
     // log('power:${gameManager.towerPower}, base:$base, b:$b, result: $result');
     // int result = _base * math.pow(2, r).toInt();
-    if (result <= 1000) {
+    if (result < 99999999) {
       result = result.floorToDouble();
     }
     return result;
