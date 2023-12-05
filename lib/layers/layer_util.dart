@@ -47,3 +47,54 @@ Widget makeTextButton(SCWarGame game, String name, VoidCallback onClick,
   //   ]),
   // );
 }
+
+Widget makeIconButton(SCWarGame game, IconData icon, String name, double space,
+    VoidCallback onClick,
+    {Color? color}) {
+  double scale = game.scale;
+  return ElevatedButton(
+    onPressed: () {
+      onClick();
+    },
+    style: ElevatedButton.styleFrom(
+        backgroundColor: color ?? const Color(0xFF4A90E2), // 按钮背景颜色
+        padding: const EdgeInsets.symmetric(vertical: 10.0),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(30 / scale),
+        ),
+        fixedSize: Size(200 / scale, 50 / scale)),
+    // return FilledButton(
+    //   onPressed: () {
+    //     onClick();
+    //   },
+    child: Container(
+      padding: EdgeInsets.all(3.0 / scale),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(
+            icon,
+            size: 30 / scale,
+            color: Colors.white, // 图标颜色
+          ),
+          SizedBox(width: space / scale), // 间距
+          Text(
+            name,
+            style: TextStyle(color: Colors.white, fontSize: 30 / scale), // 文字颜色
+          ),
+        ],
+      ),
+    ),
+  );
+
+  // return IconButton(
+  //   icon: Icon(
+  //     size: 50 / scale,
+  //     icon,
+  //     color: Colors.white,
+  //   ),
+  //   onPressed: () {
+  //     onClick();
+  //   },
+  // );
+}

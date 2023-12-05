@@ -13,7 +13,7 @@ python3 -m http.server
 <!-- WEB(gh-page)：
 flutter build web -o docs --base-href=/SCWar/ --web-renderer canvaskit --dart-define=FLUTTER_WEB_CANVASKIT_URL=canvaskit/ -->
 
-WEB(vercel)：
+WEB(netlify)：
 flutter build web -o docs --web-renderer canvaskit --dart-define=FLUTTER_WEB_CANVASKIT_URL=canvaskit/
 
 # 规则说明
@@ -24,9 +24,11 @@ flutter build web -o docs --web-renderer canvaskit --dart-define=FLUTTER_WEB_CAN
 
 ### 生成数值规则
     生成怪基础分：炮塔总分除以5取整。
-    小怪值：基础分的1倍到3倍之间
-    大怪值：取最大炮塔和基础分3倍的平均值为基础，生成基础的2到3倍之间。
+    小怪值：怪基础分的1倍到3倍之间
+    大怪值：取最大炮塔和怪基础分3倍的平均值为基础，生成基础的2到3倍之间。
+    怪分值加成：根据炮分等级加成*(1+0.002*_baseLevel)
     资源基础分：炮总分80（5炮平均分16）以上开始基础分升到2，5炮平均32，基础分到4。生成资源按概率生成1-3倍。
+    炮分等级：总分从80开始是1级，每多一倍加1级。怪分成生有加成。
     资源值生成：60%基础分的1倍，30%基础分2倍，10%基础分4倍。
     一行最多大怪数量：炮塔分4分以下没有，100分以下1个，以上2个。
     一行怪最多占几格：炮分4以下2格，64以下3格，512以下4格，以上5格。

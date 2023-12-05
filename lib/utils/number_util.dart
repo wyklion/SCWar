@@ -14,15 +14,20 @@ class NumberUtil {
     }
   }
 
+  static int getUnitLevel(double v) {
+    int x = 0;
+    while (v >= 1000) {
+      v /= 1000;
+      x++;
+    }
+    return x;
+  }
+
   static double getScale(double v) {
     if (v <= 16384) {
       return 1 + 0.05 * v.toInt().bitLength;
     }
-    int x = 0;
-    while (v > 1000) {
-      v /= 1000;
-      x++;
-    }
+    var x = getUnitLevel(v);
     return 1.7 + 0.05 * x;
   }
 

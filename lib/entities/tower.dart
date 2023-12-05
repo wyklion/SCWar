@@ -16,7 +16,7 @@ enum TowerState {
   backing,
 }
 
-class Tower extends Entity with TapCallbacks, DragCallbacks, HasPaint {
+class Tower extends Entity with TapCallbacks, DragCallbacks {
   int r;
   int c;
   TowerState state = TowerState.ready;
@@ -26,8 +26,8 @@ class Tower extends Entity with TapCallbacks, DragCallbacks, HasPaint {
   Tower? mergingTower;
   Tower? swapTower;
   (int, int)? movePos;
-  Paint paint = Paint()..color = ColorMap.tower;
   Tower(this.r, this.c, double x, double y, double value) : super(x, y, value) {
+    paint.color = ColorMap.tower;
     _rect = Rect.fromCenter(
         center: Offset.zero,
         width: GameConfig.baseLen,
@@ -216,9 +216,29 @@ class Tower extends Entity with TapCallbacks, DragCallbacks, HasPaint {
   }
 
   @override
-  void renderBg(Canvas canvas) {
+  void render(Canvas canvas) {
     // 绘制炮塔
-    canvas.drawCircle(Offset.zero, GameConfig.baseLen / 2, paint);
+    var radius = GameConfig.baseLen / 2;
+    // canvas.drawCircle(Offset.zero, radius, paint);
+
+    // // 绘制底部阴影
+    // final shadowPaint = Paint()
+    //   ..color = Colors.black.withOpacity(0.3)
+    //   ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 3.0);
+    // canvas.drawCircle(Offset.zero, radius, shadowPaint);
+
+    // // 绘制主体圆形
+    // final gradient = RadialGradient(
+    //   center: Alignment.center,
+    //   radius: 0.5,
+    //   colors: [paint.color, const Color(0xFF2ECC71)],
+    //   stops: const [0.0, 1.0],
+    // );
+    // final circlePaint = Paint()
+    //   ..shader = gradient
+    //       .createShader(Rect.fromCircle(center: Offset.zero, radius: radius));
+    // canvas.drawCircle(Offset.zero, radius, circlePaint);
+    canvas.drawCircle(Offset.zero, radius, paint);
   }
 
   @override

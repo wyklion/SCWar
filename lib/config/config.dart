@@ -1,3 +1,3 @@
 class Config {
-  static const String version = 'v0.1.0';
+  static const String version = 'v0.1.1';
 }

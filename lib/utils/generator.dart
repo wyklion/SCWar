@@ -2,11 +2,13 @@ import 'dart:developer';
 import 'dart:math' as math;
 import 'package:scwar/entities/entity_info.dart';
 import 'package:scwar/config/game_config.dart';
+import 'package:scwar/utils/number_util.dart';
 import '../game/game_manager.dart';
 
 class Generator {
   GameManager gameManager;
   double _base = 1;
+  int _baseLevel = 0;
   int _count = 0;
   int enemyCount = 0;
   int afterBigEnemyCount = 0;
@@ -26,6 +28,7 @@ class Generator {
 
   void init() {
     _base = 1;
+    _baseLevel = 0;
     _count = 0;
     enemyCount = 0;
     afterBigEnemyCount = 0;
@@ -38,17 +41,19 @@ class Generator {
   }
 
   /// 资源基础分：炮总分80（5炮平均分16）以上开始基础分升到2，5炮平均32，基础分到4。生成资源按概率生成1-3倍。
+  /// 炮塔分等级：总分从80开始是1级，每多一倍加1级。怪分成生有加成。
   void _refreshBase() {
     double power = gameManager.towerPower / 80;
     while (_base <= power) {
       _base *= 2;
+      _baseLevel++;
     }
   }
 
   /// 生成怪基础分：炮塔总分除以5取整。
   /// 小怪值：基础分的1倍到3倍之间
   /// 大怪值：取最大炮塔和基础分3倍的平均值为基础，生成基础的2到3倍之间。
-  /// 每5个小怪出一个双倍分小怪。
+  /// 根据炮分等级加成*(1+0.002*_baseLevel)
   double getNextEnemyValue({int? size = 1}) {
     _count++;
     double base = (gameManager.towerPower + 1) / 5;
@@ -69,11 +74,12 @@ class Generator {
       result = base * 2 + _random.nextDouble() * base;
     }
     afterEnergyCount++;
-    // log('power:${gameManager.towerPower}, base:$base, b:$b, result: $result');
-    // int result = _base * math.pow(2, r).toInt();
+    // 炮分等级加成
+    result *= (1 + 0.002 * _baseLevel);
     if (result < 99999999) {
       result = result.floorToDouble();
     }
+    // log('power:${gameManager.towerPower}, base:$base, baseLevel:$_baseLevel result: $result');
     return result;
   }
 

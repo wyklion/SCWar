@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:scwar/config/config.dart';
+import 'package:scwar/config/game_config.dart';
 import 'package:scwar/game/game.dart';
 import 'package:scwar/utils/number_util.dart';
 
@@ -48,14 +49,17 @@ Widget buidlHomeOverlay(BuildContext buildContext, SCWarGame game) {
                   Text(
                     'HighScore: ${NumberUtil.getScoreString(game.gameManager.localStorage.getHighScore())}',
                     style: TextStyle(
-                      color: const Color.fromARGB(255, 248, 229, 13),
+                      color: ColorMap.highScore,
                       fontSize: 30 / scale,
                     ),
                   ),
-                  const SizedBox(height: 20),
-                  const Text(
+                  const SizedBox(height: 10),
+                  Text(
                     Config.version,
-                    style: TextStyle(color: Colors.black87),
+                    style: TextStyle(
+                      fontSize: 18 / scale,
+                      color: const Color(0xFF535353),
+                    ),
                   ),
                 ],
               ),

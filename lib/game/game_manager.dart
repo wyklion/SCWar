@@ -55,6 +55,39 @@ class GameManager {
     generator = Generator(this);
   }
 
+  void test() {
+    // score = 3523511;
+    // game.menu.updateScore();
+    // addTower(0, 0, 4);
+    // addTower(0, 1, 2048);
+    // addTower(0, 2, 8);
+    // addTower(0, 3, 2);
+    // addTower(0, 4, 8);
+    // addTower(0, 0, 262144);
+    // addTower(0, 1, 131072);
+    // addTower(0, 2, 8192);
+    // addTower(0, 4, 16384);
+    // addTower(1, 3, 524288);
+    // addTower(1, 0, 1.2e14);
+    // addTower(1, 1, 1.2e14);
+    // addTower(1, 2, 1.2e14);
+    // addEnergy(2, 1, 2, EntityType.energyMultiply);
+    // addEnergy(3, 1, 2, EntityType.energyMultiply);
+    // addEnergy(2, 0, 2, EntityType.energy);
+    // addEnemy(3, 0, 8, 1);
+    // addEnergy(4, 0, 2, EntityType.energy);
+    // addEnemy(5, 0, 1, 1);
+    // addEnergy(2, 1, 2);
+    // addEnemy(8, 1, 7, 1);
+    // addEnemy(1, 3, 1024, 1);
+    // addEnemy(2, 2, 8, 1);
+    // addEnemy(4, 3, 3252, 1);
+    // addEnemy(6, 4, 253, 1);
+    // addEnemy(7, 4, 253, 1);
+    // addEnemy(8, 2, 524, 1);
+    // addEnemy(9, 3, 235, 1);
+  }
+
   Future<void> load() async {
     sizeConfig = SizeConfig(game.size);
     await Flame.images.loadAll([
@@ -141,39 +174,6 @@ class GameManager {
   Vector2 get size => sizeConfig.size;
 
   GameState get currentState => _currentState;
-
-  void test() {
-    // score = 3523511;
-    // game.menu.updateScore();
-    // addTower(0, 0, 4);
-    // addTower(0, 1, 2048);
-    // addTower(0, 2, 8);
-    // addTower(0, 3, 2);
-    // addTower(0, 4, 8);
-    // addTower(0, 0, 262144);
-    // addTower(0, 1, 131072);
-    // addTower(0, 2, 8192);
-    // addTower(0, 4, 16384);
-    // addTower(1, 3, 524288);
-    // addTower(1, 0, 1.2e32);
-    // addTower(1, 1, 1.2e90);
-    // addTower(1, 2, 1.2e168);
-    // addEnergy(2, 1, 2, EntityType.energyMultiply);
-    // addEnergy(3, 1, 2, EntityType.energyMultiply);
-    // addEnergy(2, 0, 2, EntityType.energy);
-    // addEnemy(3, 0, 8, 1);
-    // addEnergy(4, 0, 2, EntityType.energy);
-    // addEnemy(5, 0, 1, 1);
-    // addEnergy(2, 1, 2);
-    // addEnemy(8, 1, 7, 1);
-    // addEnemy(1, 3, 1024, 1);
-    // addEnemy(2, 2, 8, 1);
-    // addEnemy(4, 3, 3252, 1);
-    // addEnemy(6, 4, 253, 1);
-    // addEnemy(7, 4, 253, 1);
-    // addEnemy(8, 2, 524, 1);
-    // addEnemy(9, 3, 235, 1);
-  }
 
   void setState(GameState status) {
     var oldState = _currentState;

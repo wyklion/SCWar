@@ -48,6 +48,7 @@ class SCWarGame extends FlameGame<SCWarWorld> with TapDetector, ScaleDetector {
 
   void start() {
     overlays.remove('main');
+    overlays.add('game');
     camera.viewport.add(menu = GameUI());
     world.startGame();
     gameManager.startGame();
@@ -75,6 +76,7 @@ class SCWarGame extends FlameGame<SCWarWorld> with TapDetector, ScaleDetector {
 
   void restart() {
     overlays.clear();
+    overlays.add('game');
     gameManager.restartGame();
   }
 

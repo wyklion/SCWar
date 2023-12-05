@@ -58,9 +58,8 @@ class Energy extends BoardEntity {
   }
 
   @override
-  void renderBg(Canvas canvas) {
+  void render(Canvas canvas) {
     // 绘制敌人
-    // final paint = Paint()..color = Colors.green;
     var paint = type == EntityType.energy
         ? paintMap['energy']!
         : paintMap['energyMultiply']!;

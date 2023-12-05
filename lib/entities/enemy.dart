@@ -6,10 +6,35 @@ import 'package:flutter/material.dart';
 import '../config/game_config.dart';
 import 'entity.dart';
 
+// class ConvexRectanglePainter extends CustomPainter {
+//   @override
+//   void paint(Canvas canvas, Size size) {
+//     Paint paint = Paint()
+//       ..color = Colors.blue
+//       ..style = PaintingStyle.fill;
+
+//     double width = size.width;
+//     double height = size.height;
+
+//     Path path = Path()
+//       ..moveTo(0, 0)
+//       ..lineTo(width, 0)
+//       ..lineTo(width, height - 20)
+//       ..quadraticBezierTo(width / 2, height + 20, 0, height - 20)
+//       ..close();
+
+//     canvas.drawPath(path, paint);
+//   }
+
+//   @override
+//   bool shouldRepaint(CustomPainter oldDelegate) {
+//     return false;
+//   }
+// }
+
 class Enemy extends BoardEntity {
   late double target;
   HurtEffect? hurtEffect;
-  Paint paint = Paint();
   Enemy(int r, int c, double x, double y, double value, int body)
       : super(r, c, x, y, body, value) {
     target = value;
@@ -70,17 +95,29 @@ class Enemy extends BoardEntity {
       ),
     );
     add(beatEffect);
-    await beatEffect.removed;
-    paint.color = Colors.black;
+
+    var colorEffect = ColorEffect(
+      const Color(0xFF000000),
+      EffectController(duration: 0.3),
+    );
+    add(colorEffect);
+
+    await colorEffect.removed;
   }
 
   @override
-  void renderBg(Canvas canvas) {
+  void render(Canvas canvas) {
     // 绘制敌人
     // final paint = Paint()..color = Colors.red;
     var len = body == 1 ? GameConfig.baseLen : GameConfig.doubleBaseLen;
-    canvas.drawRect(
-        Rect.fromCenter(center: Offset.zero, width: len, height: len), paint);
+    final roundedRect = RRect.fromRectAndRadius(
+        Rect.fromCenter(center: Offset.zero, width: len, height: len),
+        const Radius.circular(5));
+    canvas.drawRRect(roundedRect, paint);
+    // canvas.drawRect(
+    //     Rect.fromCenter(center: Offset.zero, width: len, height: len), paint);
+    // final painter = ConvexRectanglePainter();
+    // painter.paint(canvas, Size.square(len));
   }
 
   @override

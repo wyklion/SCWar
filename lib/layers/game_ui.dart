@@ -1,6 +1,4 @@
 import 'package:flame/components.dart';
-import 'package:flame/events.dart';
-import 'package:flame/flame.dart';
 import 'package:flutter/material.dart';
 import 'dart:developer';
 import 'package:scwar/game/game.dart';
@@ -12,7 +10,7 @@ class GameUI extends Component with HasGameRef<SCWarGame> {
 
   @override
   Future<void> onLoad() async {
-    add(PauseButton());
+    // add(PauseButton());
     add(scoreComponent = ScoreComponent());
     return super.onLoad();
   }
@@ -22,52 +20,52 @@ class GameUI extends Component with HasGameRef<SCWarGame> {
   }
 }
 
-class PauseButton extends PositionComponent
-    with HasGameRef<SCWarGame>, TapCallbacks {
-  // final textRenderer = TextPaint(
-  //     style: const TextStyle(
-  //         fontSize: 40, fontWeight: FontWeight.w900, color: Color(0xFF3B5998)));
-  PauseButton()
-      : super(
-          position: Vector2(470, 5),
-          size: Vector2.all(64),
-          // anchor: Anchor.center,
-        );
+// class PauseButton extends PositionComponent
+//     with HasGameRef<SCWarGame>, TapCallbacks {
+//   // final textRenderer = TextPaint(
+//   //     style: const TextStyle(
+//   //         fontSize: 40, fontWeight: FontWeight.w900, color: Color(0xFF3B5998)));
+//   PauseButton()
+//       : super(
+//           position: Vector2(470, 5),
+//           size: Vector2.all(64),
+//           // anchor: Anchor.center,
+//         );
 
-  @override
-  void onTapDown(TapDownEvent event) {
-    // log('onTapDown');
-    gameRef.gameManager.soundManager.playCick();
-    gameRef.pause();
-  }
+//   @override
+//   void onTapDown(TapDownEvent event) {
+//     // log('onTapDown');
+//     gameRef.gameManager.soundManager.playCick();
+//     gameRef.pause();
+//   }
 
-  @override
-  Future<void> onLoad() async {
-    var img = Flame.images.fromCache('pause_icon.png');
-    final sprite = Sprite(img);
-    final btn = SpriteComponent(
-      size: Vector2.all(64),
-      sprite: sprite,
-      // anchor: Anchor.center,
-    );
-    add(btn);
-    // final pauseText = TextComponent(
-    //   text: '||',
-    //   textRenderer: textRenderer,
-    //   size: Vector2.all(80),
-    // );
-    // add(pauseText);
-    return super.onLoad();
-  }
-}
+//   @override
+//   Future<void> onLoad() async {
+//     var img = Flame.images.fromCache('pause_icon.png');
+//     final sprite = Sprite(img);
+//     final btn = SpriteComponent(
+//       size: Vector2.all(64),
+//       sprite: sprite,
+//       // anchor: Anchor.center,
+//     );
+//     add(btn);
+//     // final pauseText = TextComponent(
+//     //   text: '||',
+//     //   textRenderer: textRenderer,
+//     //   size: Vector2.all(80),
+//     // );
+//     // add(pauseText);
+//     return super.onLoad();
+//   }
+// }
 
 class ScoreComponent extends PositionComponent with HasGameRef<SCWarGame> {
   late TextComponent label;
   late TextComponent score;
   final labelStyle = const TextStyle(
-      fontSize: 30, fontWeight: FontWeight.bold, color: Color(0xFF0f4c75));
+      fontSize: 30, fontWeight: FontWeight.bold, color: Color(0xFFFCF3CF));
   final scoreStyle = const TextStyle(
-      fontSize: 30, fontWeight: FontWeight.bold, color: Color(0xFFFFE9A3));
+      fontSize: 30, fontWeight: FontWeight.bold, color: Color(0xFFFFCD00));
   ScoreComponent()
       : super(
           position: Vector2(470, 220),

@@ -47,6 +47,8 @@ final class ColorMap {
   static Color enemy = const Color(0xFF3282b8);
   static Color enemy2 = const Color(0xFF0f4c75);
   static Color bullet = const Color(0xFFFF8A00);
+  static Color score = const Color(0xFFFFCD00);
+  static Color highScore = const Color(0xFFF7E967);
 }
 
 class GameConfig {

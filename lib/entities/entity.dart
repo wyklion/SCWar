@@ -8,7 +8,8 @@ import 'package:scwar/utils/number_util.dart';
 import '../game/game.dart';
 import '../config/game_config.dart';
 
-abstract class Entity extends PositionComponent with HasGameRef<SCWarGame> {
+abstract class Entity extends PositionComponent
+    with HasGameRef<SCWarGame>, HasPaint {
   final double score;
   double value;
   bool isValid = true;
@@ -50,23 +51,6 @@ abstract class Entity extends PositionComponent with HasGameRef<SCWarGame> {
 
   void setTextValue(double value) {
     text.text = getDisplay(value: value);
-  }
-
-  void renderBg(Canvas canvas);
-
-  @override
-  void render(Canvas canvas) {
-    super.render(canvas);
-    renderBg(canvas);
-    // final textPainter = TextPainter(
-    //   text: TextSpan(
-    //     text: '$value',
-    //     style: const TextStyle(color: Colors.white, fontSize: 20),
-    //   ),
-    //   textDirection: TextDirection.ltr,
-    // )..layout();
-    // textPainter.paint(
-    //     canvas, Offset(x - textPainter.width / 2, y - textPainter.height / 2));
   }
 }
 
