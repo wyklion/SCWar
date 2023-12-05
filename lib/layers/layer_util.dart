@@ -67,8 +67,9 @@ Widget makeIconButton(SCWarGame game, IconData icon, String name, double space,
     //   onPressed: () {
     //     onClick();
     //   },
-    child: Container(
-      padding: EdgeInsets.all(3.0 / scale),
+    child: SizedBox(
+      height: 40 / scale,
+      // padding: EdgeInsets.all(3.0 / scale),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [

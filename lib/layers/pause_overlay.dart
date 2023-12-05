@@ -22,7 +22,7 @@ class SoundSwitchButtonState extends State<SoundSwitchButton> {
     double scale = widget.game.scale;
     // return IconButton(
     //   icon: Icon(
-    //     size: 50 / scale,
+    //     size: 40 / scale,
     //     isSoundOn ? Iconfont.soundOn : Iconfont.soundOff,
     //     color: isSoundOn ? Colors.white : const Color(0xFF848484),
     //   ),
@@ -34,17 +34,27 @@ class SoundSwitchButtonState extends State<SoundSwitchButton> {
     //   },
     // );
     return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        Icon(
-          size: 40 / scale,
-          isSoundOn ? Iconfont.soundOn : Iconfont.soundOff,
-          color: isSoundOn ? Colors.white : const Color(0xFF848484),
+        IconButton(
+          icon: Icon(
+            size: 40 / scale,
+            isSoundOn ? Iconfont.soundOn : Iconfont.soundOff,
+            color: isSoundOn ? Colors.white : const Color(0xFF848484),
+          ),
+          onPressed: () {
+            setState(() {
+              widget.game.gameManager.setSoundOn(!isSoundOn);
+              isSoundOn = !isSoundOn;
+            });
+          },
         ),
         SizedBox(width: 40 / scale),
         Switch(
           value: isSoundOn,
           activeColor: const Color(0xFF4A90E2),
           inactiveTrackColor: Colors.grey,
+          materialTapTargetSize: MaterialTapTargetSize.padded,
           onChanged: (value) {
             setState(() {
               isSoundOn = value;
@@ -67,60 +77,45 @@ Widget buidlPauseOverlay(BuildContext buildContext, SCWarGame game) {
         child: Center(
           child: ClipRRect(
             borderRadius: BorderRadius.circular(10),
-            child: Container(
-              width: 300 / scale,
-              height: 400 / scale,
-              color: const Color(0xFF7FB3D5),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  SizedBox(
-                    height: 90 / scale,
-                    child: Center(
-                      child: Text(
+            child: UnconstrainedBox(
+              child: IntrinsicWidth(
+                child: Container(
+                  width: 300 / scale,
+                  // height: 400 / scale,
+                  color: const Color(0xFF7FB3D5),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      SizedBox(height: 20 / scale),
+                      Text(
                         'PAUSED',
                         style: TextStyle(
                             color: const Color(0xFF3B5998),
                             fontSize: 30 / scale,
                             fontWeight: FontWeight.bold),
                       ),
-                    ),
+                      SizedBox(height: 20 / scale),
+                      SoundSwitchButton(game: game),
+                      SizedBox(height: 20 / scale),
+                      makeIconButton(game, Iconfont.home, 'Home', 30, () {
+                        game.gameManager.soundManager.playCick();
+                        game.home();
+                      }),
+                      SizedBox(height: 20 / scale),
+                      makeIconButton(game, Iconfont.restart, 'Restart', 15, () {
+                        game.gameManager.soundManager.playCick();
+                        game.restart();
+                      }),
+                      SizedBox(height: 20 / scale),
+                      makeIconButton(game, Iconfont.play, 'Resume', 5, () {
+                        game.gameManager.soundManager.playCick();
+                        game.resume();
+                      }, color: const Color(0xFF48C9B0)),
+                      SizedBox(height: 20 / scale),
+                    ],
                   ),
-                  Center(
-                    child: Column(
-                      children: [
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            SoundSwitchButton(game: game),
-                          ],
-                        ),
-                        SizedBox(height: 20 / scale),
-                        Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            makeIconButton(game, Iconfont.home, 'Home', 30, () {
-                              game.gameManager.soundManager.playCick();
-                              game.home();
-                            }),
-                            SizedBox(height: 20 / scale),
-                            makeIconButton(
-                                game, Iconfont.restart, 'Restart', 15, () {
-                              game.gameManager.soundManager.playCick();
-                              game.restart();
-                            }),
-                            SizedBox(height: 20 / scale),
-                            makeIconButton(game, Iconfont.play, 'Resume', 5,
-                                () {
-                              game.gameManager.soundManager.playCick();
-                              game.resume();
-                            }, color: const Color(0xFF48C9B0)),
-                          ],
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
+                ),
               ),
             ),
           ),
