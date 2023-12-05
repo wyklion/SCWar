@@ -3,7 +3,7 @@ import 'package:flame/events.dart';
 import 'package:flame/flame.dart';
 import 'package:flutter/material.dart';
 import 'dart:developer';
-import 'package:scwar/game.dart';
+import 'package:scwar/game/game.dart';
 import 'package:scwar/utils/number_util.dart';
 
 class GameUI extends Component with HasGameRef<SCWarGame> {

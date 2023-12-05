@@ -5,7 +5,7 @@ import 'package:flame/game.dart';
 import 'package:flame/events.dart';
 import 'package:flame/extensions.dart';
 import 'package:scwar/layers/game_ui.dart';
-import 'game_config.dart';
+import '../config/game_config.dart';
 import 'game_manager.dart';
 
 class SCWarGame extends FlameGame<SCWarWorld> with TapDetector, ScaleDetector {

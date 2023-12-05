@@ -1,4 +1,4 @@
-import 'package:scwar/game_config.dart';
+import 'package:scwar/config/game_config.dart';
 
 class EntityInfo {
   double value;

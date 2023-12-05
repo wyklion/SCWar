@@ -3,7 +3,7 @@ import 'package:flame/game.dart';
 import 'package:scwar/layers/gameover_overlay.dart';
 import 'package:scwar/layers/home_overlay.dart';
 import 'package:scwar/layers/pause_overlay.dart';
-import 'game.dart';
+import 'game/game.dart';
 
 class SpaceShooterGame extends FlameGame {}
 

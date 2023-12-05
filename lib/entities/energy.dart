@@ -2,7 +2,7 @@ import 'dart:developer';
 import 'package:flame/effects.dart';
 import 'package:flutter/rendering.dart';
 import 'package:scwar/utils/number_util.dart';
-import '../game_config.dart';
+import '../config/game_config.dart';
 import 'entity.dart';
 
 class Energy extends BoardEntity {
@@ -23,13 +23,22 @@ class Energy extends BoardEntity {
   @override
   Future<void> takeDamage(double damage) async {
     // log('energy takeDamage $damage');
+    // 不能二次受击
+    if (!isValid) {
+      return;
+    }
+    isValid = false;
     if (type == EntityType.energy) {
       var targetPos = gameManager.prepareTowerPos;
       gameManager.addPreMerge(value);
-      var moveEffect = MoveToEffect(targetPos, EffectController(duration: 0.3),
-          onComplete: () {
-        dead();
-      });
+      var moveEffect = MoveToEffect(
+        targetPos,
+        EffectController(duration: 0.3),
+        onComplete: () {
+          gameManager.onEnergyArrived(this);
+          dead();
+        },
+      );
       add(moveEffect);
       await moveEffect.removed;
     } else if (type == EntityType.energyMultiply) {

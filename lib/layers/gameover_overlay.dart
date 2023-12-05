@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:scwar/game.dart';
+import 'package:scwar/game/game.dart';
 import 'package:scwar/layers/layer_util.dart';
 import 'package:scwar/utils/number_util.dart';
 

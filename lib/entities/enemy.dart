@@ -3,7 +3,7 @@ import 'dart:developer';
 import 'package:flame/components.dart';
 import 'package:flame/effects.dart';
 import 'package:flutter/material.dart';
-import '../game_config.dart';
+import '../config/game_config.dart';
 import 'entity.dart';
 
 class Enemy extends BoardEntity {

@@ -7,14 +7,14 @@ import 'package:flame/game.dart';
 import 'package:scwar/utils/local_storage.dart';
 import 'package:scwar/utils/particles.dart';
 import 'package:scwar/utils/sound_manager.dart';
-import 'entities/energy.dart';
-import 'entities/entity.dart';
-import 'entities/enemy.dart';
-import 'entities/tower.dart';
+import '../entities/energy.dart';
+import '../entities/entity.dart';
+import '../entities/enemy.dart';
+import '../entities/tower.dart';
 import 'game.dart';
-import 'game_config.dart';
-import 'utils/generator.dart';
-import 'utils/size_config.dart';
+import '../config/game_config.dart';
+import '../utils/generator.dart';
+import '../utils/size_config.dart';
 
 enum GameState {
   ready,
@@ -158,6 +158,8 @@ class GameManager {
     // addTower(1, 0, 1.2e32);
     // addTower(1, 1, 1.2e90);
     // addTower(1, 2, 1.2e168);
+    // addEnergy(2, 1, 2, EntityType.energyMultiply);
+    // addEnergy(3, 1, 2, EntityType.energyMultiply);
     // addEnergy(2, 0, 2, EntityType.energy);
     // addEnemy(3, 0, 8, 1);
     // addEnergy(4, 0, 2, EntityType.energy);
@@ -273,7 +275,8 @@ class GameManager {
     if (hasTarget) {
       await _attackCompleter!.future;
     }
-    mergePrepareTower();
+    preMerges.clear();
+    // mergePrepareTower();
     setState(GameState.enemyMove);
   }
 
@@ -377,6 +380,27 @@ class GameManager {
 
   void addPreMerge(double value) {
     preMerges.add(value);
+  }
+
+  void onEnergyArrived(Energy energy) {
+    if (prepareTower == null) {
+      addPrepareTower(energy.value);
+      preMerges.remove(energy.value);
+      return;
+    }
+    double s = prepareTower!.value;
+    double big = prepareTower!.value;
+    for (var m in preMerges) {
+      s += m;
+      if (m > big) {
+        big = m;
+      }
+    }
+    // 合并资源
+    while (big * 2 <= s) {
+      big *= 2;
+    }
+    prepareTower!.setValue(big);
   }
 
   void mergePrepareTower() {
@@ -560,7 +584,7 @@ class GameManager {
     soundManager.playDead();
     localStorage.removeGame();
     var high = localStorage.getHighScore();
-    if (high == null || score > high) {
+    if (score > high) {
       localStorage.setHighScore(score);
     }
     await Future.delayed(const Duration(milliseconds: 500));

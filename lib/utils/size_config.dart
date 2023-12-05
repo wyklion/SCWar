@@ -3,7 +3,7 @@ import 'package:flame/components.dart';
 import 'package:flame/game.dart';
 import 'package:flutter/material.dart';
 
-import '../game_config.dart';
+import '../config/game_config.dart';
 
 class SizeConfig {
   late Vector2 size;

@@ -3,7 +3,7 @@ import 'dart:math';
 import 'package:flame/components.dart';
 import 'package:flame/particles.dart';
 import 'package:flutter/material.dart';
-import 'package:scwar/game_config.dart';
+import 'package:scwar/config/game_config.dart';
 
 class RectComponent extends Component {
   @override

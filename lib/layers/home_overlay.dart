@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:scwar/game.dart';
+import 'package:scwar/config/config.dart';
+import 'package:scwar/game/game.dart';
 import 'package:scwar/utils/number_util.dart';
 
 Widget buidlHomeOverlay(BuildContext buildContext, SCWarGame game) {
@@ -53,7 +54,7 @@ Widget buidlHomeOverlay(BuildContext buildContext, SCWarGame game) {
                   ),
                   const SizedBox(height: 20),
                   const Text(
-                    'v0.0.9',
+                    Config.version,
                     style: TextStyle(color: Colors.black87),
                   ),
                 ],

@@ -3,9 +3,9 @@ import 'package:flame/components.dart';
 import 'package:flame/effects.dart';
 import 'package:flutter/material.dart';
 import 'package:flame/events.dart';
-import 'package:scwar/game_manager.dart';
+import 'package:scwar/game/game_manager.dart';
 import 'package:scwar/utils/number_util.dart';
-import '../game_config.dart';
+import '../config/game_config.dart';
 import 'bullet.dart';
 import 'entity.dart';
 
@@ -16,7 +16,7 @@ enum TowerState {
   backing,
 }
 
-class Tower extends Entity with TapCallbacks, DragCallbacks {
+class Tower extends Entity with TapCallbacks, DragCallbacks, HasPaint {
   int r;
   int c;
   TowerState state = TowerState.ready;
@@ -186,6 +186,17 @@ class Tower extends Entity with TapCallbacks, DragCallbacks {
     }
     // 更新炮塔外观或其他操作
     setTextValue(value);
+    var upgradeEffect = SequenceEffect([
+      ColorEffect(
+        const Color(0xFF7f16ff),
+        EffectController(duration: 0.1),
+      ),
+      ColorEffect(
+        ColorMap.tower,
+        EffectController(duration: 0.1),
+      ),
+    ], repeatCount: 2);
+    add(upgradeEffect);
   }
 
   Future<void> shoot() async {

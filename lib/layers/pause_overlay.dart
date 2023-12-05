@@ -1,7 +1,7 @@
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
-import 'package:scwar/game.dart';
+import 'package:scwar/game/game.dart';
 import 'package:scwar/layers/layer_util.dart';
 
 class SoundSwitchButton extends StatefulWidget {

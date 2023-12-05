@@ -3,14 +3,15 @@ import 'dart:developer';
 import 'package:flame/components.dart';
 import 'package:flame/effects.dart';
 import 'package:flutter/material.dart';
-import 'package:scwar/game_manager.dart';
+import 'package:scwar/game/game_manager.dart';
 import 'package:scwar/utils/number_util.dart';
-import '../game.dart';
-import '../game_config.dart';
+import '../game/game.dart';
+import '../config/game_config.dart';
 
 abstract class Entity extends PositionComponent with HasGameRef<SCWarGame> {
   final double score;
   double value;
+  bool isValid = true;
   late EntityType type;
   late TextComponent text;
   late GameManager gameManager;

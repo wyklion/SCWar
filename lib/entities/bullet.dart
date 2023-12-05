@@ -4,9 +4,9 @@ import 'package:flame/effects.dart';
 import 'package:flutter/material.dart';
 import 'package:scwar/entities/enemy.dart';
 import 'package:scwar/entities/entity.dart';
-import 'package:scwar/game.dart';
+import 'package:scwar/game/game.dart';
 import 'package:scwar/utils/number_util.dart';
-import '../game_config.dart';
+import '../config/game_config.dart';
 
 class Bullet extends CircleComponent with HasGameRef<SCWarGame> {
   double value;

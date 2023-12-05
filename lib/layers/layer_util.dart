@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:scwar/game.dart';
+import 'package:scwar/game/game.dart';
 
 Widget makeTextButton(SCWarGame game, String name, VoidCallback onClick,
     {Color color = const Color(0xFFF7E7CE)}) {

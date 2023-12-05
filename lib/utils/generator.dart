@@ -1,8 +1,8 @@
 import 'dart:developer';
 import 'dart:math' as math;
 import 'package:scwar/entities/entity_info.dart';
-import 'package:scwar/game_config.dart';
-import '../game_manager.dart';
+import 'package:scwar/config/game_config.dart';
+import '../game/game_manager.dart';
 
 class Generator {
   GameManager gameManager;
@@ -66,7 +66,7 @@ class Generator {
     } else {
       afterBigEnemyCount = 0;
       base = (base * 3 + gameManager.bigTower) / 2;
-      result = base + _random.nextDouble() * base;
+      result = base * 2 + _random.nextDouble() * base;
     }
     afterEnergyCount++;
     // log('power:${gameManager.towerPower}, base:$base, b:$b, result: $result');
@@ -139,15 +139,14 @@ class Generator {
         break;
       }
       if (b4[i] == 1) {
-        if (_random.nextInt(3) == 1) {
-          if (i < b4.length - 1) {
-            b4[i + 1] = 0;
-          }
+        if (_random.nextInt(4) == 1) {
           queue[1][i].setEnemy(getNextEnemyValue(size: 2), 2);
           queue[1][i + 1].setEnemy(0, 2);
           queue[0][i].setEnemy(0, 2);
           queue[0][i + 1].setEnemy(0, 2);
           count4++;
+          // 下一列没法生成大怪
+          i++;
         }
       }
     }
@@ -162,44 +161,28 @@ class Generator {
         left--;
       }
     }
-    if (_count == 0) {
-      // 第一次生成的时候，一个资源，一个怪。
-      var (makeRow, leftRow) = getRandomCols(row, 1, 10);
-      row = leftRow;
-      for (var i = 0; i < makeRow.length; i++) {
-        queue[0][makeRow[i]].setEnergy(getNextEnegyValue(), EntityType.energy);
+    var tryCount = row.length;
+    for (var i = 0; i < tryCount; i++) {
+      if (left <= 0) {
+        break;
       }
-      afterEnergyCount = 0;
-      left -= 1;
-      if (left > 0) {
-        var (makeEnemy, _) = getRandomCols(row, left, 7);
-        for (var i = 0; i < makeEnemy.length; i++) {
-          queue[0][makeEnemy[i]].setEnemy(getNextEnemyValue(), 1);
-        }
-      }
-    } else {
-      var tryCount = row.length;
-      for (var i = 0; i < tryCount; i++) {
-        if (left <= 0) {
-          break;
-        }
-        var idx = _random.nextInt(row.length);
-        var col = row[idx];
-        row.removeAt(idx);
-        if ((i == 0 && tryCount >= 3) || _random.nextInt(2) == 1) {
-          if (afterEnergyCount >= 2 &&
-              (afterEnergyCount >= 10 || _random.nextInt(3) == 1)) {
-            afterEnergyCount = 0;
-            if (_random.nextInt(3) == 1) {
-              queue[0][col].setEnergy(2, EntityType.energyMultiply);
-            } else {
-              queue[0][col].setEnergy(getNextEnegyValue(), EntityType.energy);
-            }
+      var idx = _random.nextInt(row.length);
+      var col = row[idx];
+      row.removeAt(idx);
+      if ((i == 0 && tryCount >= 3) || _random.nextInt(2) == 1) {
+        // if (afterEnergyCount >= 2 &&
+        //     (afterEnergyCount >= 10 || _random.nextInt(3) == 1)) {
+        if (afterEnergyCount >= 6 || _random.nextInt(3) == 1) {
+          afterEnergyCount = 0;
+          if (_random.nextInt(3) == 1) {
+            queue[0][col].setEnergy(2, EntityType.energyMultiply);
           } else {
-            queue[0][col].setEnemy(getNextEnemyValue(), 1);
+            queue[0][col].setEnergy(getNextEnegyValue(), EntityType.energy);
           }
-          left--;
+        } else {
+          queue[0][col].setEnemy(getNextEnemyValue(), 1);
         }
+        left--;
       }
     }
   }
@@ -217,6 +200,21 @@ class Generator {
     return (result, row);
   }
 
+  /// 第一行生成一个资源，一个怪。
+  void makeFirstRow() {
+    var row = [0, 1, 2, 3, 4];
+    var (makeRow, leftRow) = getRandomCols(row, 1, 10);
+    row = leftRow;
+    for (var i = 0; i < makeRow.length; i++) {
+      queue[0][makeRow[i]].setEnergy(getNextEnegyValue(), EntityType.energy);
+    }
+    afterEnergyCount = 0;
+    var (makeEnemy, _) = getRandomCols(row, 1, 7);
+    for (var i = 0; i < makeEnemy.length; i++) {
+      queue[0][makeEnemy[i]].setEnemy(getNextEnemyValue(), 1);
+    }
+  }
+
   /// 第二行         0 1 2 3 4
   ///                  下移
   /// 第一行         0 1 2 3 4
@@ -226,15 +224,19 @@ class Generator {
   /// 有两行预生成行。每次生成时，先在第一行生成小怪。
   ///   在一行上限怪数内补充生成小怪/资源。
   ///   如果可以生成且剩三个格及以上，至少生成一个，之后50%机率生成东西
-  ///     其中1/3机率生成炮资源（连续生成2个怪及以内不会生成资源。连续10个怪后必出资源）
+  ///     其中1/3机率生成炮资源（连续6个怪后必出资源）
   ///       资源中1/3出随机2倍，2/3出普通资源
   ///     2/3机率生成怪。
   /// 返回第一行数据给外部。
   /// 然后在第二行可生成位置（会被第一行大怪档住）生成大怪。
-  ///   在大怪数上限内，1/3机率生成大怪。
+  ///   在大怪数上限内，1/4机率生成大怪。
   List<EntityInfo> getNextRow() {
     _refreshBase();
-    makeSmallEntity();
+    if (_count == 0) {
+      makeFirstRow();
+    } else {
+      makeSmallEntity();
+    }
     List<EntityInfo> row = [];
     for (var i = 0; i < GameConfig.col; i++) {
       var e = queue[0][i];
