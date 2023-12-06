@@ -4,14 +4,18 @@ import 'package:flame/components.dart';
 import 'package:flame/game.dart';
 import 'package:flame/events.dart';
 import 'package:flame/extensions.dart';
+import 'package:scwar/game/player_data.dart';
 import 'package:scwar/layers/game_ui.dart';
+import 'package:scwar/utils/local_storage.dart';
 import '../config/game_config.dart';
 import 'game_manager.dart';
 
 class SCWarGame extends FlameGame<SCWarWorld> with TapDetector, ScaleDetector {
   late GameManager gameManager;
   late PositionComponent container;
-  late GameUI menu;
+  PlayerData playerData = PlayerData();
+  late GameUI ui;
+  late LocalStorage localStorage;
 
   SCWarGame()
       : super(
@@ -23,6 +27,8 @@ class SCWarGame extends FlameGame<SCWarWorld> with TapDetector, ScaleDetector {
 
   @override
   FutureOr<void> onLoad() async {
+    localStorage = await LocalStorage.getInstance();
+    playerData.loadJson(localStorage.getPlayerJson());
     await gameManager.load();
     overlays.add('main');
     return super.onLoad();
@@ -49,7 +55,7 @@ class SCWarGame extends FlameGame<SCWarWorld> with TapDetector, ScaleDetector {
   void start() {
     overlays.remove('main');
     overlays.add('game');
-    camera.viewport.add(menu = GameUI());
+    camera.viewport.add(ui = GameUI());
     world.startGame();
     gameManager.startGame();
   }
@@ -63,6 +69,9 @@ class SCWarGame extends FlameGame<SCWarWorld> with TapDetector, ScaleDetector {
   }
 
   void end() {
+    playerData.updateGameData(gameManager.data);
+    var j = playerData.saveJson();
+    localStorage.setPlayerJson(j);
     overlays.add('gameover');
   }
 
@@ -71,7 +80,7 @@ class SCWarGame extends FlameGame<SCWarWorld> with TapDetector, ScaleDetector {
     world.clear();
     overlays.clear();
     overlays.add('main');
-    menu.removeFromParent();
+    ui.removeFromParent();
   }
 
   void restart() {

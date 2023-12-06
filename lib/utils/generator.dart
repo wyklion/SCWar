@@ -2,21 +2,22 @@ import 'dart:developer';
 import 'dart:math' as math;
 import 'package:scwar/entities/entity_info.dart';
 import 'package:scwar/config/game_config.dart';
+import 'package:scwar/game/game_data.dart';
 import 'package:scwar/utils/number_util.dart';
 import '../game/game_manager.dart';
 
 class Generator {
   GameManager gameManager;
-  double _base = 1;
-  int _baseLevel = 0;
   int _count = 0;
   int enemyCount = 0;
   int afterBigEnemyCount = 0;
   int afterEnergyCount = 0;
   late List<List<EntityInfo>> queue;
   late math.Random _random;
+  late GameData _data;
   Generator(this.gameManager) {
     _random = gameManager.random;
+    _data = gameManager.data;
     queue = [];
     for (var i = 0; i < GameConfig.row; i++) {
       queue.add([]);
@@ -27,8 +28,6 @@ class Generator {
   }
 
   void init() {
-    _base = 1;
-    _baseLevel = 0;
     _count = 0;
     enemyCount = 0;
     afterBigEnemyCount = 0;
@@ -40,23 +39,13 @@ class Generator {
     }
   }
 
-  /// 资源基础分：炮总分80（5炮平均分16）以上开始基础分升到2，5炮平均32，基础分到4。生成资源按概率生成1-3倍。
-  /// 炮塔分等级：总分从80开始是1级，每多一倍加1级。怪分成生有加成。
-  void _refreshBase() {
-    double power = gameManager.towerPower / 80;
-    while (_base <= power) {
-      _base *= 2;
-      _baseLevel++;
-    }
-  }
-
   /// 生成怪基础分：炮塔总分除以5取整。
   /// 小怪值：基础分的1倍到3倍之间
   /// 大怪值：取最大炮塔和基础分3倍的平均值为基础，生成基础的2到3倍之间。
-  /// 根据炮分等级加成*(1+0.002*_baseLevel)
+  /// 根据炮分等级加成*(1+0.002*baseLevel)
   double getNextEnemyValue({int? size = 1}) {
     _count++;
-    double base = (gameManager.towerPower + 1) / 5;
+    double base = (_data.towerPower + 1) / 5;
     if (base < 1) {
       base = 1;
     }
@@ -70,37 +59,37 @@ class Generator {
       afterBigEnemyCount++;
     } else {
       afterBigEnemyCount = 0;
-      base = (base * 3 + gameManager.bigTower) / 2;
+      base = (base * 3 + _data.bigTower) / 2;
       result = base * 2 + _random.nextDouble() * base;
     }
     afterEnergyCount++;
     // 炮分等级加成
-    result *= (1 + 0.002 * _baseLevel);
+    result *= (1 + 0.002 * _data.baseLevel);
     if (result < 99999999) {
       result = result.floorToDouble();
     }
-    // log('power:${gameManager.towerPower}, base:$base, baseLevel:$_baseLevel result: $result');
+    // log('power:${_data.towerPower}, base:$base, baseLevel:$_data.baseLevel result: $result');
     return result;
   }
 
   /// 资源值生成：60%基础分的1倍，30%基础分2倍，10%基础分4倍。
   double getNextEnegyValue() {
     _count++;
-    double result = _base;
+    double result = _data.base;
     int r = _random.nextInt(10);
     if (r >= 6 && r <= 8) {
-      result = _base * 2;
+      result = _data.base * 2;
     } else if (r >= 9) {
-      result = _base * 4;
+      result = _data.base * 4;
     }
     return result;
   }
 
   // 一行最多几个大怪，炮塔分4分以下没有，100分以下1个，以上2个。
   int getMaxBlock4Count() {
-    if (gameManager.towerPower < 4) {
+    if (_data.towerPower < 4) {
       return 0;
-    } else if (gameManager.towerPower < 100) {
+    } else if (_data.towerPower < 100) {
       return 1;
     } else {
       return 2;
@@ -109,11 +98,11 @@ class Generator {
 
   // 一行怪最多占几格：炮分4以下2格，64以下3格，128以下4格，以上5格。
   int getMaxCount() {
-    if (gameManager.towerPower < 4) {
+    if (_data.towerPower < 4) {
       return 2;
-    } else if (gameManager.towerPower < 64) {
+    } else if (_data.towerPower < 64) {
       return 3;
-    } else if (gameManager.towerPower < 512) {
+    } else if (_data.towerPower < 512) {
       return 4;
     } else {
       return 5;
@@ -237,7 +226,6 @@ class Generator {
   /// 然后在第二行可生成位置（会被第一行大怪档住）生成大怪。
   ///   在大怪数上限内，1/4机率生成大怪。
   List<EntityInfo> getNextRow() {
-    _refreshBase();
     if (_count == 0) {
       makeFirstRow();
     } else {
@@ -251,7 +239,7 @@ class Generator {
       queue[1][i].setEmpty();
     }
     makeBigEnemy();
-    // log('towerPower:${gameManager.towerPower} base:${_base.toString()}');
+    // log('towerPower:${_data.towerPower} base:${_data.base.toString()}');
     // log('queue[1]: ${queue[1].toString()}');
     // log('queue[0]: ${queue[0].toString()}');
     // log('new row: ${row.toString()}');

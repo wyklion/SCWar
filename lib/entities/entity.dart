@@ -96,10 +96,10 @@ abstract class BoardEntity extends Entity {
 
   void moveToEnd() {
     log('entity move to end $r $c');
-    gameManager.removeBoardEntity(this);
+    gameManager.removeBoardEntity(this, false);
   }
 
   void dead() {
-    gameManager.removeBoardEntity(this);
+    gameManager.removeBoardEntity(this, true);
   }
 }

@@ -115,4 +115,22 @@ class LocalStorage {
     // log('save game: $str');
     return setString('latestGame', str);
   }
+
+  // 读玩家信息
+  dynamic getPlayerJson() {
+    var playerStr = getString('playerData');
+    // log('load playerData: $json');
+    if (playerStr == null) {
+      return null;
+    }
+    final json = jsonDecode(playerStr);
+    return json;
+  }
+
+  // 存玩家信息
+  Future<bool> setPlayerJson(dynamic j) {
+    var str = jsonEncode(j);
+    // log('save playerData: $str');
+    return setString('playerData', str);
+  }
 }

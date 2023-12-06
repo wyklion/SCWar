@@ -4,6 +4,7 @@ import 'dart:math' as math;
 import 'package:flame/components.dart';
 import 'package:flame/flame.dart';
 import 'package:flame/game.dart';
+import 'package:scwar/game/game_data.dart';
 import 'package:scwar/utils/local_storage.dart';
 import 'package:scwar/utils/particles.dart';
 import 'package:scwar/utils/sound_manager.dart';
@@ -33,10 +34,7 @@ class GameManager {
   List<Enemy> enemies = [];
   List<Energy> energies = [];
   List<double> preMerges = [];
-  int playerMoveCount = 0;
-  double towerPower = 0;
-  double bigTower = 0;
-  double score = 0;
+  GameData data = GameData();
   GameState _currentState = GameState.ready;
   int _attackCount = 0;
   Completer? _attackCompleter;
@@ -56,7 +54,7 @@ class GameManager {
   }
 
   void test() {
-    // score = 3523511;
+    // data.score = 3523511;
     // game.menu.updateScore();
     // addTower(0, 0, 4);
     // addTower(0, 1, 2048);
@@ -89,12 +87,12 @@ class GameManager {
   }
 
   Future<void> load() async {
+    localStorage = game.localStorage;
     sizeConfig = SizeConfig(game.size);
     await Flame.images.loadAll([
       // 'blue.png',
       'pause_icon.png',
     ]);
-    await loadStorage();
     await soundManager.load();
     setSoundOn(localStorage.getSoundOn());
   }
@@ -104,10 +102,6 @@ class GameManager {
     localStorage.setSoundOn(on);
   }
 
-  Future<void> loadStorage() async {
-    localStorage = await LocalStorage.getInstance();
-  }
-
   void saveGame() {
     var j = toJson();
     localStorage.setGameJson(j);
@@ -115,12 +109,11 @@ class GameManager {
 
   Map<String, dynamic> toJson() {
     dynamic json = {
-      'score': score,
-      'moveCount': score,
       'preTower': prepareTower == null ? 0 : prepareTower!.value,
       'towers': [],
       'board': [],
     };
+    data.saveJson(json);
     for (var i = 0; i < towers.length; i++) {
       var t = towers[i];
       json['towers'].add([t.r, t.c, t.value]);
@@ -145,9 +138,9 @@ class GameManager {
       return false;
     }
     clear();
-    score = json['score'];
-    game.menu.updateScore();
-    playerMoveCount = json['moveCount'];
+
+    data.loadJson(json);
+    game.ui.updateAll();
     var preT = json['preTower'];
     if (preT > 0) {
       addPrepareTower(preT);
@@ -167,6 +160,7 @@ class GameManager {
       var t = jtowers[i];
       addTower(t[0], t[1], t[2]);
     }
+    data.computeAfterLoad();
     _currentState = GameState.playerMove;
     return true;
   }
@@ -222,11 +216,8 @@ class GameManager {
       }
     }
     preMerges.clear();
-    playerMoveCount = 0;
-    towerPower = 0;
-    bigTower = 0;
-    score = 0;
-    game.menu.updateScore();
+    data.clear();
+    game.ui.updateAll();
     _currentState = GameState.ready;
   }
 
@@ -249,12 +240,14 @@ class GameManager {
   }
 
   void playerMove() {
+    game.ui.updateEnemyData();
     saveGame();
   }
 
   void startShooting() async {
     soundManager.playShoot();
-    playerMoveCount++;
+    data.computeMove();
+    game.ui.updatePlayerData();
     _currentState = GameState.shooting;
     List<Future<void>> tasks = [];
     var hasTarget = false;
@@ -448,9 +441,9 @@ class GameManager {
     var pos = sizeConfig.getTowerPos(r, c);
     var tower = Tower(r, c, pos.x, pos.y, value);
     towers.add(tower);
-    towerPower += value;
-    if (value > bigTower) {
-      bigTower = value;
+    data.towerPower += value;
+    if (value > data.bigTower) {
+      data.bigTower = value;
     }
     game.addContent(tower);
     // log('addTower $pos $value');
@@ -481,13 +474,14 @@ class GameManager {
   // }
 
   void moveTower(Tower tower, int r, int c) {
+    data.moveCount++;
     soundManager.playMove();
     if (tower == prepareTower) {
       prepareTower = null;
       towers.add(tower);
-      towerPower += tower.value;
-      if (tower.value > bigTower) {
-        bigTower = tower.value;
+      data.towerPower += tower.value;
+      if (tower.value > data.bigTower) {
+        data.bigTower = tower.value;
       }
     }
     var tp = sizeConfig.getTowerPos(r, c);
@@ -500,22 +494,23 @@ class GameManager {
   }
 
   Future<void> swapTower(Tower tower1, Tower tower2) async {
+    data.swapCount++;
     soundManager.playSwap();
     var tempR = tower1.r;
     var tempC = tower1.c;
     tower1.setPos(tower2.r, tower2.c);
     tower2.setPos(tempR, tempC);
     if (tower1 == prepareTower) {
-      towerPower += (tower1.value - tower2.value);
+      data.towerPower += (tower1.value - tower2.value);
       prepareTower = tower2;
       towers.remove(tower2);
       towers.add(tower1);
       // 这种交换情况重算一下
       if (tower1.value < tower2.value) {
-        bigTower = 0;
+        data.bigTower = 0;
         for (var i = 0; i < towers.length; i++) {
-          if (towers[i].value > bigTower) {
-            bigTower = towers[i].value;
+          if (towers[i].value > data.bigTower) {
+            data.bigTower = towers[i].value;
           }
         }
       }
@@ -525,21 +520,22 @@ class GameManager {
 
   void doubleTower(Tower tower) {
     soundManager.playMerge();
-    towerPower += tower.value;
+    data.towerPower += tower.value;
     tower.upgrade();
-    if (tower.value > bigTower) {
-      bigTower = tower.value;
+    if (tower.value > data.bigTower) {
+      data.bigTower = tower.value;
     }
   }
 
   void upgradeTower(Tower tower, bool fromPrepare) {
+    data.mergeCount++;
     soundManager.playMerge();
     if (fromPrepare) {
-      towerPower += tower.value;
+      data.towerPower += tower.value;
     }
     tower.upgrade();
-    if (tower.value > bigTower) {
-      bigTower = tower.value;
+    if (tower.value > data.bigTower) {
+      data.bigTower = tower.value;
     }
     setState(GameState.shooting);
   }
@@ -557,14 +553,22 @@ class GameManager {
     // log('addEnemy ($r,$c) $pos $value');
   }
 
-  void removeBoardEntity(BoardEntity entity) {
+  void removeBoardEntity(BoardEntity entity, bool dead) {
     board[entity.r][entity.c] = null;
     if (entity is Enemy) {
+      data.enemyCount++;
       enemies.remove(entity);
       // 杀怪加分
-      score += entity.score;
-      game.menu.updateScore();
+      data.score += entity.score;
+      game.ui.updateScore();
     } else if (entity is Energy) {
+      if (dead) {
+        if (entity.type == EntityType.energy) {
+          data.energyCount++;
+        } else if (entity.type == EntityType.energyMultiply) {
+          data.energyMultiplyCount++;
+        }
+      }
       energies.remove(entity);
     }
     entity.removeFromParent();
@@ -584,8 +588,8 @@ class GameManager {
     soundManager.playDead();
     localStorage.removeGame();
     var high = localStorage.getHighScore();
-    if (score > high) {
-      localStorage.setHighScore(score);
+    if (data.score > high) {
+      localStorage.setHighScore(data.score);
     }
     await Future.delayed(const Duration(milliseconds: 500));
     game.end();
@@ -623,11 +627,6 @@ class GameManager {
       }
     }
     return (null, sizeConfig.findNearTowerPos(x, y));
-  }
-
-  void handlePlayerMove() {
-    playerMoveCount++;
-    // 更新炮塔和敌人的位置、数值等
   }
 
   void dump() {
