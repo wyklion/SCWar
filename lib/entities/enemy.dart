@@ -35,13 +35,12 @@ import 'entity.dart';
 class Enemy extends BoardEntity {
   late double target;
   HurtEffect? hurtEffect;
-  Enemy(int r, int c, double x, double y, double value, int body)
-      : super(r, c, x, y, body, value) {
+  Enemy(super.r, super.c, super.x, super.y, super.value, {super.body}) {
     target = value;
-    final size = Vector2.all(GameConfig.baseLen);
-    if (body == 2) {
-      size.setAll(GameConfig.doubleBaseLen);
-    }
+    // final size = Vector2.all(GameConfig.baseLen);
+    // if (body == 2) {
+    //   size.setAll(GameConfig.doubleBaseLen);
+    // }
     // var img = Flame.images.fromCache('blue.png');
     // final sprite = Sprite(img);
     // final player =

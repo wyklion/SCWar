@@ -85,14 +85,6 @@ class LocalStorage {
     return setBool('sound', on);
   }
 
-  double getHighScore() {
-    return getDouble('highScore') ?? 0;
-  }
-
-  Future<bool> setHighScore(double score) {
-    return setDouble('highScore', score);
-  }
-
   // 清除游戏
   Future<bool> removeGame() {
     return remove('latestGame');

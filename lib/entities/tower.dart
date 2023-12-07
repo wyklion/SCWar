@@ -26,7 +26,7 @@ class Tower extends Entity with TapCallbacks, DragCallbacks {
   Tower? mergingTower;
   Tower? swapTower;
   (int, int)? movePos;
-  Tower(this.r, this.c, double x, double y, double value) : super(x, y, value) {
+  Tower(this.r, this.c, super.x, super.y, super.value) {
     paint.color = ColorMap.tower;
     _rect = Rect.fromCenter(
         center: Offset.zero,
@@ -40,10 +40,7 @@ class Tower extends Entity with TapCallbacks, DragCallbacks {
   @override
   String getDisplay({double? value}) {
     var v = value ?? this.value;
-    if (v < 16384) {
-      return '${v.toInt()}';
-    }
-    return NumberUtil.convertValue(v, 0);
+    return NumberUtil.getTowerString(v);
   }
 
   void setPos(int r, int c) {

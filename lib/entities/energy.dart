@@ -6,10 +6,7 @@ import '../config/game_config.dart';
 import 'entity.dart';
 
 class Energy extends BoardEntity {
-  Energy(int r, int c, double x, double y, double value, EntityType type)
-      : super(r, c, x, y, 1, value) {
-    this.type = type;
-  }
+  Energy(super.r, super.c, super.x, super.y, super.value, {super.type});
 
   @override
   String getDisplay({double? value}) {

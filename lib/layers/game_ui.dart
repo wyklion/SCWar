@@ -89,9 +89,9 @@ class DataComponent extends PositionComponent with HasGameRef<SCWarGame> {
   final scoreStyle = const TextStyle(
       fontSize: 30, fontWeight: FontWeight.bold, color: Color(0xFFFFCD00));
   final dataLabelStyle = const TextStyle(
-      fontSize: 20, fontWeight: FontWeight.bold, color: Color(0xFFD3E2F2));
+      fontSize: 20, fontWeight: FontWeight.bold, color: Color(0xFF6D7993));
   final dataStyle = const TextStyle(
-      fontSize: 20, fontWeight: FontWeight.w600, color: Color(0xFF6D7993));
+      fontSize: 20, fontWeight: FontWeight.w600, color: Color(0xFFD3E2F2));
   DataComponent()
       : super(
           position: Vector2(470, 220),

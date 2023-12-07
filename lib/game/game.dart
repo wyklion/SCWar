@@ -6,6 +6,7 @@ import 'package:flame/events.dart';
 import 'package:flame/extensions.dart';
 import 'package:scwar/game/player_data.dart';
 import 'package:scwar/layers/game_ui.dart';
+import 'package:scwar/layers/home.dart';
 import 'package:scwar/utils/local_storage.dart';
 import '../config/game_config.dart';
 import 'game_manager.dart';
@@ -30,6 +31,7 @@ class SCWarGame extends FlameGame<SCWarWorld> with TapDetector, ScaleDetector {
     localStorage = await LocalStorage.getInstance();
     playerData.loadJson(localStorage.getPlayerJson());
     await gameManager.load();
+    world.showHome();
     overlays.add('main');
     return super.onLoad();
   }
@@ -77,7 +79,7 @@ class SCWarGame extends FlameGame<SCWarWorld> with TapDetector, ScaleDetector {
 
   void home() {
     gameManager.clear();
-    world.clear();
+    world.goHome();
     overlays.clear();
     overlays.add('main');
     ui.removeFromParent();
@@ -100,6 +102,7 @@ class SCWarGame extends FlameGame<SCWarWorld> with TapDetector, ScaleDetector {
 }
 
 class SCWarWorld extends World with HasGameReference<SCWarGame> {
+  late HomeComponent home;
   late RectangleComponent enemyBg;
   late Component towerBg;
   @override
@@ -108,14 +111,21 @@ class SCWarWorld extends World with HasGameReference<SCWarGame> {
     // log('addbg');
   }
 
+  void showHome() {
+    home = HomeComponent();
+    add(home);
+  }
+
   void startGame() {
+    home.removeFromParent();
     addEnemyBg();
     addTowerBg();
   }
 
-  void clear() {
+  void goHome() {
     enemyBg.removeFromParent();
     towerBg.removeFromParent();
+    showHome();
   }
 
   void addBg() {

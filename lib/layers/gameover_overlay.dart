@@ -47,7 +47,7 @@ Widget buidlGameoverOverlay(BuildContext buildContext, SCWarGame game) {
                             ),
                             SizedBox(height: 5 / scale),
                             Text(
-                              'High Score: ${NumberUtil.getScoreString(game.gameManager.localStorage.getHighScore())}',
+                              'High Score: ${NumberUtil.getScoreString(game.playerData.highScore)}',
                               style: TextStyle(
                                 fontSize: 25 / scale,
                                 color: ColorMap.highScore,

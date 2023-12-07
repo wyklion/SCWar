@@ -47,7 +47,7 @@ Widget buidlHomeOverlay(BuildContext buildContext, SCWarGame game) {
               child: Column(
                 children: [
                   Text(
-                    'HighScore: ${NumberUtil.getScoreString(game.gameManager.localStorage.getHighScore())}',
+                    'HighScore: ${NumberUtil.getScoreString(game.playerData.highScore)}',
                     style: TextStyle(
                       color: ColorMap.highScore,
                       fontSize: 30 / scale,

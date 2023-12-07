@@ -47,6 +47,13 @@ class NumberUtil {
     return '${v.toStringAsFixed(fix)}$unit';
   }
 
+  static String getTowerString(double v) {
+    if (v < 16384) {
+      return '${v.toInt()}';
+    }
+    return NumberUtil.convertValue(v, 0);
+  }
+
   static String getScoreString(double v) {
     if (v < 99999999) {
       return '$v';

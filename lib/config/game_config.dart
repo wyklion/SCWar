@@ -8,27 +8,6 @@ enum EntityType {
   energyMultiply,
 }
 
-Map<int, (Color, double)> numberMap = {
-  1: (Colors.white, 1),
-  2: (Colors.white, 1),
-  4: (Colors.white, 1),
-  8: (Colors.white, 1),
-  16: (Colors.white, 1),
-  32: (Colors.white, 1),
-  64: (Colors.white, 1),
-  128: (Colors.white, 1),
-  256: (Colors.white, 1),
-  512: (Colors.white, 1),
-  1024: (Colors.white, 1),
-  2048: (Colors.white, 1),
-  4096: (Colors.white, 1),
-  8192: (Colors.white, 1),
-  16384: (Colors.white, 0.9),
-  32768: (Colors.white, 0.9),
-  65536: (Colors.white, 0.9),
-  131072: (Colors.white, 0.8),
-};
-
 final Map<String, Paint> paintMap = {
   'bg': Paint()..color = const Color(0xFF7FB3D5),
   'enemyBg': Paint()..color = const Color(0xFFD2E8E8),

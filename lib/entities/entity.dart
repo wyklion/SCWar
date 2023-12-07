@@ -12,12 +12,15 @@ abstract class Entity extends PositionComponent
     with HasGameRef<SCWarGame>, HasPaint {
   final double score;
   double value;
+  static final TextPaint renderer =
+      TextPaint(style: const TextStyle(fontSize: 20, color: Colors.white));
+  late TextComponent text;
   bool isValid = true;
   late EntityType type;
-  late TextComponent text;
   late GameManager gameManager;
 
-  Entity(double x, double y, this.score) : value = score {
+  Entity(double x, double y, this.score, {this.type = EntityType.enemy})
+      : value = score {
     size.setAll(GameConfig.baseLen);
     this.x = x;
     this.y = y;
@@ -25,19 +28,18 @@ abstract class Entity extends PositionComponent
 
   @override
   FutureOr<void> onLoad() {
-    (Color, double) nconfig = numberMap[value] ?? (Colors.white, 1);
-    final renderer =
-        TextPaint(style: TextStyle(fontSize: 20, color: nconfig.$1));
     text = TextComponent(
         text: getDisplay(),
         anchor: Anchor.center,
         textRenderer: renderer,
-        scale: Vector2.all(nconfig.$2),
+        scale: Vector2.all(textScale),
         size: Vector2.all(GameConfig.baseLen));
     add(text);
     gameManager = gameRef.gameManager;
     return super.onLoad();
   }
+
+  double get textScale => 1;
 
   String getDisplay({double? value}) {
     var v = value ?? this.value;
@@ -58,8 +60,15 @@ abstract class BoardEntity extends Entity {
   int r;
   int c;
   int body;
-  BoardEntity(this.r, this.c, double x, double y, this.body, double value)
-      : super(x, y, value);
+  BoardEntity(this.r, this.c, super.x, super.y, super.value,
+      {this.body = 1, super.type}) {
+    if (body == 2) {
+      size.setAll(GameConfig.doubleBaseLen);
+    }
+  }
+
+  @override
+  double get textScale => body == 2 ? 1.2 : 1;
 
   Future<void> createShow() async {
     scale.setAll(0);
