@@ -90,6 +90,12 @@ class LocalStorage {
     return remove('latestGame');
   }
 
+  // 是否有未结束游戏
+  bool hasGame() {
+    var gameStr = getString('latestGame');
+    return gameStr != null;
+  }
+
   // 读游戏
   dynamic getGameJson() {
     var gameStr = getString('latestGame');

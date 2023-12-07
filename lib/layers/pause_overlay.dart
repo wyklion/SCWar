@@ -100,7 +100,7 @@ Widget buidlPauseOverlay(BuildContext buildContext, SCWarGame game) {
                       SizedBox(height: 20 / scale),
                       makeIconButton(game, Iconfont.home, 'Home', 30, () {
                         game.gameManager.soundManager.playCick();
-                        game.home();
+                        game.goHome();
                       }),
                       SizedBox(height: 20 / scale),
                       makeIconButton(game, Iconfont.restart, 'Restart', 15, () {

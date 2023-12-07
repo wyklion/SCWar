@@ -7,6 +7,33 @@ import 'package:scwar/utils/number_util.dart';
 
 Widget buidlGameoverOverlay(BuildContext buildContext, SCWarGame game) {
   double scale = game.scale;
+  List<Widget> list = [
+    Text(
+      'GameOver',
+      style: TextStyle(
+          color: const Color(0xFF3B5998),
+          fontSize: 30 / scale,
+          fontWeight: FontWeight.bold),
+    ),
+    SizedBox(height: 20 / scale),
+    Text(
+      'Score: ${NumberUtil.getScoreString(game.gameManager.data.score)}',
+      style: TextStyle(
+        fontSize: 35 / scale,
+        color: ColorMap.score,
+      ),
+    ),
+    SizedBox(height: 5 / scale),
+  ];
+  if (game.gameManager.level == 0) {
+    list.add(Text(
+      'High Score: ${NumberUtil.getScoreString(game.playerData.highScore)}',
+      style: TextStyle(
+        fontSize: 25 / scale,
+        color: ColorMap.highScore,
+      ),
+    ));
+  }
   return Center(
     child: AspectRatio(
       aspectRatio: 9 / 16,
@@ -29,31 +56,7 @@ Widget buidlGameoverOverlay(BuildContext buildContext, SCWarGame game) {
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.end,
                           crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            Text(
-                              'GameOver',
-                              style: TextStyle(
-                                  color: const Color(0xFF3B5998),
-                                  fontSize: 30 / scale,
-                                  fontWeight: FontWeight.bold),
-                            ),
-                            SizedBox(height: 20 / scale),
-                            Text(
-                              'Score: ${NumberUtil.getScoreString(game.gameManager.data.score)}',
-                              style: TextStyle(
-                                fontSize: 35 / scale,
-                                color: ColorMap.score,
-                              ),
-                            ),
-                            SizedBox(height: 5 / scale),
-                            Text(
-                              'High Score: ${NumberUtil.getScoreString(game.playerData.highScore)}',
-                              style: TextStyle(
-                                fontSize: 25 / scale,
-                                color: ColorMap.highScore,
-                              ),
-                            ),
-                          ],
+                          children: list,
                         ),
                       ),
                     ),
@@ -65,7 +68,7 @@ Widget buidlGameoverOverlay(BuildContext buildContext, SCWarGame game) {
                         children: [
                           makeIconButton(game, Iconfont.home, 'Home', 30, () {
                             game.gameManager.soundManager.playCick();
-                            game.home();
+                            game.goHome();
                           }),
                           SizedBox(height: 20 / scale),
                           makeIconButton(game, Iconfont.restart, 'Restart', 15,

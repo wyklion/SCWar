@@ -19,6 +19,11 @@ import '../config/game_config.dart';
 import '../utils/generator.dart';
 import '../utils/size_config.dart';
 
+enum GameType {
+  endless,
+  level,
+}
+
 enum GameState {
   ready,
   playerMove,
@@ -30,6 +35,8 @@ enum GameState {
 
 class GameManager {
   SCWarGame game;
+  // 无尺模式是0。其他是关卡
+  int level = 0;
   Tower? prepareTower;
   List<List<BoardEntity?>> board = [];
   List<Tower> towers = [];
@@ -231,26 +238,32 @@ class GameManager {
   }
 
   void restartGame() {
-    localStorage.removeGame();
+    if (level == 0) {
+      localStorage.removeGame();
+    }
     clear();
-    startGame(newGame: true);
+    startGame(newGame: true, level: level);
   }
 
-  void startGame({bool newGame = false}) {
+  void startGame({bool newGame = false, int level = 0}) {
+    this.level = level;
     generator.init();
-    // 加载之前游戏
-    if (!newGame && loadGame()) {
+    // 加载之前游戏，只有无尽模式有记录
+    if (!newGame && level == 0 && loadGame()) {
       return;
     }
     // 新游戏
-    test();
-    addPrepareTower(1);
+    double preTowerValue = math.pow(1024, level).toDouble();
+    addPrepareTower(preTowerValue);
     addRandomEnemy();
   }
 
   void playerMove() {
     game.ui.updateEnemyData();
-    saveGame();
+    // 只有无尽模式保存游戏。
+    if (level == 0 && data.playerMoveCount > 0) {
+      saveGame();
+    }
   }
 
   void startShooting() async {
@@ -277,7 +290,7 @@ class GameManager {
     if (hasTarget) {
       await _attackCompleter!.future;
     }
-    preMergeTotal = 0;
+    preMergeTotal = prepareTower != null ? prepareTower!.value : 0;
     // preMerges.clear();
     // mergePrepareTower();
     setState(GameState.enemyMove);
@@ -387,13 +400,12 @@ class GameManager {
 
   void onEnergyArrived(Energy energy) {
     var newValue = energy.value;
+    preMergeTotal += newValue;
     if (prepareTower == null) {
       addPrepareTower(newValue);
       // preMerges.remove(newValue);
-      preMergeTotal = newValue;
       return;
     }
-    preMergeTotal += newValue;
     double big = prepareTower!.value;
     if (newValue > big) {
       big = newValue;

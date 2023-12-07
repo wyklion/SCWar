@@ -3,6 +3,7 @@ import 'package:flame/game.dart';
 import 'package:scwar/layers/game_overlay.dart';
 import 'package:scwar/layers/gameover_overlay.dart';
 import 'package:scwar/layers/home_overlay.dart';
+import 'package:scwar/layers/level_overlay.dart';
 import 'package:scwar/layers/pause_overlay.dart';
 import 'game/game.dart';
 
@@ -27,10 +28,11 @@ class AppWidget extends StatelessWidget {
             child: GameWidget(
               game: SCWarGame(),
               overlayBuilderMap: const {
-                'main': buidlHomeOverlay,
+                'home': buidlHomeOverlay,
                 'pause': buidlPauseOverlay,
                 'game': buidlGameOverlay,
                 'gameover': buidlGameoverOverlay,
+                'level': buidlLevelOverlay,
               },
             ),
           )),

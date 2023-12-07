@@ -12,6 +12,7 @@ import '../config/game_config.dart';
 import 'game_manager.dart';
 
 class SCWarGame extends FlameGame<SCWarWorld> with TapDetector, ScaleDetector {
+  bool playing = false;
   late GameManager gameManager;
   late PositionComponent container;
   PlayerData playerData = PlayerData();
@@ -32,7 +33,7 @@ class SCWarGame extends FlameGame<SCWarWorld> with TapDetector, ScaleDetector {
     playerData.loadJson(localStorage.getPlayerJson());
     await gameManager.load();
     world.showHome();
-    overlays.add('main');
+    overlays.add('home');
     return super.onLoad();
   }
 
@@ -54,12 +55,22 @@ class SCWarGame extends FlameGame<SCWarWorld> with TapDetector, ScaleDetector {
   @override
   Color backgroundColor() => const Color.fromARGB(0, 0, 0, 0);
 
-  void start() {
-    overlays.remove('main');
+  void start({int level = 0}) {
+    overlays.clear();
     overlays.add('game');
     camera.viewport.add(ui = GameUI());
     world.startGame();
-    gameManager.startGame();
+    gameManager.startGame(level: level);
+    playing = true;
+  }
+
+  void goToLevel() {
+    world.goToLevel();
+    if (playing) {
+      playing = false;
+    }
+    overlays.remove('home');
+    overlays.add('level');
   }
 
   void pause() {
@@ -71,18 +82,24 @@ class SCWarGame extends FlameGame<SCWarWorld> with TapDetector, ScaleDetector {
   }
 
   void end() {
-    playerData.updateGameData(gameManager.data);
-    var j = playerData.saveJson();
-    localStorage.setPlayerJson(j);
+    // 只有无尽模式记录记录单局游戏数据。
+    if (gameManager.level == 0) {
+      playerData.updateGameData(gameManager.data);
+      var j = playerData.saveJson();
+      localStorage.setPlayerJson(j);
+    }
     overlays.add('gameover');
   }
 
-  void home() {
-    gameManager.clear();
+  void goHome() {
     world.goHome();
+    if (playing) {
+      gameManager.clear();
+      ui.removeFromParent();
+      playing = false;
+    }
     overlays.clear();
-    overlays.add('main');
-    ui.removeFromParent();
+    overlays.add('home');
   }
 
   void restart() {
@@ -122,9 +139,18 @@ class SCWarWorld extends World with HasGameReference<SCWarGame> {
     addTowerBg();
   }
 
+  void goToLevel() {
+    if (game.playing) {
+    } else {
+      home.removeFromParent();
+    }
+  }
+
   void goHome() {
-    enemyBg.removeFromParent();
-    towerBg.removeFromParent();
+    if (game.playing) {
+      enemyBg.removeFromParent();
+      towerBg.removeFromParent();
+    }
     showHome();
   }
 

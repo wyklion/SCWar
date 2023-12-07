@@ -58,7 +58,7 @@ Widget makeIconButton(SCWarGame game, IconData icon, String name, double space,
     },
     style: ElevatedButton.styleFrom(
         backgroundColor: color ?? const Color(0xFF4A90E2), // 按钮背景颜色
-        padding: const EdgeInsets.symmetric(vertical: 10.0),
+        padding: const EdgeInsets.symmetric(vertical: 5.0),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(30 / scale),
         ),
@@ -68,7 +68,7 @@ Widget makeIconButton(SCWarGame game, IconData icon, String name, double space,
     //     onClick();
     //   },
     child: SizedBox(
-      height: 40 / scale,
+      // height: 40 / scale,
       // padding: EdgeInsets.all(3.0 / scale),
       child: Row(
         mainAxisSize: MainAxisSize.min,
