@@ -54,3 +54,8 @@ flutter build web -o docs --web-renderer canvaskit --dart-define=FLUTTER_WEB_CAN
     炮和资源16384开始显示16K。
     怪1000以上就显示K带一位小数。
     分数99999999以上显示三位小数带单位。
+
+### 关卡
+    50关。
+    初始炮分是1024的level次方。目标是初始的1024倍。
+    初始炮塔给三个。
