@@ -33,4 +33,16 @@ class Iconfont {
     0xe7c6,
     fontFamily: 'Iconfont',
   );
+  static const back = IconData(
+    0xe6b1,
+    fontFamily: 'Iconfont',
+  );
+  static const ok = IconData(
+    0xe6a3,
+    fontFamily: 'Iconfont',
+  );
+  static const next = IconData(
+    0xe672,
+    fontFamily: 'Iconfont',
+  );
 }

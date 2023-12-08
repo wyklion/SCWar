@@ -30,6 +30,26 @@ class GameData {
     baseLevel = 0;
   }
 
+  void addTower(double value) {
+    towerPower += value;
+    if (value > bigTower) {
+      bigTower = value;
+    }
+  }
+
+  void upgradeTower(double value, {bool merge = false}) {
+    if (!merge) {
+      towerPower += value;
+    }
+    if (value * 2 > bigTower) {
+      bigTower = value * 2;
+    }
+  }
+
+  void computeInit() {
+    _refreshBase();
+  }
+
   void computeMove() {
     playerMoveCount++;
     _refreshBase();
@@ -63,9 +83,5 @@ class GameData {
     mergeCount = json['mergeCount'] ?? 0;
     moveCount = json['moveCount'] ?? 0;
     swapCount = json['swapCount'] ?? 0;
-  }
-
-  void computeAfterLoad() {
-    _refreshBase();
   }
 }

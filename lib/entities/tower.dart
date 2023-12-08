@@ -143,10 +143,9 @@ class Tower extends Entity with TapCallbacks, DragCallbacks {
     super.onDragEnd(event);
     // 还原颜色
     paint.color = ColorMap.tower;
+    priority = 0;
     if (mergingTower != null) {
-      var isPrepare = this == gameManager.prepareTower;
-      gameManager.removeTower(this);
-      gameManager.upgradeTower(mergingTower!, isPrepare);
+      gameManager.mergeTower(mergingTower!, this);
     } else if (swapTower != null) {
       gameManager.swapTower(this, swapTower!);
     } else if (movePos != null && movePos != (r, c)) {
@@ -154,7 +153,6 @@ class Tower extends Entity with TapCallbacks, DragCallbacks {
     } else {
       goBack();
     }
-    priority = 0;
   }
 
   void goBack() {

@@ -30,7 +30,7 @@ class SCWarGame extends FlameGame<SCWarWorld> with TapDetector, ScaleDetector {
   @override
   FutureOr<void> onLoad() async {
     localStorage = await LocalStorage.getInstance();
-    playerData.loadJson(localStorage.getPlayerJson());
+    playerData.loadFromStorage(localStorage);
     await gameManager.load();
     world.showHome();
     overlays.add('home');
@@ -82,13 +82,25 @@ class SCWarGame extends FlameGame<SCWarWorld> with TapDetector, ScaleDetector {
   }
 
   void end() {
+    bool win = false;
     // 只有无尽模式记录记录单局游戏数据。
     if (gameManager.level == 0) {
       playerData.updateGameData(gameManager.data);
-      var j = playerData.saveJson();
-      localStorage.setPlayerJson(j);
+      playerData.saveStorage(localStorage);
+    } else {
+      if (gameManager.data.towerPower >= gameManager.levelTarget) {
+        win = true;
+        playerData.levels[gameManager.level][0]++;
+      } else {
+        playerData.levels[gameManager.level][1]++;
+      }
+      playerData.saveLevelsStorage(localStorage);
     }
-    overlays.add('gameover');
+    if (win) {
+      overlays.add('win');
+    } else {
+      overlays.add('gameover');
+    }
   }
 
   void goHome() {
@@ -105,6 +117,13 @@ class SCWarGame extends FlameGame<SCWarWorld> with TapDetector, ScaleDetector {
   void restart() {
     overlays.clear();
     overlays.add('game');
+    gameManager.restartGame();
+  }
+
+  void nextLevel() {
+    overlays.clear();
+    overlays.add('game');
+    gameManager.level++;
     gameManager.restartGame();
   }
 

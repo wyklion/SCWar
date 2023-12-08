@@ -1,5 +1,6 @@
 import 'package:scwar/config/config.dart';
 import 'package:scwar/game/game_data.dart';
+import 'package:scwar/utils/local_storage.dart';
 
 class PlayerData {
   String version = Config.version;
@@ -10,6 +11,8 @@ class PlayerData {
   int enemyCount = 0;
   int energyCount = 0;
   int energyMultiplyCount = 0;
+  // 50关卡数据[[胜次，败次]]
+  List<List<int>> levels = List.generate(51, (_) => [0, 0]);
 
   void updateGameData(GameData data) {
     gameTimes++;
@@ -25,7 +28,7 @@ class PlayerData {
     }
   }
 
-  dynamic saveJson() {
+  saveStorage(LocalStorage storage) {
     dynamic json = {};
     json['version'] = version;
     json['gameTimes'] = gameTimes;
@@ -35,24 +38,39 @@ class PlayerData {
     json['enemyCount'] = enemyCount;
     json['energyCount'] = energyCount;
     json['energyMultiplyCount'] = energyMultiplyCount;
-    return json;
+    storage.setPlayerJson(json);
   }
 
-  void loadJson(dynamic json) {
-    if (json == null) {
-      return;
+  saveLevelsStorage(LocalStorage storage) {
+    storage.setLevelsJson(levels);
+  }
+
+  void loadFromStorage(LocalStorage storage) {
+    dynamic json = storage.getPlayerJson();
+    if (json != null) {
+      version = json['version'];
+      if (version != Config.version) {
+        updateVersion();
+      }
+      gameTimes = json['gameTimes'] ?? 0;
+      highScore = json['highScore'] ?? 0;
+      bigestTower = json['bigestTower'] ?? 0;
+      playerMoveCount = json['playerMoveCount'] ?? 0;
+      enemyCount = json['enemyCount'] ?? 0;
+      energyCount = json['energyCount'] ?? 0;
+      energyMultiplyCount = json['energyMultiplyCount'] ?? 0;
     }
-    version = json['version'];
-    if (version != Config.version) {
-      updateVersion();
+    var ljson = storage.getLevelsJson();
+    if (ljson != null) {
+      for (var i = 0; i < ljson.length; i++) {
+        levels[i][0] = ljson[i][0];
+        levels[i][1] = ljson[i][1];
+      }
     }
-    gameTimes = json['gameTimes'] ?? 0;
-    highScore = json['highScore'] ?? 0;
-    bigestTower = json['bigestTower'] ?? 0;
-    playerMoveCount = json['playerMoveCount'] ?? 0;
-    enemyCount = json['enemyCount'] ?? 0;
-    energyCount = json['energyCount'] ?? 0;
-    energyMultiplyCount = json['energyMultiplyCount'] ?? 0;
+  }
+
+  isLevelPassed(int level) {
+    return levels[level][0] > 0;
   }
 
   updateVersion() {

@@ -6,6 +6,7 @@ import 'package:scwar/utils/number_util.dart';
 
 class GameUI extends Component with HasGameRef<SCWarGame> {
   late DataComponent scoreComponent;
+  late LevelComponent levelComponent;
   GameUI();
 
   @override
@@ -31,6 +32,18 @@ class GameUI extends Component with HasGameRef<SCWarGame> {
 
   void updateEnemyData() {
     scoreComponent.updateEnemyData();
+  }
+
+  void setupLevel() {
+    if (game.gameManager.level > 0) {
+      add(levelComponent = LevelComponent());
+    }
+  }
+
+  void updateLevelData() {
+    if (game.gameManager.level > 0) {
+      levelComponent.updatePower();
+    }
   }
 }
 
@@ -72,6 +85,84 @@ class GameUI extends Component with HasGameRef<SCWarGame> {
 //     return super.onLoad();
 //   }
 // }
+
+class LevelComponent extends PositionComponent with HasGameRef<SCWarGame> {
+  late TextComponent power;
+  late RectangleComponent powerRect;
+  LevelComponent()
+      : super(
+          position: Vector2(470, 100),
+        );
+
+  @override
+  Future<void> onLoad() async {
+    add(TextComponent(
+      anchor: Anchor.center,
+      text: 'Level ${game.gameManager.level}',
+      textRenderer: TextPaint(
+        style: const TextStyle(
+            fontSize: 30,
+            fontWeight: FontWeight.bold,
+            color: Color(0xFF1F4E79)),
+      ),
+      size: Vector2(180, 50),
+      position: Vector2(0, 0),
+    ));
+    add(TextComponent(
+      anchor: Anchor.center,
+      text: 'Target Power',
+      textRenderer: TextPaint(
+        style: const TextStyle(
+            fontSize: 15,
+            fontWeight: FontWeight.bold,
+            color: Color(0xFF3B5998)),
+      ),
+      size: Vector2(180, 15),
+      position: Vector2(0, 40),
+    ));
+    add(RectangleComponent(
+      anchor: Anchor.center,
+      size: Vector2(110, 20),
+      paint: Paint()..color = const Color(0xFFD2E8E8),
+      position: Vector2(0, 65),
+    ));
+    add(powerRect = RectangleComponent(
+      anchor: Anchor.centerLeft,
+      size: Vector2(110, 20),
+      paint: Paint()..color = const Color(0xFF7DCEA0),
+      position: Vector2(-55, 65),
+    ));
+    add(
+      power = TextComponent(
+        anchor: Anchor.center,
+        text: '',
+        textRenderer: TextPaint(
+          style: const TextStyle(
+              fontSize: 15,
+              fontWeight: FontWeight.bold,
+              color: Color(0xFF3B5998)),
+        ),
+        size: Vector2(180, 20),
+        position: Vector2(0, 65),
+      ),
+    );
+    updatePower();
+  }
+
+  String getPowerString() {
+    String current =
+        NumberUtil.convertValue(game.gameManager.data.towerPower, 1);
+    String target = NumberUtil.convertValue(game.gameManager.levelTarget, 1);
+    return '$current / $target';
+  }
+
+  void updatePower() {
+    double ratio =
+        game.gameManager.data.towerPower / game.gameManager.levelTarget;
+    powerRect.scale.x = ratio > 1 ? 1 : ratio;
+    power.text = getPowerString();
+  }
+}
 
 class DataComponent extends PositionComponent with HasGameRef<SCWarGame> {
   late TextComponent label;

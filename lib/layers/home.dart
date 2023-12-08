@@ -21,7 +21,7 @@ class HomeComponent extends Component with HasGameRef<SCWarGame> {
         ' ${NumberUtil.getTowerString(game.playerData.bigestTower)}', 2);
     playerMoveCount =
         addData('ShootTimes', ' ${game.playerData.playerMoveCount}', 3);
-    enemyCount = addData('KillEnymies', ' ${game.playerData.enemyCount}', 4);
+    enemyCount = addData('KillEnemies', ' ${game.playerData.enemyCount}', 4);
     return super.onLoad();
   }
 

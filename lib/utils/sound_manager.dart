@@ -70,5 +70,10 @@ class SoundManager {
     FlameAudio.play('dead.ogg');
   }
 
+  void playWin() {
+    if (!soundOn) return;
+    FlameAudio.play('energy.ogg');
+  }
+
   void playPrepare() {}
 }

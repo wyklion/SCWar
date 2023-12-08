@@ -8,6 +8,29 @@ import 'package:scwar/utils/number_util.dart';
 
 Widget makeLevelButton(SCWarGame game, int level) {
   double scale = game.scale;
+  bool passed = game.playerData.isLevelPassed(level);
+  Widget content;
+  if (passed) {
+    content = Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Text(
+          '$level',
+          style: TextStyle(color: Colors.white, fontSize: 20 / scale), // 文字颜色
+        ),
+        Icon(
+          Iconfont.ok,
+          size: 20 / scale,
+          color: Colors.white, // 图标颜色
+        ),
+      ],
+    );
+  } else {
+    content = Text(
+      '$level',
+      style: TextStyle(color: Colors.white, fontSize: 20 / scale), // 文字颜色
+    );
+  }
   return SizedBox(
     width: 70 / scale,
     height: 70 / scale,
@@ -17,16 +40,15 @@ Widget makeLevelButton(SCWarGame game, int level) {
         game.start(level: level);
       },
       style: ElevatedButton.styleFrom(
-          backgroundColor: const Color(0xFF3F5D7D), // 按钮背景颜色
+          backgroundColor: passed
+              ? const Color(0xFFa7f2a7)
+              : const Color(0xFF3F5D7D), // 按钮背景颜色
           padding: const EdgeInsets.symmetric(vertical: 5.0),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(5 / scale),
           ),
           fixedSize: Size(70 / scale, 70 / scale)),
-      child: Text(
-        '$level',
-        style: TextStyle(color: Colors.white, fontSize: 20 / scale), // 文字颜色
-      ),
+      child: content,
     ),
   );
 }
@@ -58,15 +80,31 @@ Widget buidlLevelOverlay(BuildContext buildContext, SCWarGame game) {
       aspectRatio: 9 / 16,
       child: Column(children: [
         SizedBox(
-          height: 100 / scale,
-        ),
+            height: 100 / scale,
+            child: Center(
+              child: Text(
+                'LEVEL',
+                style: TextStyle(
+                  color: const Color(0xFF7DCEA0),
+                  fontSize: 50 / scale,
+                  fontWeight: FontWeight.bold,
+                  shadows: const [
+                    Shadow(
+                      blurRadius: 3,
+                      color: Color(0xff003333),
+                      offset: Offset(3, 3),
+                    ),
+                  ],
+                ),
+              ),
+            )),
         SizedBox(
           height: 760 / scale,
           child: makeLevels(game),
         ),
         Expanded(
           child: Center(
-            child: makeIconButton(game, Iconfont.home, 'Return', 10, () {
+            child: makeIconButton(game, Iconfont.back, 'Return', 10, () {
               game.gameManager.soundManager.playCick();
               game.goHome();
             }),

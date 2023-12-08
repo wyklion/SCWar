@@ -27,7 +27,6 @@ class Energy extends BoardEntity {
     isValid = false;
     if (type == EntityType.energy) {
       var targetPos = gameManager.prepareTowerPos;
-      gameManager.addPreMerge(value);
       var moveEffect = MoveToEffect(
         targetPos,
         EffectController(duration: 0.3),

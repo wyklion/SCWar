@@ -5,6 +5,7 @@ import 'package:scwar/layers/gameover_overlay.dart';
 import 'package:scwar/layers/home_overlay.dart';
 import 'package:scwar/layers/level_overlay.dart';
 import 'package:scwar/layers/pause_overlay.dart';
+import 'package:scwar/layers/win_overlay.dart';
 import 'game/game.dart';
 
 class SpaceShooterGame extends FlameGame {}
@@ -31,6 +32,7 @@ class AppWidget extends StatelessWidget {
                 'home': buidlHomeOverlay,
                 'pause': buidlPauseOverlay,
                 'game': buidlGameOverlay,
+                'win': buidlWinOverlay,
                 'gameover': buidlGameoverOverlay,
                 'level': buidlLevelOverlay,
               },

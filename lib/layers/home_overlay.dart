@@ -46,7 +46,7 @@ Widget makeLevelButton(SCWarGame game) {
         alignment: Alignment.bottomCenter,
         child: TextButton(
           style: TextButton.styleFrom(
-            foregroundColor: const Color(0xFF3A7CA5),
+            foregroundColor: const Color(0xFF7DCEA0),
             padding: const EdgeInsets.all(16.0),
             textStyle: TextStyle(
               fontSize: 50 / scale,

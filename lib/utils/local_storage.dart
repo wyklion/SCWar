@@ -131,4 +131,22 @@ class LocalStorage {
     // log('save playerData: $str');
     return setString('playerData', str);
   }
+
+  // 读关卡信息
+  dynamic getLevelsJson() {
+    var levelsStr = getString('levelsData');
+    if (levelsStr == null) {
+      return null;
+    }
+    final json = jsonDecode(levelsStr);
+    // log('load levelsData: $json');
+    return json;
+  }
+
+  // 存关卡信息
+  Future<bool> setLevelsJson(dynamic j) {
+    var str = jsonEncode(j);
+    // log('save levelsData: $str');
+    return setString('levelsData', str);
+  }
 }

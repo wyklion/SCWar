@@ -6,7 +6,6 @@ import 'package:flame/flame.dart';
 import 'package:flame/game.dart';
 import 'package:scwar/game/game_data.dart';
 import 'package:scwar/game/game_test.dart';
-import 'package:scwar/game/player_data.dart';
 import 'package:scwar/utils/local_storage.dart';
 import 'package:scwar/utils/particles.dart';
 import 'package:scwar/utils/sound_manager.dart';
@@ -37,12 +36,12 @@ class GameManager {
   SCWarGame game;
   // 无尺模式是0。其他是关卡
   int level = 0;
+  double levelTarget = 0;
   Tower? prepareTower;
   List<List<BoardEntity?>> board = [];
   List<Tower> towers = [];
   List<Enemy> enemies = [];
   List<Energy> energies = [];
-  // List<double> preMerges = [];
   double preMergeTotal = 0;
   GameData data = GameData();
   GameState _currentState = GameState.ready;
@@ -61,39 +60,6 @@ class GameManager {
       board.add(row);
     }
     generator = Generator(this);
-  }
-
-  void test() {
-    // data.score = 3523511;
-    // game.menu.updateScore();
-    // addTower(0, 0, 4);
-    // addTower(0, 1, 2048);
-    // addTower(0, 2, 8);
-    // addTower(0, 3, 2);
-    // addTower(0, 4, 8);
-    // addTower(0, 0, 262144);
-    // addTower(0, 1, 131072);
-    // addTower(0, 2, 8192);
-    // addTower(0, 4, 16384);
-    // addTower(1, 3, 524288);
-    // addTower(1, 0, 1.2e14);
-    // addTower(1, 1, 1.2e14);
-    // addTower(1, 2, 1.2e14);
-    // addEnergy(2, 1, 2, EntityType.energyMultiply);
-    // addEnergy(3, 1, 2, EntityType.energyMultiply);
-    // addEnergy(2, 0, 2, EntityType.energy);
-    // addEnemy(3, 0, 8, 1);
-    // addEnergy(4, 0, 2, EntityType.energy);
-    // addEnemy(5, 0, 1, 1);
-    // addEnergy(2, 1, 2);
-    // addEnemy(8, 1, 7, 1);
-    // addEnemy(1, 3, 1024, 1);
-    // addEnemy(2, 2, 8, 1);
-    // addEnemy(4, 3, 3252, 1);
-    // addEnemy(6, 4, 253, 1);
-    // addEnemy(7, 4, 253, 1);
-    // addEnemy(8, 2, 524, 1);
-    // addEnemy(9, 3, 235, 1);
   }
 
   Future<void> load() async {
@@ -175,7 +141,7 @@ class GameManager {
       var t = jtowers[i];
       addTower(t[0], t[1], t[2]);
     }
-    data.computeAfterLoad();
+    data.computeInit();
     _currentState = GameState.playerMove;
     return true;
   }
@@ -224,6 +190,7 @@ class GameManager {
     towers = [];
     if (prepareTower != null) {
       prepareTower!.removeFromParent();
+      prepareTower = null;
     }
     for (var i = 0; i < GameConfig.row; i++) {
       for (var j = 0; j < GameConfig.col; j++) {
@@ -231,7 +198,6 @@ class GameManager {
       }
     }
     preMergeTotal = 0;
-    // preMerges.clear();
     data.clear();
     game.ui.updateAll();
     _currentState = GameState.ready;
@@ -253,16 +219,33 @@ class GameManager {
       return;
     }
     // 新游戏
-    double preTowerValue = math.pow(1024, level).toDouble();
-    addPrepareTower(preTowerValue);
-    addRandomEnemy();
+    if (level == 0) {
+      addPrepareTower(1);
+      addRandomEnemy();
+    } else {
+      double initTowerValue = math.pow(1024, level).toDouble();
+      levelTarget = initTowerValue * 1024;
+      addTower(1, 0, initTowerValue);
+      addTower(1, 2, initTowerValue);
+      addTower(1, 4, initTowerValue);
+      data.computeInit();
+      addRandomEnemy();
+      game.ui.setupLevel();
+    }
   }
 
   void playerMove() {
     game.ui.updateEnemyData();
+    game.ui.updateLevelData();
     // 只有无尽模式保存游戏。
-    if (level == 0 && data.playerMoveCount > 0) {
-      saveGame();
+    if (level == 0) {
+      if (data.playerMoveCount > 0) {
+        saveGame();
+      }
+    } else {
+      if (data.towerPower >= levelTarget) {
+        setState(GameState.gameOver);
+      }
     }
   }
 
@@ -270,6 +253,7 @@ class GameManager {
     soundManager.playShoot();
     data.computeMove();
     game.ui.updatePlayerData();
+    game.ui.updateLevelData();
     _currentState = GameState.shooting;
     List<Future<void>> tasks = [];
     var hasTarget = false;
@@ -291,8 +275,6 @@ class GameManager {
       await _attackCompleter!.future;
     }
     preMergeTotal = prepareTower != null ? prepareTower!.value : 0;
-    // preMerges.clear();
-    // mergePrepareTower();
     setState(GameState.enemyMove);
   }
 
@@ -349,21 +331,6 @@ class GameManager {
         }
       }
     }
-    // List<Future<bool>> tasks = [];
-    // for (var enemy in enemies) {
-    //   board[enemy.r][enemy.c] = null;
-    //   if (enemy.r < 9) {
-    //     board[enemy.r + 1][enemy.c] = enemy;
-    //   }
-    //   tasks.add(enemy.moveOneStep());
-    // }
-    // for (var energy in energies) {
-    //   board[energy.r][energy.c] = null;
-    //   if (energy.r < 9) {
-    //     board[energy.r + 1][energy.c] = energy;
-    //   }
-    //   tasks.add(energy.moveOneStep());
-    // }
     tasks.add(addRandomEnemy());
     await Future.wait(tasks);
   }
@@ -383,19 +350,7 @@ class GameManager {
       }
     }
     await Future.wait(tasks);
-    // var list = generator.generatorRow();
-    // for (var i = 0; i < GameConfig.col; i++) {
-    //   if (list[i] > 0) {
-    //     addEnemy(0, i, list[i], 1);
-    //   } else if (list[i] < 0) {
-    //     addEnergy(0, i, -list[i]);
-    //   }
-    // }
     setState(GameState.playerMove);
-  }
-
-  void addPreMerge(double value) {
-    // preMerges.add(value);
   }
 
   void onEnergyArrived(Energy energy) {
@@ -403,7 +358,6 @@ class GameManager {
     preMergeTotal += newValue;
     if (prepareTower == null) {
       addPrepareTower(newValue);
-      // preMerges.remove(newValue);
       return;
     }
     double big = prepareTower!.value;
@@ -416,38 +370,6 @@ class GameManager {
     }
     prepareTower!.setValue(big);
   }
-
-  // void mergePrepareTower() {
-  //   if (preMerges.isEmpty) {
-  //     return;
-  //   }
-  //   double s = 0;
-  //   double big = 0;
-  //   for (var m in preMerges) {
-  //     s += m;
-  //     if (m > big) {
-  //       big = m;
-  //     }
-  //   }
-  //   preMerges.clear();
-  //   Tower tower;
-  //   if (prepareTower is Tower) {
-  //     tower = prepareTower!;
-  //     s += tower.value;
-  //     if (tower.value >= big) {
-  //       big = tower.value;
-  //     }
-  //   }
-  //   // 合并资源
-  //   while (big * 2 <= s) {
-  //     big *= 2;
-  //   }
-  //   if (prepareTower is Tower) {
-  //     prepareTower!.setValue(big);
-  //   } else {
-  //     addPrepareTower(big);
-  //   }
-  // }
 
   get prepareTowerPos => sizeConfig.getPrepareTowerPos();
 
@@ -462,10 +384,7 @@ class GameManager {
     var pos = sizeConfig.getTowerPos(r, c);
     var tower = Tower(r, c, pos.x, pos.y, value);
     towers.add(tower);
-    data.towerPower += value;
-    if (value > data.bigTower) {
-      data.bigTower = value;
-    }
+    data.addTower(value);
     game.addContent(tower);
     // log('addTower $pos $value');
   }
@@ -479,31 +398,13 @@ class GameManager {
     tower.removeFromParent();
   }
 
-  // void towerAction(Tower tower, Tower? mergingTower, Tower? swapTower, Vector2? movePos){
-  //   if (mergingTower != null) {
-  //     upgradeTower(mergingTower!);
-  //     removeTower(this);
-  //   } else if (swapTower != null) {
-  //     // 还原颜色
-  //     paint.color = Colors.blue;
-  //     swapTower(this, swapTower!);
-  //   } else if (movePos != null) {
-  //     moveTower(this, movePos!.$1, movePos!.$2);
-  //   } else {
-  //     goBack();
-  //   }
-  // }
-
   void moveTower(Tower tower, int r, int c) {
     data.moveCount++;
     soundManager.playMove();
     if (tower == prepareTower) {
       prepareTower = null;
       towers.add(tower);
-      data.towerPower += tower.value;
-      if (tower.value > data.bigTower) {
-        data.bigTower = tower.value;
-      }
+      data.addTower(tower.value);
     }
     var tp = sizeConfig.getTowerPos(r, c);
     tower.pos.setFrom(tp);
@@ -522,10 +423,10 @@ class GameManager {
     tower1.setPos(tower2.r, tower2.c);
     tower2.setPos(tempR, tempC);
     if (tower1 == prepareTower) {
-      data.towerPower += (tower1.value - tower2.value);
       prepareTower = tower2;
       towers.remove(tower2);
       towers.add(tower1);
+      data.towerPower += (tower1.value - tower2.value);
       // 这种交换情况重算一下
       if (tower1.value < tower2.value) {
         data.bigTower = 0;
@@ -539,26 +440,20 @@ class GameManager {
     setState(GameState.shooting);
   }
 
-  void doubleTower(Tower tower) {
-    soundManager.playMerge();
-    data.towerPower += tower.value;
-    tower.upgrade();
-    if (tower.value > data.bigTower) {
-      data.bigTower = tower.value;
-    }
-  }
-
-  void upgradeTower(Tower tower, bool fromPrepare) {
+  void mergeTower(Tower tower, Tower other) {
     data.mergeCount++;
     soundManager.playMerge();
-    if (fromPrepare) {
-      data.towerPower += tower.value;
-    }
+    var merge = other != prepareTower;
+    removeTower(other);
+    data.upgradeTower(tower.value, merge: merge);
     tower.upgrade();
-    if (tower.value > data.bigTower) {
-      data.bigTower = tower.value;
-    }
     setState(GameState.shooting);
+  }
+
+  void doubleTower(Tower tower) {
+    soundManager.playMerge();
+    data.upgradeTower(tower.value);
+    tower.upgrade();
   }
 
   Future<void> addEnemy(int r, int c, double value, int body) async {
@@ -606,8 +501,19 @@ class GameManager {
   }
 
   void gameOver() async {
-    soundManager.playDead();
-    localStorage.removeGame();
+    bool win = false;
+    if (level == 0) {
+      localStorage.removeGame();
+    } else {
+      if (data.towerPower >= levelTarget) {
+        win = true;
+      }
+    }
+    if (win) {
+      soundManager.playWin();
+    } else {
+      soundManager.playDead();
+    }
     await Future.delayed(const Duration(milliseconds: 500));
     game.end();
   }
