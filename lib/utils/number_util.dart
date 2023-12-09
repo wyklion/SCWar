@@ -23,12 +23,12 @@ class NumberUtil {
     return x;
   }
 
-  static double getScale(double v) {
+  static double getScale(double v, int level) {
     if (v <= 16384) {
       return 1 + 0.05 * v.toInt().bitLength;
     }
     var x = getUnitLevel(v);
-    return 1.7 + 0.05 * x;
+    return 1.7 + 0.05 * (x - level);
   }
 
   static String convertValue(double v, int fix) {

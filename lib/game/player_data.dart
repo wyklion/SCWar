@@ -70,7 +70,8 @@ class PlayerData {
   }
 
   isLevelPassed(int level) {
-    return levels[level][0] > 0;
+    return level < 4;
+    // return levels[level][0] > 0;
   }
 
   updateVersion() {

@@ -18,7 +18,7 @@ class Bullet extends CircleComponent with HasGameRef<SCWarGame> {
   List<Future<void>> tasks = [];
   Bullet(this.value, this.r, this.c /*,this.dis*/)
       : super(radius: GameConfig.baseLen / 10, anchor: Anchor.center) {
-    scale.setAll(NumberUtil.getScale(value));
+    scale.setAll(NumberUtil.getScale(value, game.gameManager.level));
     paint = Paint()..color = ColorMap.bullet;
     priority = 2;
   }

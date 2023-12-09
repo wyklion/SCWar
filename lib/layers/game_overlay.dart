@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:scwar/game/game.dart';
-import 'package:scwar/layers/layer_util.dart';
+import 'package:scwar/game/game_manager.dart';
 import 'package:scwar/utils/iconfont.dart';
-import 'package:scwar/utils/number_util.dart';
 
 Widget buidlGameOverlay(BuildContext buildContext, SCWarGame game) {
   double scale = game.scale;
@@ -20,6 +19,9 @@ Widget buidlGameOverlay(BuildContext buildContext, SCWarGame game) {
               color: const Color(0xFFF2F2F2),
             ),
             onPressed: () {
+              if (game.gameManager.currentState != GameState.playerMove) {
+                return;
+              }
               game.gameManager.soundManager.playCick();
               game.pause();
             },

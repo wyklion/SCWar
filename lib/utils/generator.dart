@@ -41,7 +41,9 @@ class Generator {
 
   /// 生成怪基础分：炮塔总分除以5取整。
   /// 小怪值：基础分的1倍到3倍之间
-  /// 大怪值：取最大炮塔和基础分3倍的平均值为基础，生成基础的2到3倍之间。
+  /// 大怪值：取最大炮塔0.3倍和基础分1.7倍的平均值为基础，生成基础的2到3倍之间。
+  ///   极限情况，最平均时全是1炮，大怪基础是(0.3+1.7)=2，算出大怪是4-6之间。
+  ///   只有一个5分炮，大怪基础(5*0.3+1.7)=3.2，大怪在6.4-9.6之间。
   /// 根据炮分等级加成*(1+0.002*baseLevel)
   double getNextEnemyValue({int? size = 1}) {
     _count++;
@@ -59,12 +61,12 @@ class Generator {
       afterBigEnemyCount++;
     } else {
       afterBigEnemyCount = 0;
-      base = (base * 3 + _data.bigTower) / 2;
-      result = base * 2 + _random.nextDouble() * base;
+      double bigBase = base * 1.7 + _data.bigTower * 0.3;
+      result = bigBase * 2 + _random.nextDouble() * bigBase;
     }
     afterEnergyCount++;
     // 炮分等级加成
-    result *= (1 + 0.002 * _data.baseLevel);
+    result *= (1 + 0.001 * _data.baseLevel);
     if (result < 99999999) {
       result = result.floorToDouble();
     }

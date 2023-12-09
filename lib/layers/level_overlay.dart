@@ -6,7 +6,7 @@ import 'package:scwar/layers/layer_util.dart';
 import 'package:scwar/utils/iconfont.dart';
 import 'package:scwar/utils/number_util.dart';
 
-Widget makeLevelButton(SCWarGame game, int level) {
+Widget makeLevelButton(SCWarGame game, int level, bool enable) {
   double scale = game.scale;
   bool passed = game.playerData.isLevelPassed(level);
   Widget content;
@@ -28,7 +28,8 @@ Widget makeLevelButton(SCWarGame game, int level) {
   } else {
     content = Text(
       '$level',
-      style: TextStyle(color: Colors.white, fontSize: 20 / scale), // 文字颜色
+      style: TextStyle(
+          color: const Color(0xFFf1f0cf), fontSize: 20 / scale), // 文字颜色
     );
   }
   return SizedBox(
@@ -36,13 +37,18 @@ Widget makeLevelButton(SCWarGame game, int level) {
     height: 70 / scale,
     child: ElevatedButton(
       onPressed: () {
+        if (!enable) {
+          return;
+        }
         game.gameManager.soundManager.playCick();
         game.start(level: level);
       },
       style: ElevatedButton.styleFrom(
-          backgroundColor: passed
-              ? const Color(0xFFa7f2a7)
-              : const Color(0xFF3F5D7D), // 按钮背景颜色
+          backgroundColor: !enable
+              ? const Color(0xFF4b5d67)
+              : passed
+                  ? const Color(0xFF248888)
+                  : const Color(0xFF31aa75),
           padding: const EdgeInsets.symmetric(vertical: 5.0),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(5 / scale),
@@ -57,10 +63,16 @@ Widget makeLevels(SCWarGame game) {
   double scale = game.scale;
   double space = 20 / scale;
   List<Widget> column = [SizedBox(height: space)];
+  bool enable = true;
   for (var i = 0; i < 10; i++) {
     List<Widget> row = [];
     for (var j = 0; j < 5; j++) {
-      row.add(makeLevelButton(game, i * 5 + j + 1));
+      int level = i * 5 + j + 1;
+      bool passed = game.playerData.isLevelPassed(level);
+      row.add(makeLevelButton(game, i * 5 + j + 1, Config.testMode || enable));
+      if (!passed) {
+        enable = false;
+      }
       if (j < 4) {
         row.add(SizedBox(width: space));
       }
@@ -104,28 +116,37 @@ Widget buidlLevelOverlay(BuildContext buildContext, SCWarGame game) {
         ),
         Expanded(
           child: Center(
-            child: makeIconButton(game, Iconfont.back, 'Return', 10, () {
-              game.gameManager.soundManager.playCick();
-              game.goHome();
-            }),
-            // child: ElevatedButton(
-            //   onPressed: () {
-            //     game.gameManager.soundManager.playCick();
-            //     game.goHome();
-            //   },
-            //   style: ElevatedButton.styleFrom(
-            //       backgroundColor: const Color(0xFF3F5D7D), // 按钮背景颜色
-            //       // padding: const EdgeInsets.symmetric(vertical: 10.0),
-            //       shape: RoundedRectangleBorder(
-            //         borderRadius: BorderRadius.circular(30 / scale),
-            //       ),
-            //       fixedSize: Size(200 / scale, 50 / scale)),
-            //   child: Text(
-            //     'RETURN',
-            //     style: TextStyle(
-            //         color: Colors.white, fontSize: 30 / scale), // 文字颜色
-            //   ),
-            // ),
+            child: ElevatedButton(
+              onPressed: () {
+                game.gameManager.soundManager.playCick();
+                game.goHome();
+              },
+              style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color(0xFF4baea0), // 按钮背景颜色
+                  padding: const EdgeInsets.symmetric(vertical: 5.0),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(30 / scale),
+                  ),
+                  fixedSize: Size(200 / scale, 50 / scale)),
+              child: SizedBox(
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(
+                      Iconfont.back,
+                      size: 30 / scale,
+                      color: Colors.white, // 图标颜色
+                    ),
+                    SizedBox(width: 10 / scale), // 间距
+                    Text(
+                      'Return',
+                      style: TextStyle(
+                          color: Colors.white, fontSize: 30 / scale), // 文字颜色
+                    ),
+                  ],
+                ),
+              ),
+            ),
           ),
         ),
       ]),

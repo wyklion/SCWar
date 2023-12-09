@@ -24,20 +24,21 @@ class AppWidget extends StatelessWidget {
       body: Column(
         children: [
           Expanded(
-              child: Container(
-            color: Colors.blueGrey,
-            child: GameWidget(
-              game: SCWarGame(),
-              overlayBuilderMap: const {
-                'home': buidlHomeOverlay,
-                'pause': buidlPauseOverlay,
-                'game': buidlGameOverlay,
-                'win': buidlWinOverlay,
-                'gameover': buidlGameoverOverlay,
-                'level': buidlLevelOverlay,
-              },
+            child: Container(
+              color: Colors.blueGrey,
+              child: GameWidget(
+                game: SCWarGame(),
+                overlayBuilderMap: const {
+                  'home': buidlHomeOverlay,
+                  'pause': buidlPauseOverlay,
+                  'game': buidlGameOverlay,
+                  'win': buidlWinOverlay,
+                  'gameover': buidlGameoverOverlay,
+                  'level': buidlLevelOverlay,
+                },
+              ),
             ),
-          )),
+          ),
           Container(
             height: 80,
             color: Colors.blueGrey,

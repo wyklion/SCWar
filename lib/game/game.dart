@@ -1,18 +1,25 @@
 import 'dart:async';
 import 'dart:developer';
 import 'package:flame/components.dart';
+import 'package:flame/flame.dart';
 import 'package:flame/game.dart';
 import 'package:flame/events.dart';
 import 'package:flame/extensions.dart';
+import 'package:flutter/material.dart';
+import 'package:scwar/config/config.dart';
 import 'package:scwar/game/player_data.dart';
 import 'package:scwar/layers/game_ui.dart';
 import 'package:scwar/layers/home.dart';
 import 'package:scwar/utils/local_storage.dart';
+import 'package:scwar/utils/sound_manager.dart';
 import '../config/game_config.dart';
 import 'game_manager.dart';
 
+late SCWarGame game;
+
 class SCWarGame extends FlameGame<SCWarWorld> with TapDetector, ScaleDetector {
   bool playing = false;
+  SoundManager soundManager = SoundManager();
   late GameManager gameManager;
   late PositionComponent container;
   PlayerData playerData = PlayerData();
@@ -25,11 +32,17 @@ class SCWarGame extends FlameGame<SCWarWorld> with TapDetector, ScaleDetector {
                 width: GameConfig.fixedWidth, height: GameConfig.fixedHeight),
             world: SCWarWorld()) {
     gameManager = GameManager(this);
+    game = this;
   }
 
   @override
   FutureOr<void> onLoad() async {
     localStorage = await LocalStorage.getInstance();
+    // await Flame.images.loadAll([
+    //   // 'blue.png',
+    //   // 'pause_icon.png',
+    // ]);
+    await soundManager.load();
     playerData.loadFromStorage(localStorage);
     await gameManager.load();
     world.showHome();
@@ -41,11 +54,10 @@ class SCWarGame extends FlameGame<SCWarWorld> with TapDetector, ScaleDetector {
     return GameConfig.fixedWidth / camera.viewport.size.x;
   }
 
-  // @override
-  // void onTap() {
-  //   log('tap');
-  //   super.onTap();
-  // }
+  void changeTestMode(bool testMode) {
+    Config.testMode = testMode;
+    world.home.changeTestMode(testMode);
+  }
 
   void addContent(content) {
     world.add(content);
@@ -139,7 +151,7 @@ class SCWarGame extends FlameGame<SCWarWorld> with TapDetector, ScaleDetector {
 
 class SCWarWorld extends World with HasGameReference<SCWarGame> {
   late HomeComponent home;
-  late RectangleComponent enemyBg;
+  late Component enemyBg;
   late Component towerBg;
   @override
   Future<void> onLoad() async {
@@ -202,12 +214,30 @@ class SCWarWorld extends World with HasGameReference<SCWarGame> {
   }
 
   void addEnemyBg() {
-    // final paint =  Paint()..color = const Color(0xFFD2E8E8);
-    final enemyRect = game.gameManager.sizeConfig.getEnemyBgRect();
-    enemyBg = RectangleComponent.fromRect(enemyRect,
-        anchor: Anchor.center, paint: paintMap['enemyBg']);
+    enemyBg = Component();
     enemyBg.priority = -1;
     add(enemyBg);
+    // final paint =  Paint()..color = const Color(0xFFD2E8E8);
+    var enemyRect = game.gameManager.sizeConfig.getEnemyBgRect();
+    enemyBg.add(RectangleComponent.fromRect(enemyRect,
+        anchor: Anchor.center, paint: paintMap['enemyBg']));
+    // for (int row = 0; row < 10; row++) {
+    //   for (int col = 0; col < 5; col++) {
+    //     // 判断颜色
+    //     Color color = (row + col) % 2 == 0
+    //         ? const Color(0xFFD2E8E8)
+    //         : const Color(0xFEA2A8C8);
+    //     // 创建格子组件并设置位置和颜色
+    //     final gridCell = RectangleComponent(
+    //       position: game.gameManager.sizeConfig.getEnemyPos(row, col, 1),
+    //       size: Vector2.all(GameConfig.baseBlockLen),
+    //       anchor: Anchor.center,
+    //       paint: Paint()..color = color,
+    //     );
+    //     // 将格子组件添加到 Flame 游戏中
+    //     enemyBg.add(gridCell);
+    //   }
+    // }
   }
 
   void addTowerBg() {

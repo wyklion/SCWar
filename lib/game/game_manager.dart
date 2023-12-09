@@ -51,7 +51,7 @@ class GameManager {
   late Generator generator;
   final math.Random random = math.Random();
   final Particles particles = Particles();
-  SoundManager soundManager = SoundManager();
+  late SoundManager soundManager;
   late LocalStorage localStorage;
 
   GameManager(this.game) {
@@ -59,17 +59,13 @@ class GameManager {
       var row = List<BoardEntity?>.filled(GameConfig.col, null);
       board.add(row);
     }
+    soundManager = game.soundManager;
     generator = Generator(this);
   }
 
   Future<void> load() async {
     localStorage = game.localStorage;
     sizeConfig = SizeConfig(game.size);
-    await Flame.images.loadAll([
-      // 'blue.png',
-      'pause_icon.png',
-    ]);
-    await soundManager.load();
     setSoundOn(localStorage.getSoundOn());
   }
 
@@ -121,7 +117,6 @@ class GameManager {
     clear();
 
     data.loadJson(json);
-    game.ui.updateAll();
     var preT = json['preTower'];
     if (preT > 0) {
       addPrepareTower(preT);
@@ -142,6 +137,7 @@ class GameManager {
       addTower(t[0], t[1], t[2]);
     }
     data.computeInit();
+    game.ui.updateAll();
     _currentState = GameState.playerMove;
     return true;
   }
@@ -226,11 +222,14 @@ class GameManager {
       double initTowerValue = math.pow(1024, level).toDouble();
       levelTarget = initTowerValue * 1024;
       addTower(1, 0, initTowerValue);
-      addTower(1, 2, initTowerValue);
+      addTower(1, 1, initTowerValue);
+      addTower(0, 2, initTowerValue * 2);
+      addTower(1, 3, initTowerValue);
       addTower(1, 4, initTowerValue);
       data.computeInit();
       addRandomEnemy();
       game.ui.setupLevel();
+      game.ui.updateAll();
     }
   }
 

@@ -7,7 +7,7 @@ import 'package:scwar/utils/iconfont.dart';
 
 class SoundSwitchButton extends StatefulWidget {
   final SCWarGame game;
-  const SoundSwitchButton({Key? key, required this.game}) : super(key: key);
+  const SoundSwitchButton({super.key, required this.game});
 
   @override
   SoundSwitchButtonState createState() => SoundSwitchButtonState();

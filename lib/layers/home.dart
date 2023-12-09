@@ -1,5 +1,6 @@
 import 'package:flame/components.dart';
 import 'package:flutter/material.dart';
+import 'package:scwar/config/config.dart';
 import 'package:scwar/game/game.dart';
 import 'package:scwar/utils/number_util.dart';
 
@@ -16,13 +17,23 @@ class HomeComponent extends Component with HasGameRef<SCWarGame> {
 
   @override
   Future<void> onLoad() async {
-    gameTimes = addData('GameTimes', '${game.playerData.gameTimes}', 1);
-    bigestTower = addData('BigestTower',
-        ' ${NumberUtil.getTowerString(game.playerData.bigestTower)}', 2);
-    playerMoveCount =
-        addData('ShootTimes', ' ${game.playerData.playerMoveCount}', 3);
-    enemyCount = addData('KillEnemies', ' ${game.playerData.enemyCount}', 4);
+    if (Config.testMode) {
+      gameTimes = addData('GameTimes', '${game.playerData.gameTimes}', 1);
+      bigestTower = addData('BigestTower',
+          ' ${NumberUtil.getTowerString(game.playerData.bigestTower)}', 2);
+      playerMoveCount =
+          addData('ShootTimes', ' ${game.playerData.playerMoveCount}', 3);
+      enemyCount = addData('KillEnemies', ' ${game.playerData.enemyCount}', 4);
+    }
     return super.onLoad();
+  }
+
+  void changeTestMode(bool testMode) {
+    if (!testMode) {
+      removeAll(children);
+    } else {
+      onLoad();
+    }
   }
 
   TextComponent addData(String label, String value, int idx) {

@@ -1,5 +1,6 @@
 import 'package:flame/components.dart';
 import 'package:flutter/material.dart';
+import 'package:scwar/config/config.dart';
 import 'dart:developer';
 import 'package:scwar/game/game.dart';
 import 'package:scwar/utils/number_util.dart';
@@ -206,14 +207,16 @@ class DataComponent extends PositionComponent with HasGameRef<SCWarGame> {
       position: Vector2(0, 50),
     );
     add(score);
-    playerMoveCount = addData('Shoot', 1);
-    level = addData('Level', 2);
-    enemyCount = addData('Enemy', 3);
-    energyCount = addData('Energy', 4);
-    energyMultiplyCount = addData('x2', 5);
-    moveCount = addData('Move', 6);
-    swapCount = addData('Swap', 7);
-    mergeCount = addData('Merge', 8);
+    if (Config.testMode) {
+      playerMoveCount = addData('Shoot', 1);
+      level = addData('Level', 2);
+      enemyCount = addData('Enemy', 3);
+      energyCount = addData('Energy', 4);
+      energyMultiplyCount = addData('x2', 5);
+      moveCount = addData('Move', 6);
+      swapCount = addData('Swap', 7);
+      mergeCount = addData('Merge', 8);
+    }
     return super.onLoad();
   }
 
@@ -241,17 +244,21 @@ class DataComponent extends PositionComponent with HasGameRef<SCWarGame> {
   }
 
   void updatePlayerData() {
-    playerMoveCount.text = '${gameRef.gameManager.data.playerMoveCount}';
-    level.text = '${gameRef.gameManager.data.baseLevel}';
-    moveCount.text = '${gameRef.gameManager.data.moveCount}';
-    swapCount.text = '${gameRef.gameManager.data.swapCount}';
-    mergeCount.text = '${gameRef.gameManager.data.mergeCount}';
+    if (Config.testMode) {
+      playerMoveCount.text = '${gameRef.gameManager.data.playerMoveCount}';
+      level.text = '${gameRef.gameManager.data.baseLevel}';
+      moveCount.text = '${gameRef.gameManager.data.moveCount}';
+      swapCount.text = '${gameRef.gameManager.data.swapCount}';
+      mergeCount.text = '${gameRef.gameManager.data.mergeCount}';
+    }
   }
 
   void updateEnemyData() {
-    enemyCount.text = '${gameRef.gameManager.data.enemyCount}';
-    energyCount.text = '${gameRef.gameManager.data.energyCount}';
-    energyMultiplyCount.text =
-        '${gameRef.gameManager.data.energyMultiplyCount}';
+    if (Config.testMode) {
+      enemyCount.text = '${gameRef.gameManager.data.enemyCount}';
+      energyCount.text = '${gameRef.gameManager.data.energyCount}';
+      energyMultiplyCount.text =
+          '${gameRef.gameManager.data.energyMultiplyCount}';
+    }
   }
 }
