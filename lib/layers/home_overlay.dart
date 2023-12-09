@@ -157,7 +157,7 @@ Widget makePlayButton(SCWarGame game) {
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(55 / scale),
             ),
-            fixedSize: Size(260 / scale, 110 / scale),
+            fixedSize: Size(270 / scale, 110 / scale),
             foregroundColor: const Color(0xFF4be4c5),
             textStyle: TextStyle(
               color: const Color(0xFFa7f2a7),
@@ -200,7 +200,7 @@ Widget makeLevelButton(SCWarGame game) {
             fixedSize: Size(180 / scale, 60 / scale),
             foregroundColor: const Color(0xFF7DCEA0),
             textStyle: TextStyle(
-              fontSize: 50 / scale,
+              fontSize: 40 / scale,
               fontWeight: FontWeight.bold,
               shadows: const [
                 Shadow(
