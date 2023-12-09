@@ -4,6 +4,7 @@ import 'package:flame/components.dart';
 import 'package:flame/game.dart';
 import 'package:flame/events.dart';
 import 'package:flame/extensions.dart';
+import 'package:flutter/material.dart';
 import 'package:scwar/config/config.dart';
 import 'package:scwar/game/player_data.dart';
 import 'package:scwar/layers/game_ui.dart';
@@ -91,26 +92,46 @@ class SCWarGame extends FlameGame<SCWarWorld> with TapDetector, ScaleDetector {
     overlays.remove('pause');
   }
 
+  void win() {
+    playerData.levels[gameManager.level][0]++;
+    overlays.add('win');
+  }
+
   void end() {
     bool win = false;
-    // 只有无尽模式记录记录单局游戏数据。
-    if (gameManager.level == 0) {
-      playerData.updateGameData(gameManager.data);
-      playerData.saveStorage(localStorage);
-    } else {
-      if (gameManager.data.towerPower >= gameManager.levelTarget) {
-        win = true;
-        playerData.levels[gameManager.level][0]++;
-      } else {
-        playerData.levels[gameManager.level][1]++;
-      }
-      playerData.saveLevelsStorage(localStorage);
+    if (gameManager.level > 0 &&
+        gameManager.data.towerPower >= gameManager.levelTarget) {
+      win = true;
+      playerData.levels[gameManager.level][0]++;
     }
     if (win) {
       overlays.add('win');
     } else {
       overlays.add('gameover');
     }
+  }
+
+  void gameOver() {
+    // 只有无尽模式记录记录单局游戏数据。
+    if (gameManager.level == 0) {
+      localStorage.removeGame();
+      playerData.updateGameData(gameManager.data);
+      playerData.saveStorage(localStorage);
+    } else {
+      playerData.levels[gameManager.level][1]++;
+      playerData.saveLevelsStorage(localStorage);
+    }
+  }
+
+  Future<bool> reborn() async {
+    if (Config.testMode) {
+      await Future.delayed(const Duration(seconds: 1));
+      // 这里判断广告有没有看完
+      overlays.remove('gameover');
+      gameManager.reborn();
+      return true;
+    }
+    return false;
   }
 
   void goHome() {

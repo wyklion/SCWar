@@ -45,4 +45,12 @@ class Iconfont {
     0xe672,
     fontFamily: 'Iconfont',
   );
+  static const video = IconData(
+    0xe677,
+    fontFamily: 'Iconfont',
+  );
+  static const end = IconData(
+    0xe9cb,
+    fontFamily: 'Iconfont',
+  );
 }

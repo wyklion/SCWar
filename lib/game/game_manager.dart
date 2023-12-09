@@ -471,11 +471,13 @@ class GameManager {
   void removeBoardEntity(BoardEntity entity, bool dead) {
     board[entity.r][entity.c] = null;
     if (entity is Enemy) {
-      data.enemyCount++;
       enemies.remove(entity);
       // 杀怪加分
-      data.score += entity.score;
-      game.ui.updateScore();
+      if (dead) {
+        data.enemyCount++;
+        data.score += entity.score;
+        game.ui.updateScore();
+      }
     } else if (entity is Energy) {
       if (dead) {
         if (entity.type == EntityType.energy) {
@@ -501,12 +503,8 @@ class GameManager {
 
   void gameOver() async {
     bool win = false;
-    if (level == 0) {
-      localStorage.removeGame();
-    } else {
-      if (data.towerPower >= levelTarget) {
-        win = true;
-      }
+    if (level > 0 && data.towerPower >= levelTarget) {
+      win = true;
     }
     if (win) {
       soundManager.playWin();
@@ -514,7 +512,23 @@ class GameManager {
       soundManager.playDead();
     }
     await Future.delayed(const Duration(milliseconds: 500));
-    game.end();
+    if (win) {
+      game.win();
+    } else {
+      game.end();
+    }
+  }
+
+  void reborn() {
+    int rowCount = 3;
+    for (var i = GameConfig.row - 1; i >= GameConfig.row - rowCount; i--) {
+      for (var j = 0; j < GameConfig.col; j++) {
+        if (board[i][j] != null) {
+          removeBoardEntity(board[i][j]!, false);
+        }
+      }
+    }
+    setState(GameState.playerMove);
   }
 
   int getTowerTarget(int r, int c) {

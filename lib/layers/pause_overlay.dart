@@ -91,8 +91,8 @@ Widget buidlPauseOverlay(BuildContext buildContext, SCWarGame game) {
                       Text(
                         'PAUSED',
                         style: TextStyle(
-                            color: const Color(0xFF3B5998),
-                            fontSize: 30 / scale,
+                            color: const Color(0xFF003f5c),
+                            fontSize: 35 / scale,
                             fontWeight: FontWeight.bold),
                       ),
                       SizedBox(height: 20 / scale),
