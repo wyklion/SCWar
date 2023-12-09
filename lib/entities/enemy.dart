@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'dart:developer';
-import 'package:flame/components.dart';
 import 'package:flame/effects.dart';
+import 'package:flame/game.dart';
 import 'package:flutter/material.dart';
 import '../config/game_config.dart';
 import 'entity.dart';
@@ -35,6 +35,9 @@ import 'entity.dart';
 class Enemy extends BoardEntity {
   late double target;
   HurtEffect? hurtEffect;
+  double _idleValue = 0;
+  int _idleState = 0;
+  double _idleDelay = 0;
   Enemy(super.r, super.c, super.x, super.y, super.value, {super.body}) {
     target = value;
     // final size = Vector2.all(GameConfig.baseLen);
@@ -48,6 +51,12 @@ class Enemy extends BoardEntity {
     // add(player);
     // player.priority = -1;
     paint.color = body == 1 ? ColorMap.enemy : ColorMap.enemy2;
+  }
+
+  @override
+  FutureOr<void> onLoad() {
+    super.onLoad();
+    _idleDelay = gameManager.random.nextDouble() * 5;
   }
 
   @override
@@ -109,8 +118,10 @@ class Enemy extends BoardEntity {
     // 绘制敌人
     // final paint = Paint()..color = Colors.red;
     var len = body == 1 ? GameConfig.baseLen : GameConfig.doubleBaseLen;
+    double scale = 1 + _idleValue * (body == 2 ? 0.05 : 0.1);
     final roundedRect = RRect.fromRectAndRadius(
-        Rect.fromCenter(center: Offset.zero, width: len, height: len),
+        Rect.fromCenter(
+            center: Offset.zero, width: len * scale, height: len * scale),
         const Radius.circular(5));
     canvas.drawRRect(roundedRect, paint);
     // canvas.drawRect(
@@ -122,6 +133,25 @@ class Enemy extends BoardEntity {
   @override
   void update(double dt) {
     // 处理敌人的逻辑，比如移动等
+    if (_idleState == 1) {
+      _idleValue += dt;
+      if (_idleValue >= 0.5) {
+        _idleValue = 0.5;
+        _idleState = -1;
+      }
+    } else if (_idleState == -1) {
+      _idleValue -= dt;
+      if (_idleValue <= 0) {
+        _idleValue = 0;
+        _idleState = 0;
+        _idleDelay = gameManager.random.nextDouble() * 5;
+      }
+    } else if (_idleState == 0) {
+      _idleDelay -= dt;
+      if (_idleDelay <= 0) {
+        _idleState = 1;
+      }
+    }
   }
 }
 

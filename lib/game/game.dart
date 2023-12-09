@@ -1,11 +1,9 @@
 import 'dart:async';
 import 'dart:developer';
 import 'package:flame/components.dart';
-import 'package:flame/flame.dart';
 import 'package:flame/game.dart';
 import 'package:flame/events.dart';
 import 'package:flame/extensions.dart';
-import 'package:flutter/material.dart';
 import 'package:scwar/config/config.dart';
 import 'package:scwar/game/player_data.dart';
 import 'package:scwar/layers/game_ui.dart';

@@ -3,7 +3,6 @@ import 'dart:math' as math;
 import 'package:scwar/entities/entity_info.dart';
 import 'package:scwar/config/game_config.dart';
 import 'package:scwar/game/game_data.dart';
-import 'package:scwar/utils/number_util.dart';
 import '../game/game_manager.dart';
 
 class Generator {

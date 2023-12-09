@@ -1,10 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:scwar/config/config.dart';
-import 'package:scwar/config/game_config.dart';
 import 'package:scwar/game/game.dart';
-import 'package:scwar/layers/layer_util.dart';
 import 'package:scwar/utils/iconfont.dart';
-import 'package:scwar/utils/number_util.dart';
 
 Widget makeLevelButton(SCWarGame game, int level, bool enable) {
   double scale = game.scale;

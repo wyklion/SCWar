@@ -2,8 +2,104 @@ import 'package:flutter/material.dart';
 import 'package:scwar/config/config.dart';
 import 'package:scwar/config/game_config.dart';
 import 'package:scwar/game/game.dart';
-import 'package:scwar/utils/iconfont.dart';
 import 'package:scwar/utils/number_util.dart';
+
+class TitleComponent extends StatefulWidget {
+  const TitleComponent({super.key});
+
+  @override
+  TitleComponentState createState() => TitleComponentState();
+}
+
+class TitleComponentState extends State<TitleComponent>
+    with TickerProviderStateMixin {
+  late AnimationController _controller;
+  late Animation<double> _animation;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      vsync: this,
+      duration: const Duration(seconds: 1),
+    );
+    _animation = Tween<double>(begin: 0, end: 1).animate(
+      CurvedAnimation(
+        parent: _controller,
+        curve: Curves.easeInOut,
+      ),
+    )..addListener(() {
+        setState(() {});
+      });
+    _controller.repeat(reverse: true);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Stack(children: [
+      Positioned(
+        top: 100,
+        left: 180,
+        child: Container(
+          width: 120,
+          height: 120,
+          decoration: BoxDecoration(
+            color: ColorMap.enemy,
+            borderRadius: BorderRadius.circular(20),
+          ),
+          transform: Matrix4.translationValues(
+            -20 + 20 * _animation.value,
+            -20 + 20 * _animation.value,
+            0,
+          ),
+          child: const Center(
+            child: Text(
+              '2',
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 30,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ),
+        ),
+      ),
+      Positioned(
+        top: 150,
+        left: 240,
+        child: Container(
+          width: 120,
+          height: 120,
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            color: ColorMap.tower,
+          ),
+          transform: Matrix4.translationValues(
+            20 - 20 * _animation.value,
+            20 - 20 * _animation.value,
+            0,
+          ),
+          child: const Center(
+            child: Text(
+              'K',
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 30,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ),
+        ),
+      ),
+    ]);
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+}
 
 class TestSwitchButton extends StatefulWidget {
   final SCWarGame game;
@@ -171,6 +267,7 @@ Widget buidlHomeOverlay(BuildContext buildContext, SCWarGame game) {
   }
   stacks.add(makeLevelButton(game));
   stacks.add(makeHighScore(game));
+  stacks.add(const TitleComponent());
   if (!Config.release) {
     stacks.add(
       Positioned(
