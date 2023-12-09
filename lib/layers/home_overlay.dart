@@ -5,7 +5,8 @@ import 'package:scwar/game/game.dart';
 import 'package:scwar/utils/number_util.dart';
 
 class TitleComponent extends StatefulWidget {
-  const TitleComponent({super.key});
+  final SCWarGame game;
+  const TitleComponent({super.key, required this.game});
 
   @override
   TitleComponentState createState() => TitleComponentState();
@@ -36,28 +37,31 @@ class TitleComponentState extends State<TitleComponent>
 
   @override
   Widget build(BuildContext context) {
+    double scale = widget.game.scale;
+    double rd = (-15 + 15 * _animation.value) / scale;
+    double cd = (15 - 15 * _animation.value) / scale;
     return Stack(children: [
       Positioned(
-        top: 100,
-        left: 180,
+        top: 100 / scale,
+        left: 150 / scale,
         child: Container(
-          width: 120,
-          height: 120,
+          width: 150 / scale,
+          height: 150 / scale,
           decoration: BoxDecoration(
             color: ColorMap.enemy,
             borderRadius: BorderRadius.circular(20),
           ),
           transform: Matrix4.translationValues(
-            -20 + 20 * _animation.value,
-            -20 + 20 * _animation.value,
+            rd,
+            rd,
             0,
           ),
-          child: const Center(
+          child: Center(
             child: Text(
               '2',
               style: TextStyle(
                 color: Colors.white,
-                fontSize: 30,
+                fontSize: 50 / scale,
                 fontWeight: FontWeight.bold,
               ),
             ),
@@ -65,26 +69,26 @@ class TitleComponentState extends State<TitleComponent>
         ),
       ),
       Positioned(
-        top: 150,
-        left: 240,
+        top: 170 / scale,
+        left: 240 / scale,
         child: Container(
-          width: 120,
-          height: 120,
+          width: 150 / scale,
+          height: 150 / scale,
           decoration: BoxDecoration(
             shape: BoxShape.circle,
             color: ColorMap.tower,
           ),
           transform: Matrix4.translationValues(
-            20 - 20 * _animation.value,
-            20 - 20 * _animation.value,
+            cd,
+            cd,
             0,
           ),
-          child: const Center(
+          child: Center(
             child: Text(
               'K',
               style: TextStyle(
                 color: Colors.white,
-                fontSize: 30,
+                fontSize: 50 / scale,
                 fontWeight: FontWeight.bold,
               ),
             ),
@@ -267,7 +271,7 @@ Widget buidlHomeOverlay(BuildContext buildContext, SCWarGame game) {
   }
   stacks.add(makeLevelButton(game));
   stacks.add(makeHighScore(game));
-  stacks.add(const TitleComponent());
+  stacks.add(TitleComponent(game: game));
   if (!Config.release) {
     stacks.add(
       Positioned(
