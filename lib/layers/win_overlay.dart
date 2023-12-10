@@ -11,9 +11,17 @@ Widget buidlWinOverlay(BuildContext buildContext, SCWarGame game) {
     Text(
       'Level ${game.gameManager.level} complete !',
       style: TextStyle(
-          color: const Color(0xFF3B5998),
-          fontSize: 30 / scale,
-          fontWeight: FontWeight.bold),
+        color: ColorMap.dialogTitle,
+        fontSize: 32 / scale,
+        fontWeight: FontWeight.bold,
+        shadows: [
+          Shadow(
+            blurRadius: 2 / scale,
+            color: const Color(0xfff8f8f8),
+            offset: Offset(2 / scale, 2 / scale),
+          ),
+        ],
+      ),
     ),
     SizedBox(height: 20 / scale),
     Text(

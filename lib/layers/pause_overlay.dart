@@ -1,6 +1,7 @@
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
+import 'package:scwar/config/game_config.dart';
 import 'package:scwar/game/game.dart';
 import 'package:scwar/layers/layer_util.dart';
 import 'package:scwar/utils/iconfont.dart';
@@ -91,9 +92,17 @@ Widget buidlPauseOverlay(BuildContext buildContext, SCWarGame game) {
                       Text(
                         'PAUSED',
                         style: TextStyle(
-                            color: const Color(0xFF003f5c),
-                            fontSize: 35 / scale,
-                            fontWeight: FontWeight.bold),
+                          color: ColorMap.dialogTitle,
+                          fontSize: 40 / scale,
+                          fontWeight: FontWeight.bold,
+                          shadows: [
+                            Shadow(
+                              blurRadius: 2 / scale,
+                              color: const Color(0xfff8f8f8),
+                              offset: Offset(2 / scale, 2 / scale),
+                            ),
+                          ],
+                        ),
                       ),
                       SizedBox(height: 20 / scale),
                       SoundSwitchButton(game: game),

@@ -179,8 +179,7 @@ class SCWarGame extends FlameGame<SCWarWorld> with TapDetector, ScaleDetector {
 
 class SCWarWorld extends World with HasGameReference<SCWarGame> {
   late HomeComponent home;
-  late Component enemyBg;
-  late Component towerBg;
+  late Component gameBg;
   @override
   Future<void> onLoad() async {
     addBg();
@@ -194,8 +193,7 @@ class SCWarWorld extends World with HasGameReference<SCWarGame> {
 
   void startGame() {
     home.removeFromParent();
-    addEnemyBg();
-    addTowerBg();
+    addGameBg();
   }
 
   void goToLevel() {
@@ -207,8 +205,7 @@ class SCWarWorld extends World with HasGameReference<SCWarGame> {
 
   void goHome() {
     if (game.playing) {
-      enemyBg.removeFromParent();
-      towerBg.removeFromParent();
+      gameBg.removeFromParent();
     }
     showHome();
   }
@@ -241,13 +238,24 @@ class SCWarWorld extends World with HasGameReference<SCWarGame> {
     add(bg);
   }
 
+  void addGameBg() {
+    gameBg = Component();
+    gameBg.priority = -1;
+    add(gameBg);
+    addEnemyBg();
+    addTowerBg();
+    gameBg.add(RectangleComponent.fromRect(
+      game.gameManager.sizeConfig.getBattleFieldRect(),
+      anchor: Anchor.center,
+      paint: Paint()
+        ..color = const Color(0x55000000)
+        ..maskFilter = const MaskFilter.blur(BlurStyle.outer, 10.0),
+    ));
+  }
+
   void addEnemyBg() {
-    enemyBg = Component();
-    enemyBg.priority = -1;
-    add(enemyBg);
-    // final paint =  Paint()..color = const Color(0xFFD2E8E8);
     var enemyRect = game.gameManager.sizeConfig.getEnemyBgRect();
-    enemyBg.add(RectangleComponent.fromRect(enemyRect,
+    gameBg.add(RectangleComponent.fromRect(enemyRect,
         anchor: Anchor.center, paint: paintMap['enemyBg']));
     // for (int row = 0; row < 10; row++) {
     //   for (int col = 0; col < 5; col++) {
@@ -269,26 +277,30 @@ class SCWarWorld extends World with HasGameReference<SCWarGame> {
   }
 
   void addTowerBg() {
-    towerBg = Component();
-    towerBg.priority = -1;
-    add(towerBg);
     // final paint = Paint()..color = const Color(0xFFA8DADC);
     final rect = game.gameManager.sizeConfig.getTowerBgRect();
-    towerBg.add(RectangleComponent.fromRect(rect,
+    gameBg.add(RectangleComponent.fromRect(rect,
         anchor: Anchor.center, paint: paintMap['towerBg']));
     for (var i = 0; i < 2; i++) {
       for (var j = 0; j < GameConfig.col; j++) {
-        towerBg.add(CircleComponent(
+        gameBg.add(CircleComponent(
             anchor: Anchor.center,
             radius: GameConfig.baseLen / 2,
             paint: paintMap['towerBlock'],
             position: game.gameManager.sizeConfig.getTowerPos(i, j)));
       }
     }
-    towerBg.add(CircleComponent(
+    gameBg.add(CircleComponent(
         anchor: Anchor.center,
         radius: GameConfig.baseLen / 2,
         paint: paintMap['preTowerBlock'],
+        position: game.gameManager.sizeConfig.getPrepareTowerPos()));
+    gameBg.add(CircleComponent(
+        anchor: Anchor.center,
+        radius: GameConfig.baseLen / 2,
+        paint: Paint()
+          ..color = const Color(0x441c658c)
+          ..maskFilter = const MaskFilter.blur(BlurStyle.outer, 3.0),
         position: game.gameManager.sizeConfig.getPrepareTowerPos()));
   }
 }

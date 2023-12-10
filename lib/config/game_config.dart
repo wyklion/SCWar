@@ -19,15 +19,34 @@ final Map<String, Paint> paintMap = {
 };
 
 final class ColorMap {
-  static Color tower = const Color(0xFF20B2AA);
-  static Color towerMove = const Color(0xFF48C9B0);
-  static Color towerMerge = const Color(0xFF2ECC71);
-  static Color towerSwap = const Color(0xFF008080);
-  static Color enemy = const Color(0xFF3282b8);
-  static Color enemy2 = const Color(0xFF0f4c75);
-  static Color bullet = const Color(0xFFFF8A00);
-  static Color score = const Color(0xFFFFCD00);
-  static Color highScore = const Color(0xFFF7E967);
+  static const Color tower = Color(0xFF20B2AA);
+  static const Color towerMove = Color(0xFF48C9B0);
+  static const Color towerMerge = Color(0xFF2ECC71);
+  static const Color towerSwap = Color(0xFF008080);
+  static const Color enemy = Color(0xFF3282b8);
+  static const Color enemy2 = Color(0xFF0f4c75);
+  static const Color bullet = Color(0xFFFF8A00);
+  static const Color score = Color(0xFFFCF3CF);
+  static const Color highScore = Color(0xFFf1f0cf);
+  static const Color dialogTitle = Color(0xFF005B9A);
+}
+
+class TextStyleMap {
+  static const TextStyle label = TextStyle(
+      fontSize: 30,
+      fontWeight: FontWeight.bold,
+      color: Color(0xFF1F4E79),
+      shadows: [
+        Shadow(
+          blurRadius: 2,
+          color: Color(0x88000000),
+          offset: Offset(2, 2),
+        )
+      ]);
+  static const TextStyle dataLabel = TextStyle(
+      fontSize: 20, fontWeight: FontWeight.bold, color: Color(0xFF6D7993));
+  static const TextStyle data = TextStyle(
+      fontSize: 20, fontWeight: FontWeight.w600, color: Color(0xFFD3E2F2));
 }
 
 class GameConfig {

@@ -41,9 +41,17 @@ class RebornComponent extends StatelessWidget {
                           child: Text(
                             'Continue?',
                             style: TextStyle(
-                                color: const Color(0xFF003f5c),
-                                fontSize: 35 / scale,
-                                fontWeight: FontWeight.bold),
+                              color: ColorMap.dialogTitle,
+                              fontSize: 40 / scale,
+                              fontWeight: FontWeight.bold,
+                              shadows: [
+                                Shadow(
+                                  blurRadius: 2 / scale,
+                                  color: const Color(0xfff8f8f8),
+                                  offset: Offset(2 / scale, 2 / scale),
+                                ),
+                              ],
+                            ),
                           ),
                         ),
                       ),
@@ -100,9 +108,17 @@ class GameOverComponent extends StatelessWidget {
       Text(
         'GameOver',
         style: TextStyle(
-            color: const Color(0xFF003f5c),
-            fontSize: 35 / scale,
-            fontWeight: FontWeight.bold),
+          color: ColorMap.dialogTitle,
+          fontSize: 40 / scale,
+          fontWeight: FontWeight.bold,
+          shadows: [
+            Shadow(
+              blurRadius: 2 / scale,
+              color: const Color(0xfff8f8f8),
+              offset: Offset(2 / scale, 2 / scale),
+            ),
+          ],
+        ),
       ),
       SizedBox(height: 20 / scale),
       Text(
@@ -118,7 +134,7 @@ class GameOverComponent extends StatelessWidget {
       list.add(Text(
         'High Score: ${NumberUtil.getScoreString(game.playerData.highScore)}',
         style: TextStyle(
-          fontSize: 25 / scale,
+          fontSize: 20 / scale,
           color: ColorMap.highScore,
         ),
       ));

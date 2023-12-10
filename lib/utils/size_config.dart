@@ -18,6 +18,11 @@ class SizeConfig {
     log('originSize: $gameSize, size (${size.x}, ${size.y}) baseLen: $baseLen');
   }
 
+  Rect getBattleFieldRect() {
+    return Rect.fromLTWH(edgeSize2 - size.x / 2, edgeSize2 - size.y / 2,
+        baseLen * GameConfig.col, baseLen * (GameConfig.row + 2));
+  }
+
   Rect getEnemyBgRect() {
     return Rect.fromLTWH(edgeSize2 - size.x / 2, edgeSize2 - size.y / 2,
         baseLen * GameConfig.col, baseLen * GameConfig.row);

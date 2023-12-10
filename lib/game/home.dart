@@ -1,6 +1,7 @@
 import 'package:flame/components.dart';
 import 'package:flutter/material.dart';
 import 'package:scwar/config/config.dart';
+import 'package:scwar/config/game_config.dart';
 import 'package:scwar/game/game.dart';
 import 'package:scwar/utils/number_util.dart';
 
@@ -9,10 +10,6 @@ class HomeComponent extends Component with HasGameRef<SCWarGame> {
   late TextComponent bigestTower;
   late TextComponent playerMoveCount;
   late TextComponent enemyCount;
-  final dataLabelStyle = const TextStyle(
-      fontSize: 20, fontWeight: FontWeight.bold, color: Color(0xFF6D7993));
-  final dataStyle = const TextStyle(
-      fontSize: 20, fontWeight: FontWeight.w600, color: Color(0xFFD3E2F2));
   HomeComponent();
 
   @override
@@ -40,13 +37,13 @@ class HomeComponent extends Component with HasGameRef<SCWarGame> {
     add(TextComponent(
       anchor: Anchor.centerRight,
       text: label,
-      textRenderer: TextPaint(style: dataLabelStyle),
+      textRenderer: TextPaint(style: TextStyleMap.dataLabel),
       position: Vector2(20, 230 + idx * 30),
     ));
     var text = TextComponent(
       anchor: Anchor.centerLeft,
       text: value,
-      textRenderer: TextPaint(style: dataStyle),
+      textRenderer: TextPaint(style: TextStyleMap.data),
       position: Vector2(30, 230 + idx * 30),
     );
     add(text);

@@ -236,7 +236,7 @@ Widget makeHighScore(SCWarGame game) {
           Text(
             'HighScore: ${NumberUtil.getScoreString(game.playerData.highScore)}',
             style: TextStyle(
-              color: const Color(0xFFf1f0cf), //ColorMap.highScore,
+              color: ColorMap.highScore,
               fontSize: 30 / scale,
             ),
           ),

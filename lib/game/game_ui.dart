@@ -1,6 +1,7 @@
 import 'package:flame/components.dart';
 import 'package:flutter/material.dart';
 import 'package:scwar/config/config.dart';
+import 'package:scwar/config/game_config.dart';
 import 'dart:developer';
 import 'package:scwar/game/game.dart';
 import 'package:scwar/utils/number_util.dart';
@@ -104,10 +105,7 @@ class LevelComponent extends PositionComponent with HasGameRef<SCWarGame> {
       anchor: Anchor.center,
       text: 'Level ${game.gameManager.level}',
       textRenderer: TextPaint(
-        style: const TextStyle(
-            fontSize: 30,
-            fontWeight: FontWeight.bold,
-            color: Color(0xFF1F4E79)),
+        style: TextStyleMap.label,
       ),
       size: Vector2(180, 50),
       position: Vector2(0, 0),
@@ -180,13 +178,18 @@ class DataComponent extends PositionComponent with HasGameRef<SCWarGame> {
   late TextComponent swapCount;
   late TextComponent mergeCount;
   final labelStyle = const TextStyle(
-      fontSize: 30, fontWeight: FontWeight.bold, color: Color(0xFF1F4E79));
+      fontSize: 30,
+      fontWeight: FontWeight.bold,
+      color: Color(0xFF1F4E79),
+      shadows: [
+        Shadow(
+          blurRadius: 2,
+          color: Color(0x88000000),
+          offset: Offset(2, 2),
+        )
+      ]);
   final scoreStyle = const TextStyle(
-      fontSize: 30, fontWeight: FontWeight.bold, color: Color(0xFFFCF3CF));
-  final dataLabelStyle = const TextStyle(
-      fontSize: 20, fontWeight: FontWeight.bold, color: Color(0xFF6D7993));
-  final dataStyle = const TextStyle(
-      fontSize: 20, fontWeight: FontWeight.w600, color: Color(0xFFD3E2F2));
+      fontSize: 30, fontWeight: FontWeight.bold, color: ColorMap.score);
   DataComponent()
       : super(
           position: Vector2(470, 220),
@@ -198,7 +201,7 @@ class DataComponent extends PositionComponent with HasGameRef<SCWarGame> {
     label = TextComponent(
       anchor: Anchor.center,
       text: 'SCORE',
-      textRenderer: TextPaint(style: labelStyle),
+      textRenderer: TextPaint(style: TextStyleMap.label),
       size: Vector2(180, 80),
     );
     add(label);
@@ -227,14 +230,14 @@ class DataComponent extends PositionComponent with HasGameRef<SCWarGame> {
     add(TextComponent(
       anchor: Anchor.centerRight,
       text: label,
-      textRenderer: TextPaint(style: dataLabelStyle),
+      textRenderer: TextPaint(style: TextStyleMap.dataLabel),
       size: Vector2(180, 80),
       position: Vector2(0, 100 + idx * 30),
     ));
     var text = TextComponent(
       anchor: Anchor.centerLeft,
       text: '0',
-      textRenderer: TextPaint(style: dataStyle),
+      textRenderer: TextPaint(style: TextStyleMap.data),
       size: Vector2(380, 80),
       position: Vector2(10, 100 + idx * 30),
     );
