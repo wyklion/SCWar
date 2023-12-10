@@ -7,7 +7,7 @@ import 'package:scwar/utils/number_util.dart';
 
 class GameUI extends Component with HasGameRef<SCWarGame> {
   late DataComponent scoreComponent;
-  late LevelComponent levelComponent;
+  LevelComponent? levelComponent;
   GameUI();
 
   @override
@@ -37,13 +37,16 @@ class GameUI extends Component with HasGameRef<SCWarGame> {
 
   void setupLevel() {
     if (game.gameManager.level > 0) {
+      if (levelComponent != null) {
+        levelComponent!.removeFromParent();
+      }
       add(levelComponent = LevelComponent());
     }
   }
 
   void updateLevelData() {
     if (game.gameManager.level > 0) {
-      levelComponent.updatePower();
+      levelComponent!.updatePower();
     }
   }
 }
@@ -177,9 +180,9 @@ class DataComponent extends PositionComponent with HasGameRef<SCWarGame> {
   late TextComponent swapCount;
   late TextComponent mergeCount;
   final labelStyle = const TextStyle(
-      fontSize: 30, fontWeight: FontWeight.bold, color: Color(0xFFFCF3CF));
+      fontSize: 30, fontWeight: FontWeight.bold, color: Color(0xFF1F4E79));
   final scoreStyle = const TextStyle(
-      fontSize: 30, fontWeight: FontWeight.bold, color: Color(0xFFFFCD00));
+      fontSize: 30, fontWeight: FontWeight.bold, color: Color(0xFFFCF3CF));
   final dataLabelStyle = const TextStyle(
       fontSize: 20, fontWeight: FontWeight.bold, color: Color(0xFF6D7993));
   final dataStyle = const TextStyle(

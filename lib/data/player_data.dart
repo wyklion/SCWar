@@ -1,6 +1,6 @@
 import 'package:scwar/config/config.dart';
-import 'package:scwar/game/game_data.dart';
-import 'package:scwar/utils/local_storage.dart';
+import 'package:scwar/data/game_data.dart';
+import 'package:scwar/data/local_storage.dart';
 
 class PlayerData {
   String version = Config.version;
@@ -11,6 +11,7 @@ class PlayerData {
   int enemyCount = 0;
   int energyCount = 0;
   int energyMultiplyCount = 0;
+  int tutorial = 0;
   // 50关卡数据[[胜次，败次]]
   List<List<int>> levels = List.generate(51, (_) => [0, 0]);
 
@@ -38,6 +39,7 @@ class PlayerData {
     json['enemyCount'] = enemyCount;
     json['energyCount'] = energyCount;
     json['energyMultiplyCount'] = energyMultiplyCount;
+    json['tutorial'] = tutorial;
     storage.setPlayerJson(json);
   }
 
@@ -59,6 +61,7 @@ class PlayerData {
       enemyCount = json['enemyCount'] ?? 0;
       energyCount = json['energyCount'] ?? 0;
       energyMultiplyCount = json['energyMultiplyCount'] ?? 0;
+      tutorial = json['tutorial'] ?? 0;
     }
     var ljson = storage.getLevelsJson();
     if (ljson != null) {

@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:scwar/config/config.dart';
 import 'package:scwar/config/game_config.dart';
 import 'package:scwar/game/game.dart';
+import 'package:scwar/layers/layer_util.dart';
+import 'package:scwar/utils/iconfont.dart';
 import 'package:scwar/utils/number_util.dart';
 
 class TitleComponent extends StatefulWidget {
@@ -71,25 +73,30 @@ class TitleComponentState extends State<TitleComponent>
       Positioned(
         top: 170 / scale,
         left: 240 / scale,
-        child: Container(
-          width: 150 / scale,
-          height: 150 / scale,
-          decoration: BoxDecoration(
-            shape: BoxShape.circle,
-            color: ColorMap.tower,
-          ),
-          transform: Matrix4.translationValues(
-            cd,
-            cd,
-            0,
-          ),
-          child: Center(
-            child: Text(
-              'K',
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: 50 / scale,
-                fontWeight: FontWeight.bold,
+        child: GestureDetector(
+          onDoubleTap: () {
+            game.changeTestMode();
+          },
+          child: Container(
+            width: 150 / scale,
+            height: 150 / scale,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              color: ColorMap.tower,
+            ),
+            transform: Matrix4.translationValues(
+              cd,
+              cd,
+              0,
+            ),
+            child: Center(
+              child: Text(
+                'K',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 50 / scale,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
             ),
           ),
@@ -126,7 +133,7 @@ class TestSwitchButtonState extends State<TestSwitchButton> {
         // ),
         onPressed: () {
           setState(() {
-            game.changeTestMode(!enable);
+            game.changeTestMode();
           });
         },
         child: Text(
@@ -247,44 +254,142 @@ Widget makeHighScore(SCWarGame game) {
   );
 }
 
-Widget buidlHomeOverlay(BuildContext buildContext, SCWarGame game) {
-  double scale = game.scale;
-  List<Widget> stacks = [];
-  stacks.add(makePlayButton(game));
-  if (game.localStorage.hasGame()) {
-    stacks.add(Center(
-      child: SizedBox(
-        width: 200 / scale,
-        height: 120 / scale,
-        child: Align(
-          alignment: Alignment.topRight,
-          child: Text(
-            'continue',
-            style: TextStyle(
-              color: Colors.white30,
-              fontSize: 25 / scale,
+class KefuComponent extends StatelessWidget {
+  final SCWarGame game;
+  final VoidCallback onOk;
+  const KefuComponent({
+    super.key,
+    required this.game,
+    required this.onOk,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    double scale = game.scale;
+    return Center(
+      child: AspectRatio(
+        aspectRatio: 9 / 16,
+        child: Container(
+          color: const Color.fromARGB(130, 0, 0, 0),
+          child: Center(
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(10),
+              child: Container(
+                width: 300 / scale,
+                height: 200 / scale,
+                color: const Color(0xFF7FB3D5),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    SizedBox(
+                      height: 120 / scale,
+                      child: Center(
+                        child: Text(
+                          'Email me: wyklion@qq.com',
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                              color: const Color(0xFF3f7b70),
+                              fontSize: 25 / scale,
+                              fontWeight: FontWeight.bold),
+                        ),
+                      ),
+                    ),
+                    makeIconButton(game, Iconfont.ok, 'Got it', 30,
+                        color: const Color(0xFF6FCF97), () {
+                      onOk();
+                    }),
+                  ],
+                ),
+              ),
             ),
           ),
         ),
       ),
-    ));
+    );
   }
-  stacks.add(makeLevelButton(game));
-  stacks.add(makeHighScore(game));
-  stacks.add(TitleComponent(game: game));
-  if (!Config.release) {
+}
+
+class HomeComponent extends StatefulWidget {
+  final SCWarGame game;
+  const HomeComponent({super.key, required this.game});
+  @override
+  HomeComponentState createState() => HomeComponentState();
+}
+
+class HomeComponentState extends State<HomeComponent> {
+  bool openKefu = false;
+  @override
+  Widget build(BuildContext context) {
+    double scale = game.scale;
+    List<Widget> stacks = [];
+    stacks.add(makePlayButton(game));
+    if (game.localStorage.hasGame()) {
+      stacks.add(Center(
+        child: SizedBox(
+          width: 200 / scale,
+          height: 120 / scale,
+          child: Align(
+            alignment: Alignment.topRight,
+            child: Text(
+              'continue',
+              style: TextStyle(
+                color: Colors.white30,
+                fontSize: 25 / scale,
+              ),
+            ),
+          ),
+        ),
+      ));
+    }
+    stacks.add(makeLevelButton(game));
+    stacks.add(makeHighScore(game));
+    stacks.add(TitleComponent(game: game));
+    // if (!Config.release) {
+    //   stacks.add(
+    //     Positioned(
+    //       top: 100 / scale,
+    //       right: 40 / scale,
+    //       child: TestSwitchButton(game: game),
+    //     ),
+    //   );
+    // }
     stacks.add(
       Positioned(
-        top: 100 / scale,
-        right: 40 / scale,
-        child: TestSwitchButton(game: game),
+        left: 20 / scale,
+        bottom: 45 / scale,
+        child: IconButton(
+          icon: Icon(
+            size: 40 / scale,
+            Iconfont.kefu,
+            color: const Color(0xFF9ED9D2),
+          ),
+          onPressed: () {
+            game.gameManager.soundManager.playCick();
+            setState(() {
+              openKefu = true;
+            });
+          },
+        ),
+      ),
+    );
+    if (openKefu) {
+      stacks.add(KefuComponent(
+          game: game,
+          onOk: () {
+            setState(() {
+              openKefu = false;
+            });
+          }));
+    }
+    return Center(
+      child: AspectRatio(
+        aspectRatio: 9 / 16,
+        child: Stack(children: stacks),
       ),
     );
   }
-  return Center(
-    child: AspectRatio(
-      aspectRatio: 9 / 16,
-      child: Stack(children: stacks),
-    ),
-  );
+}
+
+Widget buidlHomeOverlay(BuildContext buildContext, SCWarGame game) {
+  return HomeComponent(game: game);
 }

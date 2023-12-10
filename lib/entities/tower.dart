@@ -1,8 +1,10 @@
+import 'dart:async';
 import 'dart:developer';
 import 'package:flame/components.dart';
 import 'package:flame/effects.dart';
 import 'package:flutter/material.dart';
 import 'package:flame/events.dart';
+import 'package:scwar/entities/idle_state.dart';
 import 'package:scwar/game/game_manager.dart';
 import 'package:scwar/utils/number_util.dart';
 import '../config/game_config.dart';
@@ -26,6 +28,7 @@ class Tower extends Entity with TapCallbacks, DragCallbacks {
   Tower? mergingTower;
   Tower? swapTower;
   (int, int)? movePos;
+  late IdleState _idleState;
   Tower(this.r, this.c, super.x, super.y, super.value) {
     paint.color = ColorMap.tower;
     _rect = Rect.fromCenter(
@@ -35,6 +38,12 @@ class Tower extends Entity with TapCallbacks, DragCallbacks {
     pos.x = x;
     pos.y = y;
     // log(_rect.toString());
+  }
+
+  @override
+  FutureOr<void> onLoad() {
+    super.onLoad();
+    _idleState = IdleState(gameManager, idleTime: 0.5, maxDelay: 5);
   }
 
   @override
@@ -233,12 +242,13 @@ class Tower extends Entity with TapCallbacks, DragCallbacks {
     //   ..shader = gradient
     //       .createShader(Rect.fromCircle(center: Offset.zero, radius: radius));
     // canvas.drawCircle(Offset.zero, radius, circlePaint);
-    canvas.drawCircle(Offset.zero, radius, paint);
+    double scale = 1 + _idleState.value * 0.1;
+    canvas.drawCircle(Offset.zero, radius * scale, paint);
   }
 
   @override
   void update(double dt) {
     // 处理炮塔的逻辑
-    if (state == TowerState.backing) {}
+    _idleState.update(dt);
   }
 }

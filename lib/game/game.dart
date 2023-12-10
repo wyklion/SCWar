@@ -6,10 +6,10 @@ import 'package:flame/events.dart';
 import 'package:flame/extensions.dart';
 import 'package:flutter/material.dart';
 import 'package:scwar/config/config.dart';
-import 'package:scwar/game/player_data.dart';
-import 'package:scwar/layers/game_ui.dart';
-import 'package:scwar/layers/home.dart';
-import 'package:scwar/utils/local_storage.dart';
+import 'package:scwar/data/player_data.dart';
+import 'package:scwar/game/game_ui.dart';
+import 'package:scwar/game/home.dart';
+import 'package:scwar/data/local_storage.dart';
 import 'package:scwar/utils/sound_manager.dart';
 import '../config/game_config.dart';
 import 'game_manager.dart';
@@ -42,6 +42,7 @@ class SCWarGame extends FlameGame<SCWarWorld> with TapDetector, ScaleDetector {
     //   // 'pause_icon.png',
     // ]);
     await soundManager.load();
+    soundManager.soundOn = localStorage.getSoundOn() ?? soundManager.soundOn;
     playerData.loadFromStorage(localStorage);
     await gameManager.load();
     world.showHome();
@@ -51,11 +52,6 @@ class SCWarGame extends FlameGame<SCWarWorld> with TapDetector, ScaleDetector {
 
   double get scale {
     return GameConfig.fixedWidth / camera.viewport.size.x;
-  }
-
-  void changeTestMode(bool testMode) {
-    Config.testMode = testMode;
-    world.home.changeTestMode(testMode);
   }
 
   void addContent(content) {
@@ -132,6 +128,19 @@ class SCWarGame extends FlameGame<SCWarWorld> with TapDetector, ScaleDetector {
       return true;
     }
     return false;
+  }
+
+  updateTutorial(int tutorialIdx) {
+    playerData.tutorial = tutorialIdx;
+    playerData.saveStorage(localStorage);
+  }
+
+  void changeTestMode() {
+    Config.testMode = !Config.testMode;
+    world.home.changeTestMode();
+    if (Config.testMode) {
+      updateTutorial(0);
+    }
   }
 
   void goHome() {

@@ -77,8 +77,8 @@ class LocalStorage {
   }
 
   ///-------下面是游戏内常用方法-----------
-  bool getSoundOn() {
-    return getBool('sound') ?? true;
+  bool? getSoundOn() {
+    return getBool('sound');
   }
 
   Future<bool> setSoundOn(bool on) {

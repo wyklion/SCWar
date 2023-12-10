@@ -53,4 +53,8 @@ class Iconfont {
     0xe9cb,
     fontFamily: 'Iconfont',
   );
+  static const kefu = IconData(
+    0xe635,
+    fontFamily: 'Iconfont',
+  );
 }

@@ -4,9 +4,10 @@ import 'dart:math' as math;
 import 'package:flame/components.dart';
 import 'package:flame/flame.dart';
 import 'package:flame/game.dart';
-import 'package:scwar/game/game_data.dart';
+import 'package:scwar/data/game_data.dart';
 import 'package:scwar/game/game_test.dart';
-import 'package:scwar/utils/local_storage.dart';
+import 'package:scwar/game/tutorial.dart';
+import 'package:scwar/data/local_storage.dart';
 import 'package:scwar/utils/particles.dart';
 import 'package:scwar/utils/sound_manager.dart';
 import '../entities/energy.dart';
@@ -45,6 +46,7 @@ class GameManager {
   double preMergeTotal = 0;
   GameData data = GameData();
   GameState _currentState = GameState.ready;
+  TutorialComponent? tutorialComponent;
   int _attackCount = 0;
   Completer? _attackCompleter;
   late SizeConfig sizeConfig;
@@ -66,7 +68,6 @@ class GameManager {
   Future<void> load() async {
     localStorage = game.localStorage;
     sizeConfig = SizeConfig(game.size);
-    setSoundOn(localStorage.getSoundOn());
   }
 
   void setSoundOn(bool on) {
@@ -172,6 +173,7 @@ class GameManager {
   }
 
   void clear() {
+    clearTutorial();
     for (var i = 0; i < enemies.length; i++) {
       enemies[i].removeFromParent();
     }
@@ -218,6 +220,7 @@ class GameManager {
     if (level == 0) {
       addPrepareTower(1);
       addRandomEnemy();
+      makeTutorial(game.playerData.tutorial);
     } else {
       double initTowerValue = math.pow(1024, level).toDouble();
       levelTarget = initTowerValue * 1024;
@@ -249,6 +252,10 @@ class GameManager {
   }
 
   void startShooting() async {
+    if (game.playerData.tutorial == 0) {
+      game.updateTutorial(1);
+      clearTutorial();
+    }
     soundManager.playShoot();
     data.computeMove();
     game.ui.updatePlayerData();
@@ -529,6 +536,19 @@ class GameManager {
       }
     }
     setState(GameState.playerMove);
+  }
+
+  void makeTutorial(int tutorialIdx) {
+    if (tutorialIdx == 0) {
+      game.addContent(tutorialComponent = TutorialComponent0(this));
+    }
+  }
+
+  void clearTutorial() {
+    if (tutorialComponent != null) {
+      tutorialComponent!.removeFromParent();
+      tutorialComponent = null;
+    }
   }
 
   int getTowerTarget(int r, int c) {

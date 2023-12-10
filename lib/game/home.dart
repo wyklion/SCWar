@@ -28,8 +28,8 @@ class HomeComponent extends Component with HasGameRef<SCWarGame> {
     return super.onLoad();
   }
 
-  void changeTestMode(bool testMode) {
-    if (!testMode) {
+  void changeTestMode() {
+    if (!Config.testMode) {
       removeAll(children);
     } else {
       onLoad();

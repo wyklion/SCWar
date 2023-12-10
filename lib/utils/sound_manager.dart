@@ -1,4 +1,5 @@
 import 'package:flame_audio/flame_audio.dart';
+import 'package:flutter/foundation.dart';
 
 class SoundManager {
   bool soundOn = true;
@@ -20,6 +21,9 @@ class SoundManager {
     //   minPlayers: 3,
     //   maxPlayers: 5,
     // );
+    if (kIsWeb) {
+      soundOn = false;
+    }
   }
 
   void playCick() {
