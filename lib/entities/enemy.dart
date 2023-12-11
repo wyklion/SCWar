@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'dart:developer';
 import 'package:flame/effects.dart';
-import 'package:flame/game.dart';
 import 'package:flutter/material.dart';
 import 'package:scwar/entities/idle_state.dart';
 import '../config/game_config.dart';

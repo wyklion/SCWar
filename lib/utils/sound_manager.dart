@@ -6,15 +6,13 @@ class SoundManager {
   late AudioPool hurtPool;
   Future<void> load() async {
     await FlameAudio.audioCache.loadAll([
-      'click.ogg',
+      'click.mp3',
       'move.mp3',
-      'energy.ogg',
-      'hurt.ogg',
-      'shoot.ogg',
-      'dead.ogg',
-      'merge.ogg',
-      // 'pepSound2.ogg',
-      // 'pepSound3.ogg',
+      'energy.mp3',
+      'hurt.mp3',
+      'shoot.mp3',
+      'dead.mp3',
+      'merge.mp3',
     ]);
     // hurtPool = await FlameAudio.createPool(
     //   'glass_001.ogg',
@@ -28,7 +26,7 @@ class SoundManager {
 
   void playCick() {
     if (!soundOn) return;
-    FlameAudio.play('click.ogg');
+    FlameAudio.play('click.mp3');
     // FlameAudio.play('drop_003.ogg');
   }
 
@@ -39,13 +37,13 @@ class SoundManager {
 
   void playMerge() {
     if (!soundOn) return;
-    FlameAudio.play('merge.ogg');
+    FlameAudio.play('merge.mp3');
     // pool.start();
   }
 
   void playSwap() {
     if (!soundOn) return;
-    FlameAudio.play('move.ogg');
+    FlameAudio.play('move.mp3');
   }
 
   void playMove() {
@@ -55,28 +53,28 @@ class SoundManager {
 
   void playShoot() {
     if (!soundOn) return;
-    FlameAudio.play('shoot.ogg');
+    FlameAudio.play('shoot.mp3');
   }
 
   void playHurt() {
     if (!soundOn) return;
     // hurtPool.start();
-    FlameAudio.play('hurt.ogg');
+    FlameAudio.play('hurt.mp3');
   }
 
   void playEnergy() {
     if (!soundOn) return;
-    FlameAudio.play('energy.ogg');
+    FlameAudio.play('energy.mp3');
   }
 
   void playDead() {
     if (!soundOn) return;
-    FlameAudio.play('dead.ogg');
+    FlameAudio.play('dead.mp3');
   }
 
   void playWin() {
     if (!soundOn) return;
-    FlameAudio.play('energy.ogg');
+    FlameAudio.play('energy.mp3');
   }
 
   void playPrepare() {}

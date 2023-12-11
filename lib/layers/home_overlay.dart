@@ -51,7 +51,7 @@ class TitleComponentState extends State<TitleComponent>
           height: 150 / scale,
           decoration: BoxDecoration(
             color: ColorMap.enemy,
-            borderRadius: BorderRadius.circular(20),
+            borderRadius: BorderRadius.circular(20 / scale),
           ),
           transform: Matrix4.translationValues(
             rd,
@@ -80,7 +80,7 @@ class TitleComponentState extends State<TitleComponent>
           child: Container(
             width: 150 / scale,
             height: 150 / scale,
-            decoration: BoxDecoration(
+            decoration: const BoxDecoration(
               shape: BoxShape.circle,
               color: ColorMap.tower,
             ),

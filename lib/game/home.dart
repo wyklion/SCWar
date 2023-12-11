@@ -1,5 +1,4 @@
 import 'package:flame/components.dart';
-import 'package:flutter/material.dart';
 import 'package:scwar/config/config.dart';
 import 'package:scwar/config/game_config.dart';
 import 'package:scwar/game/game.dart';

@@ -25,7 +25,12 @@
             "name": "SCWar (release mode)",
             "request": "launch",
             "type": "dart",
-            "flutterMode": "release"
+            "flutterMode": "release",
+            "args": [
+                "chrome",
+                "--web-renderer",
+                "canvaskit",
+            ]
         }
     ]
 }
