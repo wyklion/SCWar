@@ -44,11 +44,7 @@ jobs:
       - name: FTP Deploy
         uses: SamKirkland/FTP-Deploy-Action@v4.3.4
         with:
-          # Deployment destination server & path. Formatted as protocol://domain.com:port/full/destination/path/
           server: ${{ secrets.SERVER }}
-          # FTP account username
           username: ${{ secrets.USER }}
-          # FTP account password
           password: ${{ secrets.PASSWORD }}
-          # The local folder to copy, defaults to root project folder
           local-dir: build/web/
