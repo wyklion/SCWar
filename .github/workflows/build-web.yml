@@ -29,14 +29,26 @@ jobs:
         run: flutter pub get
       # 打包web
       - name: build web
-        run: flutter build web -o docs --web-renderer canvaskit --dart-define=FLUTTER_WEB_CANVASKIT_URL=canvaskit/
+        run: flutter build web --web-renderer canvaskit --dart-define=FLUTTER_WEB_CANVASKIT_URL=canvaskit/
       # 配置git
-      - name: Config git
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          git config --global user.name  "wyklion"
-          git config --global user.email  "wyklion@qq.com"  
-          git add .
-          git commit -m "update build web"
-          git push
+      # - name: Config git
+      #   env:
+      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      #   run: |
+      #     git config --global user.name  "wyklion"
+      #     git config --global user.email  "wyklion@qq.com"  
+      #     git add .
+      #     git commit -m "update build web"
+      #     git push
+      # 上传自己的FTP
+      - name: FTP Deploy
+        uses: SamKirkland/FTP-Deploy-Action@3.0.0
+        with:
+          # Deployment destination server & path. Formatted as protocol://domain.com:port/full/destination/path/
+          ftp-server: ${{ secrets.SERVER }}
+          # FTP account username
+          ftp-username: ${{ secrets.USER }}
+          # FTP account password
+          ftp-password: ${{ secrets.PASSWORD }}
+          # The local folder to copy, defaults to root project folder
+          local-dir: build/web/

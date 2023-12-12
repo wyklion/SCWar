@@ -34,9 +34,10 @@ dependencies:
   # Use with the CupertinoIcons class for iOS style icons.
   # cupertino_icons: ^1.0.2
   flame: ^1.11.0
-  flame_audio: ^2.1.4
+  # flame_audio: ^2.1.4
   shared_preferences: ^2.2.2
   google_mobile_ads: ^4.0.0
+  audioplayers: ^5.2.1
 
 dev_dependencies:
   flutter_test:
@@ -49,35 +50,35 @@ dev_dependencies:
   # rules and activating additional ones.
   flutter_lints: ^3.0.1
 
-dependency_overrides:
-  audioplayers:
-    git:
-      url: https://github.com/bluefireteam/audioplayers.git
-      path: 'packages/audioplayers'
-  audioplayers_platform_interface:
-    git:
-      url: https://github.com/bluefireteam/audioplayers.git
-      path: 'packages/audioplayers_platform_interface'
-  audioplayers_web:
-    git:
-      url: https://github.com/bluefireteam/audioplayers.git
-      path: 'packages/audioplayers_web'
-  audioplayers_linux:
-    git:
-      url: https://github.com/bluefireteam/audioplayers.git
-      path: 'packages/audioplayers_linux'
-  audioplayers_android:
-    git:
-      url: https://github.com/bluefireteam/audioplayers.git
-      path: 'packages/audioplayers_android'
-  audioplayers_darwin:
-    git:
-      url: https://github.com/bluefireteam/audioplayers.git
-      path: 'packages/audioplayers_darwin'
-  audioplayers_windows:
-    git:
-      url: https://github.com/bluefireteam/audioplayers.git
-      path: 'packages/audioplayers_windows'
+# dependency_overrides:
+#   audioplayers:
+#     git:
+#       url: https://github.com/bluefireteam/audioplayers.git
+#       path: 'packages/audioplayers'
+#   audioplayers_platform_interface:
+#     git:
+#       url: https://github.com/bluefireteam/audioplayers.git
+#       path: 'packages/audioplayers_platform_interface'
+#   audioplayers_web:
+#     git:
+#       url: https://github.com/bluefireteam/audioplayers.git
+#       path: 'packages/audioplayers_web'
+#   audioplayers_linux:
+#     git:
+#       url: https://github.com/bluefireteam/audioplayers.git
+#       path: 'packages/audioplayers_linux'
+#   audioplayers_android:
+#     git:
+#       url: https://github.com/bluefireteam/audioplayers.git
+#       path: 'packages/audioplayers_android'
+#   audioplayers_darwin:
+#     git:
+#       url: https://github.com/bluefireteam/audioplayers.git
+#       path: 'packages/audioplayers_darwin'
+#   audioplayers_windows:
+#     git:
+#       url: https://github.com/bluefireteam/audioplayers.git
+#       path: 'packages/audioplayers_windows'
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec

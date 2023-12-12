@@ -80,7 +80,36 @@ ios要三种规格的截图各三张。用了GIMP，就缩放。
 隐私政策用免费生成网站：https://app.freeprivacypolicy.com/
 数据收集填什么，因为用了admob。就选了粗略位置。
 
+appIcon是是用https://js.design/workspace 做的，然后网页生成ios一组不同尺寸图标，但还是缺了，后来用GIMP转了几个。
+https://js.design/workspace
+launchImage可选universal，这个查了半天没有明确的说法。做了个1242*2208的当3x了。
 
+音效内存泄露这个问题卡了。网上找不到有人说这个问题。用xcode运行能明显看到打开音效多次播放内存就一直在涨，关了音效就不涨了。
+最后改回audioPlayer。。然后每次用同一个player。。给hurt单独一个。。就差不多了。。
+
+打包用flutter build ipa。然后装个Transporter上传，校验，交付。
+收到邮件 ITMS-90078: Missing Push Notification Entitlement。好像不要紧。
+12.12 去掉中国区提交审核了。
+
+ICP很烦。代理说500。另一家说800。有一家说个人做不了。
+12.12 买了阿里云99一年，续费也是99一年。买了个域名kkfun.fun。8块首年。
+备案网站和APP。
+系统检查：通过工信部系统未核实到kkfun.fun的实名认证信息，请在域名注册商完成域名实名认证ⓘ后2-3天再提交备案
+这就得等2天了。
+
+配置apache重启
+sudo vi /etc/httpd/conf/httpd.conf
+sudo systemctl restart httpd
+FTP:
+sudo yum install -y vsftpd
+sudo systemctl enable vsftpd.service
+sudo systemctl start vsftpd.service
+sudo vim /etc/vsftpd/vsftpd.conf
+sudo vim /etc/vsftpd/chroot_list
+sudo vim /etc/vsftpd/ftpusers // 注掉root
+sudo vim /etc/vsftpd/user_list // 注掉root
+sudo systemctl stop firewalld
+sudo systemctl restart vsftpd.service
 
 # 编译
 本机测试
@@ -91,6 +120,9 @@ flutter build web -o docs --base-href=/SCWar/ --web-renderer canvaskit --dart-de
 
 WEB(netlify)：
 flutter build web -o docs --web-renderer canvaskit --dart-define=FLUTTER_WEB_CANVASKIT_URL=canvaskit/
+
+ios(ipa):
+    flutter build ipa 
 
 # 规则说明
 

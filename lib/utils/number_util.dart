@@ -33,7 +33,7 @@ class NumberUtil {
 
   static String convertValue(double v, int fix) {
     if (v < 1000) {
-      return '$v';
+      return v.toStringAsFixed(0);
     }
     int x = 0;
     while (v >= 1000) {
@@ -49,14 +49,14 @@ class NumberUtil {
 
   static String getTowerString(double v) {
     if (v < 16384) {
-      return '${v.toInt()}';
+      return v.toStringAsFixed(0);
     }
     return NumberUtil.convertValue(v, 0);
   }
 
   static String getScoreString(double v) {
     if (v < 99999999) {
-      return '$v';
+      return v.toStringAsFixed(0);
     } else {
       return convertValue(v, 3);
     }
