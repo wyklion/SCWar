@@ -111,6 +111,10 @@ sudo vim /etc/vsftpd/user_list // 注掉root
 sudo systemctl stop firewalld
 sudo systemctl restart vsftpd.service
 
+改github action，改成上传ftp。
+但遇到报错：fatal: Not a Git project? Exiting...
+
+
 # 编译
 本机测试
 python3 -m http.server
