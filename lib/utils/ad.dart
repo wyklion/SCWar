@@ -19,16 +19,16 @@ class BannerComponentState extends State<BannerComponent> {
     super.initState();
     _bannerAd = BannerAd(
       adUnitId: Config.iosBannerId, // 替换为你的 AdMob 横幅广告单元 ID
-      size: AdSize.banner,
+      size: AdSize.largeBanner,
       request: const AdRequest(),
       listener: BannerAdListener(
         onAdLoaded: (Ad ad) {
           // 广告加载成功时的回调
-          log('Ad loaded: ${ad.adUnitId}');
+          log('BannerAd loaded: ${ad.adUnitId}');
         },
         onAdFailedToLoad: (Ad ad, LoadAdError error) {
           // 广告加载失败时的回调
-          log('Ad failed to load: ${ad.adUnitId}, $error');
+          log('BannerAd failed to load: ${ad.adUnitId}, $error');
           ad.dispose();
         },
       ),

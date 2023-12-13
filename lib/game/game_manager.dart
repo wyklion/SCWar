@@ -104,8 +104,7 @@ class GameManager {
     return json;
   }
 
-  bool loadGame() {
-    dynamic json;
+  bool loadGame(dynamic json) {
     if (GameTest.enable) {
       json = GameTest.data;
     } else {
@@ -211,27 +210,36 @@ class GameManager {
   void startGame({bool newGame = false, int level = 0}) {
     this.level = level;
     generator.init();
+    dynamic json;
     // 加载之前游戏，只有无尽模式有记录
-    if (!newGame && level == 0 && loadGame()) {
-      return;
+    if (!newGame && level == 0) {
+      if (GameTest.enable) {
+        json = GameTest.data;
+      } else {
+        json = localStorage.getGameJson();
+      }
     }
-    // 新游戏
-    if (level == 0) {
-      addPrepareTower(1);
-      addRandomEnemy();
-      makeTutorial(game.playerData.tutorial);
+    if (json != null) {
+      loadGame(json);
     } else {
-      double initTowerValue = math.pow(1024, level).toDouble();
-      levelTarget = initTowerValue * 1024;
-      addTower(1, 0, initTowerValue);
-      addTower(1, 1, initTowerValue);
-      addTower(0, 2, initTowerValue * 2);
-      addTower(1, 3, initTowerValue);
-      addTower(1, 4, initTowerValue);
-      data.computeInit();
-      addRandomEnemy();
-      game.ui.setupLevel();
-      game.ui.updateAll();
+      // 新游戏
+      if (level == 0) {
+        addPrepareTower(1);
+        addRandomEnemy();
+        makeTutorial(game.playerData.tutorial);
+      } else {
+        double initTowerValue = math.pow(1024, level).toDouble();
+        levelTarget = initTowerValue * 1024;
+        addTower(1, 0, initTowerValue);
+        addTower(1, 1, initTowerValue);
+        addTower(0, 2, initTowerValue * 2);
+        addTower(1, 3, initTowerValue);
+        addTower(1, 4, initTowerValue);
+        data.computeInit();
+        addRandomEnemy();
+        game.ui.setupLevel();
+        game.ui.updateAll();
+      }
     }
   }
 

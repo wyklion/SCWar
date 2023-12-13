@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:scwar/config/config.dart';
 import 'package:scwar/config/game_config.dart';
 import 'package:scwar/game/game.dart';
@@ -65,13 +66,11 @@ class RebornComponent extends StatelessWidget {
                                 color: const Color(0xFFb33030), () {
                               onFinish();
                             }),
-                            SizedBox(height: 50 / scale),
+                            SizedBox(height: 40 / scale),
                             makeIconButton(
                                 game,
                                 Iconfont.video,
-                                color: Config.testMode
-                                    ? const Color(0xFF31aa75)
-                                    : Colors.grey,
+                                color: const Color(0xFF31aa75),
                                 'Yes',
                                 20, () {
                               onReborn();
@@ -205,14 +204,14 @@ class GameFinishComponent extends StatefulWidget {
 
 class GameFinishComponentState extends State<GameFinishComponent> {
   bool checkReborn = false;
-  bool reborning = false;
+  bool rebornClicked = false;
   @override
   Widget build(BuildContext context) {
-    if (!checkReborn) {
+    if (!checkReborn && game.rewardedAd != null) {
       return RebornComponent(
         game: game,
         onFinish: () {
-          if (reborning) {
+          if (rebornClicked) {
             return;
           }
           game.gameManager.soundManager.playCick();
@@ -222,22 +221,23 @@ class GameFinishComponentState extends State<GameFinishComponent> {
           });
         },
         onReborn: () async {
-          if (reborning) {
+          if (rebornClicked) {
             return;
           }
           setState(() {
-            reborning = true;
+            rebornClicked = true;
           });
           game.gameManager.soundManager.playCick();
-          bool reborned = await game.reborn();
-          if (!reborned) {
-            setState(() {
-              reborning = false;
-            });
-          }
+          game.rewardedAd?.show(
+              onUserEarnedReward: (AdWithoutView ad, RewardItem rewardItem) {
+            // ignore: avoid_print
+            print('Reward amount: ${rewardItem.amount}');
+            game.reborn();
+          });
         },
       );
     } else {
+      game.gameOver();
       return GameOverComponent(game: game);
     }
   }

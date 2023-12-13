@@ -3,6 +3,19 @@
 用Flutter + Flame开发。
 https://scwar.netlify.app/
 
+# 编译
+本机测试
+python3 -m http.server
+
+<!-- WEB(gh-page)：
+flutter build web -o docs --base-href=/SCWar/ --web-renderer canvaskit --dart-define=FLUTTER_WEB_CANVASKIT_URL=canvaskit/ -->
+
+WEB(netlify)：
+flutter build web -o docs --web-renderer canvaskit --dart-define=FLUTTER_WEB_CANVASKIT_URL=canvaskit/
+
+ios(ipa):
+    flutter build ipa 
+    
 教ChatGpt写的介绍：
 
 ## 短介绍：
@@ -113,20 +126,10 @@ sudo systemctl restart vsftpd.service
 
 改github action，改成上传ftp。
 但遇到报错：fatal: Not a Git project? Exiting...
+这个FTP-Deploy要用新版，提示明确多了。。然后就能自动推到阿里云上了，也不用多一次github提交。不需要doc目录了。
 
+appstore中午提交的审核晚上看就通过了？真快。
 
-# 编译
-本机测试
-python3 -m http.server
-
-<!-- WEB(gh-page)：
-flutter build web -o docs --base-href=/SCWar/ --web-renderer canvaskit --dart-define=FLUTTER_WEB_CANVASKIT_URL=canvaskit/ -->
-
-WEB(netlify)：
-flutter build web -o docs --web-renderer canvaskit --dart-define=FLUTTER_WEB_CANVASKIT_URL=canvaskit/
-
-ios(ipa):
-    flutter build ipa 
 
 # 规则说明
 

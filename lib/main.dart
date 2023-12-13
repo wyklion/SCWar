@@ -4,6 +4,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flame/game.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
+import 'package:scwar/config/config.dart';
 import 'package:scwar/layers/game_overlay.dart';
 import 'package:scwar/layers/gameover_overlay.dart';
 import 'package:scwar/layers/home_overlay.dart';
@@ -13,19 +14,32 @@ import 'package:scwar/layers/win_overlay.dart';
 import 'package:scwar/utils/ad.dart';
 import 'game/game.dart';
 
-class SpaceShooterGame extends FlameGame {}
-
 void main() {
   if (!kIsWeb) {
     WidgetsFlutterBinding.ensureInitialized();
     unawaited(MobileAds.instance.initialize());
   }
   var app = const AppWidget();
-  runApp(MaterialApp(home: app));
+  runApp(MaterialApp(
+      builder: (context, child) {
+        return MediaQuery(
+          //设置全局的文字的textScaleFactor为1.0，文字不再随系统设置改变
+          data:
+              MediaQuery.of(context).copyWith(textScaler: TextScaler.noScaling),
+          child: child!,
+        );
+      },
+      home: app));
 }
 
-class AppWidget extends StatelessWidget {
+/// A simple app that loads a rewarded ad.
+class AppWidget extends StatefulWidget {
   const AppWidget({super.key});
+  @override
+  AppWidgetState createState() => AppWidgetState();
+}
+
+class AppWidgetState extends State<AppWidget> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -48,7 +62,8 @@ class AppWidget extends StatelessWidget {
             ),
           ),
           Container(
-            height: 80,
+            alignment: Alignment.center,
+            height: 100,
             color: Colors.blueGrey,
             child: kIsWeb ? null : const BannerComponent(),
           ),
