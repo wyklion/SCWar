@@ -47,5 +47,5 @@ jobs:
           server: ${{ secrets.SERVER }}
           username: ${{ secrets.USER }}
           password: ${{ secrets.PASSWORD }}
-          local-dir: ./doc/
+          local-dir: ./docs/
           server-dir: ./scwar/
