@@ -1,3 +1,4 @@
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:scwar/config/config.dart';
@@ -6,6 +7,7 @@ import 'package:scwar/game/game.dart';
 import 'package:scwar/layers/layer_util.dart';
 import 'package:scwar/utils/iconfont.dart';
 import 'package:scwar/utils/number_util.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class RebornComponent extends StatelessWidget {
   final SCWarGame game;
@@ -40,7 +42,7 @@ class RebornComponent extends StatelessWidget {
                         height: 140 / scale,
                         child: Center(
                           child: Text(
-                            'Continue?',
+                            AppLocalizations.of(context)!.continueTitle,
                             style: TextStyle(
                               color: ColorMap.dialogTitle,
                               fontSize: 40 / scale,
@@ -62,25 +64,27 @@ class RebornComponent extends StatelessWidget {
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            makeIconButton(game, Iconfont.end, 'No', 30,
+                            makeIconButton(context, game, Iconfont.end,
+                                AppLocalizations.of(context)!.no,
                                 color: const Color(0xFFb33030), () {
                               onFinish();
                             }),
                             SizedBox(height: 40 / scale),
                             makeIconButton(
+                                context,
                                 game,
                                 Iconfont.video,
                                 color: const Color(0xFF31aa75),
-                                'Yes',
-                                20, () {
+                                AppLocalizations.of(context)!.yes, () {
                               onReborn();
                             }),
-                            Text(
-                              'Watch video ad.',
+                            AutoSizeText(
+                              AppLocalizations.of(context)!.watchAd,
                               style: TextStyle(
                                 color: const Color(0xFF555555),
                                 fontSize: 20 / scale,
                               ),
+                              maxLines: 1,
                             )
                           ],
                         ),
@@ -105,7 +109,7 @@ class GameOverComponent extends StatelessWidget {
     double scale = game.scale;
     List<Widget> list = [
       Text(
-        'GameOver',
+        AppLocalizations.of(context)!.gameOver,
         style: TextStyle(
           color: ColorMap.dialogTitle,
           fontSize: 40 / scale,
@@ -121,7 +125,7 @@ class GameOverComponent extends StatelessWidget {
       ),
       SizedBox(height: 20 / scale),
       Text(
-        'Score: ${NumberUtil.getScoreString(game.gameManager.data.score)}',
+        '${AppLocalizations.of(context)!.score}: ${NumberUtil.getScoreString(game.gameManager.data.score)}',
         style: TextStyle(
           fontSize: 35 / scale,
           color: ColorMap.score,
@@ -131,7 +135,7 @@ class GameOverComponent extends StatelessWidget {
     ];
     if (game.gameManager.level == 0) {
       list.add(Text(
-        'High Score: ${NumberUtil.getScoreString(game.playerData.highScore)}',
+        '${AppLocalizations.of(context)!.highScore}: ${NumberUtil.getScoreString(game.playerData.highScore)}',
         style: TextStyle(
           fontSize: 20 / scale,
           color: ColorMap.highScore,
@@ -170,13 +174,14 @@ class GameOverComponent extends StatelessWidget {
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            makeIconButton(game, Iconfont.home, 'Home', 30, () {
+                            makeIconButton(context, game, Iconfont.home,
+                                AppLocalizations.of(context)!.home, () {
                               game.gameManager.soundManager.playCick();
                               game.goHome();
                             }),
                             SizedBox(height: 20 / scale),
-                            makeIconButton(
-                                game, Iconfont.restart, 'Restart', 15, () {
+                            makeIconButton(context, game, Iconfont.restart,
+                                AppLocalizations.of(context)!.restart, () {
                               game.gameManager.soundManager.playCick();
                               game.restart();
                             }),
@@ -207,7 +212,7 @@ class GameFinishComponentState extends State<GameFinishComponent> {
   bool rebornClicked = false;
   @override
   Widget build(BuildContext context) {
-    if (!checkReborn && game.rewardedAd != null) {
+    if (!checkReborn && (Config.testMode || game.rewardedAd != null)) {
       return RebornComponent(
         game: game,
         onFinish: () {
@@ -221,7 +226,7 @@ class GameFinishComponentState extends State<GameFinishComponent> {
           });
         },
         onReborn: () async {
-          if (rebornClicked) {
+          if (game.rewardedAd == null || rebornClicked) {
             return;
           }
           setState(() {

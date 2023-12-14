@@ -1,0 +1,9 @@
+/* 
+  InfoPlist.strings
+  Runner
+
+  Created by KK on 2023/12/14.
+  
+*/
+"CFBundleName" = "스퀘어 원";
+"CFBundleDisplayName" = "스퀘어 원";

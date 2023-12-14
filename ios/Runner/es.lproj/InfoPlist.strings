@@ -1,0 +1,9 @@
+/* 
+  InfoPlist.strings
+  Runner
+
+  Created by KK on 2023/12/14.
+  
+*/
+"CFBundleName" = "Cuadro y Círculo";
+"CFBundleDisplayName" = "Cuadro y Círculo";

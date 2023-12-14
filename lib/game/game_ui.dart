@@ -101,25 +101,35 @@ class LevelComponent extends PositionComponent with HasGameRef<SCWarGame> {
 
   @override
   Future<void> onLoad() async {
+    String? levelText = '${game.locale?.level} ${game.gameManager.level}';
+    double scale = 1;
+    if (levelText.length > 9) {
+      scale = 0.65;
+    } else if (levelText.length > 8) {
+      scale = 0.8;
+    } else if (levelText.length == 8) {
+      scale = 0.9;
+    }
     add(TextComponent(
       anchor: Anchor.center,
-      text: 'Level ${game.gameManager.level}',
+      text: levelText,
       textRenderer: TextPaint(
         style: TextStyleMap.label,
       ),
-      size: Vector2(180, 50),
+      size: Vector2(120, 50),
+      scale: Vector2.all(scale),
       position: Vector2(0, 0),
     ));
     add(TextComponent(
       anchor: Anchor.center,
-      text: 'Target Power',
+      text: game.locale?.targetPower,
       textRenderer: TextPaint(
         style: const TextStyle(
             fontSize: 15,
             fontWeight: FontWeight.bold,
             color: Color(0xFF3B5998)),
       ),
-      size: Vector2(180, 15),
+      size: Vector2(160, 15),
       position: Vector2(0, 40),
     ));
     add(RectangleComponent(
@@ -144,7 +154,7 @@ class LevelComponent extends PositionComponent with HasGameRef<SCWarGame> {
               fontWeight: FontWeight.bold,
               color: Color(0xFF3B5998)),
         ),
-        size: Vector2(180, 20),
+        size: Vector2(160, 20),
         position: Vector2(0, 65),
       ),
     );
@@ -198,11 +208,21 @@ class DataComponent extends PositionComponent with HasGameRef<SCWarGame> {
 
   @override
   Future<void> onLoad() async {
+    String scoreText = '${game.locale?.score}';
+    double scale = 1;
+    if (scoreText.length > 9) {
+      scale = 0.65;
+    } else if (scoreText.length > 8) {
+      scale = 0.8;
+    } else if (scoreText.length == 8) {
+      scale = 0.9;
+    }
     label = TextComponent(
       anchor: Anchor.center,
-      text: 'SCORE',
+      text: scoreText,
       textRenderer: TextPaint(style: TextStyleMap.label),
       size: Vector2(180, 80),
+      scale: Vector2.all(scale),
     );
     add(label);
     score = TextComponent(
@@ -231,7 +251,7 @@ class DataComponent extends PositionComponent with HasGameRef<SCWarGame> {
       anchor: Anchor.centerRight,
       text: label,
       textRenderer: TextPaint(style: TextStyleMap.dataLabel),
-      size: Vector2(180, 80),
+      size: Vector2(160, 80),
       position: Vector2(0, 100 + idx * 30),
     ));
     var text = TextComponent(

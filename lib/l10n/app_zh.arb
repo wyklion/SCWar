@@ -1,0 +1,21 @@
+{
+    "play": "开始",
+    "level": "关卡",
+    "goon": "继续",
+    "highScore": "最高分",
+    "score": "分数",
+    "targetPower": "目标炮分",
+    "paused": "暂停",
+    "home": "主页",
+    "restart": "重来",
+    "resume": "继续",
+    "gameOver": "游戏结束",
+    "yes": "是的",
+    "no": "不",
+    "continueTitle": "继续？",
+    "watchAd": "看视频广告复活",
+    "back": "返回",
+    "ok": "好的",
+    "tutorial1": "拖拽圆形炮塔到左边的放置区",
+    "emailMe": "联系我"
+}

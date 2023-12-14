@@ -1,10 +1,13 @@
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:scwar/config/config.dart';
 import 'package:scwar/config/game_config.dart';
 import 'package:scwar/game/game.dart';
 import 'package:scwar/layers/layer_util.dart';
 import 'package:scwar/utils/iconfont.dart';
+import 'package:scwar/utils/locale.dart';
 import 'package:scwar/utils/number_util.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class TitleComponent extends StatefulWidget {
   final SCWarGame game;
@@ -46,25 +49,32 @@ class TitleComponentState extends State<TitleComponent>
       Positioned(
         top: 100 / scale,
         left: 150 / scale,
-        child: Container(
-          width: 150 / scale,
-          height: 150 / scale,
-          decoration: BoxDecoration(
-            color: ColorMap.enemy,
-            borderRadius: BorderRadius.circular(20 / scale),
-          ),
-          transform: Matrix4.translationValues(
-            rd,
-            rd,
-            0,
-          ),
-          child: Center(
-            child: Text(
-              '2',
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: 50 / scale,
-                fontWeight: FontWeight.bold,
+        child: GestureDetector(
+          onDoubleTap: () {
+            if (Config.testMode) {
+              MyLocale.changeNext();
+            }
+          },
+          child: Container(
+            width: 150 / scale,
+            height: 150 / scale,
+            decoration: BoxDecoration(
+              color: ColorMap.enemy,
+              borderRadius: BorderRadius.circular(20 / scale),
+            ),
+            transform: Matrix4.translationValues(
+              rd,
+              rd,
+              0,
+            ),
+            child: Center(
+              child: Text(
+                '2',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 50 / scale,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
             ),
           ),
@@ -147,7 +157,7 @@ class TestSwitchButtonState extends State<TestSwitchButton> {
   }
 }
 
-Widget makePlayButton(SCWarGame game) {
+Widget makePlayButton(BuildContext context, SCWarGame game) {
   double scale = game.scale;
   return Center(
     child: Column(
@@ -164,11 +174,12 @@ Widget makePlayButton(SCWarGame game) {
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(55 / scale),
             ),
-            fixedSize: Size(270 / scale, 110 / scale),
+            fixedSize: Size(280 / scale, 110 / scale),
             foregroundColor: const Color(0xFF4be4c5),
             textStyle: TextStyle(
+              textBaseline: TextBaseline.ideographic,
               color: const Color(0xFFa7f2a7),
-              fontSize: 80 / scale,
+              fontSize: 75 / scale,
               fontWeight: FontWeight.bold,
               shadows: const [
                 Shadow(
@@ -179,14 +190,20 @@ Widget makePlayButton(SCWarGame game) {
               ],
             ),
           ),
-          child: const Text('PLAY'),
+          child: SizedBox(
+            width: 240 / scale,
+            child: AutoSizeText(
+              AppLocalizations.of(context)!.play,
+              textAlign: TextAlign.center,
+            ),
+          ),
         ),
       ],
     ),
   );
 }
 
-Widget makeLevelButton(SCWarGame game) {
+Widget makeLevelButton(BuildContext context, SCWarGame game) {
   double scale = game.scale;
   return Center(
     child: SizedBox(
@@ -207,6 +224,7 @@ Widget makeLevelButton(SCWarGame game) {
             fixedSize: Size(180 / scale, 60 / scale),
             foregroundColor: const Color(0xFF7DCEA0),
             textStyle: TextStyle(
+              textBaseline: TextBaseline.ideographic,
               fontSize: 40 / scale,
               fontWeight: FontWeight.bold,
               shadows: const [
@@ -218,14 +236,20 @@ Widget makeLevelButton(SCWarGame game) {
               ],
             ),
           ),
-          child: const Text('LEVEL'),
+          child: SizedBox(
+            width: 120 / scale,
+            child: AutoSizeText(
+              AppLocalizations.of(context)!.level,
+              textAlign: TextAlign.center,
+            ),
+          ),
         ),
       ),
     ),
   );
 }
 
-Widget makeHighScore(SCWarGame game) {
+Widget makeHighScore(BuildContext context, SCWarGame game) {
   double scale = game.scale;
   return Align(
     alignment: Alignment.bottomCenter,
@@ -234,7 +258,7 @@ Widget makeHighScore(SCWarGame game) {
       child: Column(
         children: [
           Text(
-            'HighScore: ${NumberUtil.getScoreString(game.playerData.highScore)}',
+            '${AppLocalizations.of(context)!.highScore}: ${NumberUtil.getScoreString(game.playerData.highScore)}',
             style: TextStyle(
               color: ColorMap.highScore,
               fontSize: 30 / scale,
@@ -285,7 +309,7 @@ class KefuComponent extends StatelessWidget {
                       height: 120 / scale,
                       child: Center(
                         child: Text(
-                          'Email me: wyklion@qq.com',
+                          '${AppLocalizations.of(context)!.emailMe}: wyklion@qq.com',
                           textAlign: TextAlign.center,
                           style: TextStyle(
                               color: const Color(0xFF3f7b70),
@@ -294,7 +318,8 @@ class KefuComponent extends StatelessWidget {
                         ),
                       ),
                     ),
-                    makeIconButton(game, Iconfont.ok, 'Got it', 30,
+                    makeIconButton(context, game, Iconfont.ok,
+                        AppLocalizations.of(context)!.ok,
                         color: const Color(0xFF6FCF97), () {
                       onOk();
                     }),
@@ -322,7 +347,7 @@ class HomeComponentState extends State<HomeComponent> {
   Widget build(BuildContext context) {
     double scale = game.scale;
     List<Widget> stacks = [];
-    stacks.add(makePlayButton(game));
+    stacks.add(makePlayButton(context, game));
     if (game.localStorage.hasGame()) {
       stacks.add(Center(
         child: SizedBox(
@@ -331,7 +356,7 @@ class HomeComponentState extends State<HomeComponent> {
           child: Align(
             alignment: Alignment.topRight,
             child: Text(
-              'continue',
+              AppLocalizations.of(context)!.goon,
               style: TextStyle(
                 color: Colors.white30,
                 fontSize: 25 / scale,
@@ -341,8 +366,8 @@ class HomeComponentState extends State<HomeComponent> {
         ),
       ));
     }
-    stacks.add(makeLevelButton(game));
-    stacks.add(makeHighScore(game));
+    stacks.add(makeLevelButton(context, game));
+    stacks.add(makeHighScore(context, game));
     stacks.add(TitleComponent(game: game));
     // if (!Config.release) {
     //   stacks.add(

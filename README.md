@@ -29,7 +29,7 @@ Unleash strategic battles in 'CircleSquare Clash'! Command circle turrets, defen
 
 ## 稍长介绍：
 
-"《方圆大战》是一款集合了策略、合成和挑战的创新游戏，让您在方与圆的碰撞中感受到不同寻常的游戏乐趣。游戏中，您面对着五列方形怪物，这些怪物将不断前行，而您的任务是通过合成圆形炮塔，精准攻击，有效地抵挡它们的入侵。
+《方圆大战》是一款集合了策略、合成和挑战的创新游戏，让您在方与圆的碰撞中感受到不同寻常的游戏乐趣。游戏中，您面对着五列方形怪物，这些怪物将不断前行，而您的任务是通过合成圆形炮塔，精准攻击，有效地抵挡它们的入侵。
 
 游戏特色：
 
@@ -41,10 +41,10 @@ Unleash strategic battles in 'CircleSquare Clash'! Command circle turrets, defen
 
 清新画面设计： 游戏采用清新简约的画面设计，呈现出独特的游戏风格，给玩家带来愉悦的视觉体验。
 
-在《方圆大战》中，挑战您的战略思维，合成圆形炮塔，精准作战，打破传统游戏的框架，探索方与圆的战略新境界。快来加入这场前所未有的战斗，体验游戏的无尽乐趣！"
+在《方圆大战》中，挑战您的战略思维，合成圆形炮塔，精准作战，打破传统游戏的框架，探索方与圆的战略新境界。快来加入这场前所未有的战斗，体验游戏的无尽乐趣！
 
 英文版：
-"'CircleSquare Clash' is a unique fusion of strategy, synthesis, and challenge that delivers an extraordinary gaming experience. Confront five columns of square monsters relentlessly advancing towards you. Your mission: strategically synthesize circular turrets, unleash precise attacks, and effectively repel their invasion.
+'CircleSquare Clash' is a unique fusion of strategy, synthesis, and challenge that delivers an extraordinary gaming experience. Confront five columns of square monsters relentlessly advancing towards you. Your mission: strategically synthesize circular turrets, unleash precise attacks, and effectively repel their invasion.
 
 Game Features:
 
@@ -56,7 +56,30 @@ Upgrades and Level Challenges: 'CircleSquare Clash' offers multiple levels, each
 
 Fresh Visual Design: The game boasts a clean and minimalist visual design, presenting a unique gaming style that provides players with a delightful visual experience.
 
-In 'CircleSquare Clash,' challenge your strategic thinking, synthesize circular turrets, engage in precise combat, break the mold of traditional games, and explore a new realm of strategic warfare. Join this unprecedented battle and immerse yourself in the endless fun of the game!"
+In 'CircleSquare Clash,' challenge your strategic thinking, synthesize circular turrets, engage in precise combat, break the mold of traditional games, and explore a new realm of strategic warfare. Join this unprecedented battle and immerse yourself in the endless fun of the game!
+
+英、中、日、韩、西、法、德、俄
+名字：
+CircleSquare Clash
+方圆大战
+四角と円
+스퀘어 원
+Cuadro y Círculo
+Carré et Cercle
+Quadrat-Kreis
+Квадрат-Круг
+副标题：
+Numerical Tower Defense Game
+数字合成塔防游戏
+数値タワーディフェンスゲーム
+숫자 합성 타워 디펜스 게임
+Juego de Defensa Numérica
+Jeu de Défense Numérique
+Zahlen-Turmverteidigungsspiel
+Числовая башня
+关键词：
+circle,square,clash,strategy,merge,battle,invaders,turret,puzzle,upgrade, numbers,tower,defense,2048
+方圆,塔防,数字,策略,合成,射击,2048,圆,方块,颜色,升级,合并,number
 
 
 # 开发记录（2023）
@@ -67,7 +90,8 @@ In 'CircleSquare Clash,' challenge your strategic thinking, synthesize circular 
 github的io是半墙状态经常访问不了，后来试了vercel全墙。。最后用了netlify。
 github的action挺好用，提交完代码等一分半钟就自己生成web包，然后自动提交。netlify又自动更新发布。
 
-12.10晚上续费平果开发者帐号，以为瞬间生效，结果第二天才生效。
+12.10
+晚上续费平果开发者帐号，以为瞬间生效，结果第二天才生效。
 
 AppConnect协议，美国报税表
 
@@ -102,10 +126,12 @@ launchImage可选universal，这个查了半天没有明确的说法。做了个
 
 打包用flutter build ipa。然后装个Transporter上传，校验，交付。
 收到邮件 ITMS-90078: Missing Push Notification Entitlement。好像不要紧。
-12.12 去掉中国区提交审核了。
+
+12.12
+去掉中国区提交审核了。
 
 ICP很烦。代理说500。另一家说800。有一家说个人做不了。
-12.12 买了阿里云99一年，续费也是99一年。买了个域名kkfun.fun。8块首年。
+买了阿里云99一年，续费也是99一年。买了个域名kkfun.fun。8块首年。
 备案网站和APP。
 系统检查：通过工信部系统未核实到kkfun.fun的实名认证信息，请在域名注册商完成域名实名认证ⓘ后2-3天再提交备案
 这就得等2天了。
@@ -129,6 +155,15 @@ sudo systemctl restart vsftpd.service
 这个FTP-Deploy要用新版，提示明确多了。。然后就能自动推到阿里云上了，也不用多一次github提交。不需要doc目录了。
 
 appstore中午提交的审核晚上看就通过了？真快。
+
+12.13
+Flutter字体会跟系统变化，游戏里需要设置成不变的。appStore提交审核1.0.1。第二天早上就通过了。
+
+12.14
+域名工信部可搜到了，接下来下载阿里云APP继续备案流程。拍身份证，人脸实名。估计要等10天，我猜22或25号。
+准备加下多语言。
+1.0.2提交审核了。。。
+
 
 
 # 规则说明

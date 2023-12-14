@@ -1,0 +1,21 @@
+{
+    "play": "PLAY",
+    "level": "LEVEL",
+    "goon": "continue",
+    "highScore": "High Score",
+    "score": "SCORE",
+    "targetPower": "Target Power",
+    "paused": "PAUSED",
+    "home": "Home",
+    "restart": "Restart",
+    "resume": "Resume",
+    "gameOver": "Game Over",
+    "yes": "YES",
+    "no": "NO",
+    "continueTitle": "Continue ?",
+    "watchAd": "Watch video to continue",
+    "back": "Return",
+    "ok": "OK",
+    "tutorial1": "Drag the circle to battlefield",
+    "emailMe": "Email me"
+}

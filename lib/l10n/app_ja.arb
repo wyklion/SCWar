@@ -1,0 +1,21 @@
+{
+    "play": "プレイ",
+    "level": "レベル",
+    "goon": "続ける",
+    "highScore": "ハイスコア",
+    "score": "スコア",
+    "targetPower": "ターゲットパワー",
+    "paused": "一時停止",
+    "home": "ホーム",
+    "restart": "リスタート",
+    "resume": "再開",
+    "gameOver": "ゲームオーバー",
+    "yes": "はい",
+    "no": "いいえ",
+    "continueTitle": "続けますか？",
+    "watchAd": "ビデオを見て続行",
+    "back": "戻る",
+    "ok": "OK",
+    "tutorial1": "バトルフィールドに円をドラッグ",
+    "emailMe": "私にメール"
+}

@@ -1,0 +1,21 @@
+{
+    "play": "SPIELEN",
+    "level": "LEVEL",
+    "goon": "weitermachen",
+    "highScore": "Höchstpunktzahl",
+    "score": "PUNKTE",
+    "targetPower": "Zielenergie",
+    "paused": "PAUSE",
+    "home": "Zuhause",
+    "restart": "Neustart",
+    "resume": "Fortsetzen",
+    "gameOver": "Spiel vorbei",
+    "yes": "Ja",
+    "no": "Nein",
+    "continueTitle": "Weitermachen?",
+    "watchAd": "Video ansehen, um fortzufahren",
+    "back": "Zurück",
+    "ok": "OK",
+    "tutorial1": "Ziehe den Kreis auf das Schlachtfeld",
+    "emailMe": "Schreiben Sie mir"
+}

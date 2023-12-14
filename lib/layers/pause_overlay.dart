@@ -5,6 +5,7 @@ import 'package:scwar/config/game_config.dart';
 import 'package:scwar/game/game.dart';
 import 'package:scwar/layers/layer_util.dart';
 import 'package:scwar/utils/iconfont.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class SoundSwitchButton extends StatefulWidget {
   final SCWarGame game;
@@ -68,7 +69,7 @@ class SoundSwitchButtonState extends State<SoundSwitchButton> {
   }
 }
 
-Widget buidlPauseOverlay(BuildContext buildContext, SCWarGame game) {
+Widget buidlPauseOverlay(BuildContext context, SCWarGame game) {
   double scale = game.scale;
   return Center(
     child: AspectRatio(
@@ -90,7 +91,7 @@ Widget buidlPauseOverlay(BuildContext buildContext, SCWarGame game) {
                     children: [
                       SizedBox(height: 20 / scale),
                       Text(
-                        'PAUSED',
+                        AppLocalizations.of(context)!.paused,
                         style: TextStyle(
                           color: ColorMap.dialogTitle,
                           fontSize: 40 / scale,
@@ -107,17 +108,20 @@ Widget buidlPauseOverlay(BuildContext buildContext, SCWarGame game) {
                       SizedBox(height: 20 / scale),
                       SoundSwitchButton(game: game),
                       SizedBox(height: 20 / scale),
-                      makeIconButton(game, Iconfont.home, 'Home', 30, () {
+                      makeIconButton(context, game, Iconfont.home,
+                          AppLocalizations.of(context)!.home, () {
                         game.gameManager.soundManager.playCick();
                         game.goHome();
                       }),
                       SizedBox(height: 20 / scale),
-                      makeIconButton(game, Iconfont.restart, 'Restart', 15, () {
+                      makeIconButton(context, game, Iconfont.restart,
+                          AppLocalizations.of(context)!.restart, () {
                         game.gameManager.soundManager.playCick();
                         game.restart();
                       }),
                       SizedBox(height: 20 / scale),
-                      makeIconButton(game, Iconfont.play, 'Resume', 5, () {
+                      makeIconButton(context, game, Iconfont.play,
+                          AppLocalizations.of(context)!.resume, () {
                         game.gameManager.soundManager.playCick();
                         game.resume();
                       }, color: const Color(0xFF48C9B0)),

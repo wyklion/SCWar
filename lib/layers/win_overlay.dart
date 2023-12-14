@@ -4,8 +4,9 @@ import 'package:scwar/game/game.dart';
 import 'package:scwar/layers/layer_util.dart';
 import 'package:scwar/utils/iconfont.dart';
 import 'package:scwar/utils/number_util.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
-Widget buidlWinOverlay(BuildContext buildContext, SCWarGame game) {
+Widget buidlWinOverlay(BuildContext context, SCWarGame game) {
   double scale = game.scale;
   List<Widget> list = [
     Text(
@@ -34,7 +35,8 @@ Widget buidlWinOverlay(BuildContext buildContext, SCWarGame game) {
     SizedBox(height: 5 / scale),
   ];
   List<Widget> buttons = [
-    makeIconButton(game, Iconfont.home, 'Home', 30, () {
+    makeIconButton(
+        context, game, Iconfont.home, AppLocalizations.of(context)!.home, () {
       game.gameManager.soundManager.playCick();
       game.goHome();
     })
@@ -50,8 +52,9 @@ Widget buidlWinOverlay(BuildContext buildContext, SCWarGame game) {
   } else {
     if (game.gameManager.level < 50) {
       buttons.add(SizedBox(height: 20 / scale));
-      buttons.add(makeIconButton(
-          game, Iconfont.next, 'Level ${game.gameManager.level + 1}', 15, () {
+      buttons.add(makeIconButton(context, game, Iconfont.next,
+          '${AppLocalizations.of(context)!.level} ${game.gameManager.level + 1}',
+          () {
         game.gameManager.soundManager.playCick();
         game.nextLevel();
       }));

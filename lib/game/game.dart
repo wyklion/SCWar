@@ -15,6 +15,7 @@ import 'package:scwar/data/local_storage.dart';
 import 'package:scwar/utils/sound_manager.dart';
 import '../config/game_config.dart';
 import 'game_manager.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 late SCWarGame game;
 
@@ -27,8 +28,9 @@ class SCWarGame extends FlameGame<SCWarWorld> with TapDetector, ScaleDetector {
   late GameUI ui;
   late LocalStorage localStorage;
   RewardedAd? rewardedAd;
+  BuildContext context;
 
-  SCWarGame()
+  SCWarGame(this.context)
       : super(
             camera: CameraComponent.withFixedResolution(
                 width: GameConfig.fixedWidth, height: GameConfig.fixedHeight),
@@ -52,6 +54,10 @@ class SCWarGame extends FlameGame<SCWarWorld> with TapDetector, ScaleDetector {
     overlays.add('home');
     _loadAd();
     return super.onLoad();
+  }
+
+  AppLocalizations? get locale {
+    return AppLocalizations.of(context);
   }
 
   double get scale {

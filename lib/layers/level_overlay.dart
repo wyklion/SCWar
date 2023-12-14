@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:scwar/config/config.dart';
 import 'package:scwar/game/game.dart';
 import 'package:scwar/utils/iconfont.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 Widget makeLevelButton(SCWarGame game, int level, bool enable) {
   double scale = game.scale;
@@ -82,7 +83,7 @@ Widget makeLevels(SCWarGame game) {
   return Column(mainAxisAlignment: MainAxisAlignment.center, children: column);
 }
 
-Widget buidlLevelOverlay(BuildContext buildContext, SCWarGame game) {
+Widget buidlLevelOverlay(BuildContext context, SCWarGame game) {
   double scale = game.scale;
   return Center(
     child: AspectRatio(
@@ -92,7 +93,7 @@ Widget buidlLevelOverlay(BuildContext buildContext, SCWarGame game) {
             height: 100 / scale,
             child: Center(
               child: Text(
-                'LEVEL',
+                AppLocalizations.of(context)!.level,
                 style: TextStyle(
                   color: const Color(0xFF7DCEA0),
                   fontSize: 50 / scale,
@@ -136,7 +137,7 @@ Widget buidlLevelOverlay(BuildContext buildContext, SCWarGame game) {
                     ),
                     SizedBox(width: 10 / scale), // 间距
                     Text(
-                      'Return',
+                      AppLocalizations.of(context)!.back,
                       style: TextStyle(
                           color: Colors.white, fontSize: 30 / scale), // 文字颜色
                     ),

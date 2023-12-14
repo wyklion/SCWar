@@ -1,0 +1,21 @@
+{
+    "play": "JUGAR",
+    "level": "NIVEL",
+    "goon": "continuar",
+    "highScore": "Puntuación Alta",
+    "score": "PUNTUACIÓN",
+    "targetPower": "Potencia Objetivo",
+    "paused": "PAUSADO",
+    "home": "Inicio",
+    "restart": "Reiniciar",
+    "resume": "Continuar",
+    "gameOver": "Fin del Juego",
+    "yes": "Sí",
+    "no": "No",
+    "continueTitle": "¿Continuar?",
+    "watchAd": "Ver video para continuar",
+    "back": "Regresar",
+    "ok": "Aceptar",
+    "tutorial1": "Arrastra el círculo al campo de batalla",
+    "emailMe": "Envíame un correo electrónico"
+}

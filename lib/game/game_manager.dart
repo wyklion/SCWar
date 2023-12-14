@@ -7,6 +7,7 @@ import 'package:scwar/data/game_data.dart';
 import 'package:scwar/game/game_test.dart';
 import 'package:scwar/game/tutorial.dart';
 import 'package:scwar/data/local_storage.dart';
+import 'package:scwar/utils/number_util.dart';
 import 'package:scwar/utils/particles.dart';
 import 'package:scwar/utils/sound_manager.dart';
 import '../entities/energy.dart';
@@ -228,7 +229,7 @@ class GameManager {
         addRandomEnemy();
         makeTutorial(game.playerData.tutorial);
       } else {
-        double initTowerValue = math.pow(1024, level).toDouble();
+        double initTowerValue = NumberUtil.getLevelInitTower(level);
         levelTarget = initTowerValue * 1024;
         addTower(1, 0, initTowerValue);
         addTower(1, 1, initTowerValue);

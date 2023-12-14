@@ -62,6 +62,15 @@ class NumberUtil {
     }
   }
 
+  static double getLevelInitTower(int level) {
+    double v = 1;
+    while (level > 0) {
+      v *= 1024;
+      level--;
+    }
+    return v;
+  }
+
   static bool nearlyEqual(double a, double b) {
     return (a - b).abs() < 0.5;
   }

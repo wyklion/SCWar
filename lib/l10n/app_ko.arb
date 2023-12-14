@@ -1,0 +1,21 @@
+{
+    "play": "플레이",
+    "level": "레벨",
+    "goon": "계속하다",
+    "highScore": "최고 점수",
+    "score": "점수",
+    "targetPower": "목표 파워",
+    "paused": "일시 정지됨",
+    "home": "홈",
+    "restart": "다시 시작",
+    "resume": "계속",
+    "gameOver": "게임 종료",
+    "yes": "예",
+    "no": "아니오",
+    "continueTitle": "계속하시겠습니까?",
+    "watchAd": "동영상 시청으로 계속",
+    "back": "돌아가기",
+    "ok": "확인",
+    "tutorial1": "원을 전장으로 드래그하세요",
+    "emailMe": "이메일 보내기"
+}

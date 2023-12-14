@@ -37,19 +37,24 @@ class TutorialComponent0 extends TutorialComponent {
     var text = PositionComponent(position: Vector2(40, 240));
     add(text);
     text.add(RectangleComponent(
-      size: Vector2(350, 40),
+      size: Vector2(440, 40),
       anchor: Anchor.center,
       paint: Paint()..color = const Color(0xFF216583),
     ));
+    String? turorialText = game.locale?.tutorial1;
+    double fontSize = 25;
+    if (turorialText != null && turorialText.length > 35) {
+      fontSize = 20;
+    }
     text.add(
       TextComponent(
-        text: "Drag the circle to battlefield",
+        text: turorialText,
         anchor: Anchor.center,
         textRenderer: TextPaint(
-          style: const TextStyle(
-              fontSize: 25,
+          style: TextStyle(
+              fontSize: fontSize,
               fontWeight: FontWeight.bold,
-              color: Color(0xFFf9f5ce)),
+              color: const Color(0xFFf9f5ce)),
         ),
       ),
     );

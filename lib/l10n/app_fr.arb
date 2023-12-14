@@ -1,0 +1,21 @@
+{
+    "play": "JOUER",
+    "level": "NIVEAU",
+    "goon": "continuer",
+    "highScore": "Meilleur score",
+    "score": "SCORE",
+    "targetPower": "Puissance Cible",
+    "paused": "EN PAUSE",
+    "home": "Accueil",
+    "restart": "Recommencer",
+    "resume": "Reprendre",
+    "gameOver": "Fin de partie",
+    "yes": "Oui",
+    "no": "Non",
+    "continueTitle": "Continuer ?",
+    "watchAd": "Regarder la vidéo pour continuer",
+    "back": "Retour",
+    "ok": "D'accord",
+    "tutorial1": "Faites glisser le cercle dans la zone de placement",
+    "emailMe": "Envoyez-moi un e-mail"
+}
