@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:developer';
+import 'dart:io';
 import 'package:flame/components.dart';
 import 'package:flame/game.dart';
 import 'package:flame/events.dart';
@@ -176,7 +177,7 @@ class SCWarGame extends FlameGame<SCWarWorld> with TapDetector, ScaleDetector {
       return;
     }
     RewardedAd.load(
-        adUnitId: Config.iosBonusId,
+        adUnitId: Platform.isIOS ? Config.iosBonusId : Config.androidBonusId,
         request: const AdRequest(),
         rewardedAdLoadCallback: RewardedAdLoadCallback(onAdLoaded: (ad) {
           ad.fullScreenContentCallback = FullScreenContentCallback(

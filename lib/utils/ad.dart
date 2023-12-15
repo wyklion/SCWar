@@ -1,4 +1,5 @@
 import 'dart:developer';
+import 'dart:io';
 
 import 'package:flutter/material.dart';
 
@@ -18,7 +19,9 @@ class BannerComponentState extends State<BannerComponent> {
   void initState() {
     super.initState();
     _bannerAd = BannerAd(
-      adUnitId: Config.iosBannerId, // 替换为你的 AdMob 横幅广告单元 ID
+      adUnitId: Platform.isIOS
+          ? Config.iosBannerId
+          : Config.androidBannerId, // 替换为你的 AdMob 横幅广告单元 ID
       size: AdSize.largeBanner,
       request: const AdRequest(),
       listener: BannerAdListener(

@@ -15,6 +15,8 @@ flutter build web -o docs --web-renderer canvaskit --dart-define=FLUTTER_WEB_CAN
 
 ios(ipa):
     flutter build ipa 
+android(apk)
+    flutter build apk 
     
 教ChatGpt写的介绍：
 

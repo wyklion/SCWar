@@ -49,9 +49,6 @@ class SoundManager {
     //   minPlayers: 3,
     //   maxPlayers: 5,
     // );
-    if (kIsWeb) {
-      soundOn = false;
-    }
   }
 
   void _play(String source) {

@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'dart:async';
@@ -71,7 +73,7 @@ class AppWidgetState extends State<AppWidget> {
               alignment: Alignment.center,
               height: 100,
               color: Colors.blueGrey,
-              child: kIsWeb ? null : const BannerComponent(),
+              child: !kIsWeb && Platform.isIOS ? const BannerComponent() : null,
             ),
           ],
         ),
