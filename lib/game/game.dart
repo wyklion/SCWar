@@ -100,21 +100,12 @@ class SCWarGame extends FlameGame<SCWarWorld> with TapDetector, ScaleDetector {
 
   void win() {
     playerData.levels[gameManager.level][0]++;
+    playerData.saveLevelsStorage(localStorage);
     overlays.add('win');
   }
 
   void end() {
-    bool win = false;
-    if (gameManager.level > 0 &&
-        gameManager.data.towerPower >= gameManager.levelTarget) {
-      win = true;
-      playerData.levels[gameManager.level][0]++;
-    }
-    if (win) {
-      overlays.add('win');
-    } else {
-      overlays.add('gameover');
-    }
+    overlays.add('gameover');
   }
 
   void gameOver() {

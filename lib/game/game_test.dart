@@ -1,5 +1,6 @@
 class GameTest {
   static const enable = false;
+  static const levelTarget = 0;
   static const data2 = {
     'preTower': 0,
     'board': [

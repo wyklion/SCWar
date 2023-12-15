@@ -69,7 +69,7 @@ class RebornComponent extends StatelessWidget {
                                 color: const Color(0xFFb33030), () {
                               onFinish();
                             }),
-                            SizedBox(height: 40 / scale),
+                            SizedBox(height: 35 / scale),
                             makeIconButton(
                                 context,
                                 game,
@@ -124,22 +124,24 @@ class GameOverComponent extends StatelessWidget {
         ),
       ),
       SizedBox(height: 20 / scale),
-      Text(
+      AutoSizeText(
         '${AppLocalizations.of(context)!.score}: ${NumberUtil.getScoreString(game.gameManager.data.score)}',
         style: TextStyle(
           fontSize: 35 / scale,
           color: ColorMap.score,
         ),
+        maxLines: 1,
       ),
       SizedBox(height: 5 / scale),
     ];
     if (game.gameManager.level == 0) {
-      list.add(Text(
+      list.add(AutoSizeText(
         '${AppLocalizations.of(context)!.highScore}: ${NumberUtil.getScoreString(game.playerData.highScore)}',
         style: TextStyle(
           fontSize: 20 / scale,
           color: ColorMap.highScore,
         ),
+        maxLines: 1,
       ));
     }
     return Center(

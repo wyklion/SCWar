@@ -2,11 +2,38 @@
 import 'package:flutter/foundation.dart';
 import 'package:audioplayers/audioplayers.dart';
 
+class SoundPool {
+  final List<AudioPlayer> _pool = [];
+  AudioPlayer _createPlayer() {
+    return AudioPlayer();
+  }
+
+  void play(String assetPath) {
+    // 查找空闲的音效实例
+    AudioPlayer player =
+        _pool.firstWhere((p) => p.state == PlayerState.completed, orElse: () {
+      // 如果没有空闲的音效实例，则创建一个新的
+      AudioPlayer newPlayer = _createPlayer();
+      _pool.add(newPlayer);
+      return newPlayer;
+    });
+    // 播放音效
+    player.play(AssetSource('audio/$assetPath'));
+  }
+
+  void dispose() {
+    // 释放所有音效实例
+    for (AudioPlayer player in _pool) {
+      player.dispose();
+    }
+  }
+}
+
 class SoundManager {
   bool soundOn = true;
   // late AudioPool hurtPool;
-  final player = AudioPlayer();
-  final hurtPlayer = AudioPlayer();
+  final player = SoundPool();
+  // final hurtPlayer = SoundPool();
   Future<void> load() async {
     // await FlameAudio.audioCache.loadAll([
     //   'click.mp3',
@@ -29,7 +56,7 @@ class SoundManager {
 
   void _play(String source) {
     // FlameAudio.play(source);
-    player.play(AssetSource('audio/$source'));
+    player.play(source);
   }
 
   void playCick() {
@@ -65,8 +92,7 @@ class SoundManager {
 
   void playHurt() {
     if (!soundOn) return;
-    hurtPlayer.play(AssetSource('audio/hurt.mp3'));
-    // hurtPool.start();
+    // hurtPlayer.play('hurt.mp3');
     _play('hurt.mp3');
   }
 
