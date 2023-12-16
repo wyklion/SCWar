@@ -57977,10 +57977,9 @@ this.a.a.push(s)
 return s},
 $S:398}
 A.a2w.prototype={
-kj(a){var s=0,r=A.G(t.H),q=this
+kj(a){var s=0,r=A.G(t.H)
 var $async$kj=A.H(function(b,c){if(b===1)return A.D(c,r)
-while(true)switch(s){case 0:q.a=!1
-return A.E(null,r)}})
+while(true)switch(s){case 0:return A.E(null,r)}})
 return A.F($async$kj,r)},
 e0(){if(!this.a)return
 this.b.e_(0,"click.mp3")},
