@@ -43,10 +43,15 @@ class BannerComponentState extends State<BannerComponent> {
   @override
   Widget build(BuildContext context) {
     return Container(
+      // width: MediaQuery.of(context).size.width,
+      height: 100,
+      color: Colors.blueGrey,
       alignment: Alignment.bottomCenter,
-      width: _bannerAd.size.width.toDouble(),
-      height: _bannerAd.size.height.toDouble(),
-      child: AdWidget(ad: _bannerAd),
+      child: SizedBox(
+        width: _bannerAd.size.width.toDouble(),
+        height: _bannerAd.size.height.toDouble(),
+        child: AdWidget(ad: _bannerAd),
+      ),
     );
   }
 }

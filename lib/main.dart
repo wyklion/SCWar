@@ -7,7 +7,6 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flame/game.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
-import 'package:scwar/config/config.dart';
 import 'package:scwar/layers/game_overlay.dart';
 import 'package:scwar/layers/gameover_overlay.dart';
 import 'package:scwar/layers/home_overlay.dart';
@@ -69,12 +68,7 @@ class AppWidgetState extends State<AppWidget> {
                 child: const MyGameWidget(),
               ),
             ),
-            Container(
-              alignment: Alignment.center,
-              height: 100,
-              color: Colors.blueGrey,
-              child: !kIsWeb && Platform.isIOS ? const BannerComponent() : null,
-            ),
+            !kIsWeb ? const BannerComponent() : const SizedBox.shrink(),
           ],
         ),
       ),
