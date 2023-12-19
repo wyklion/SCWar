@@ -37,13 +37,13 @@ class HomeComponent extends Component with HasGameRef<SCWarGame> {
       anchor: Anchor.centerRight,
       text: label,
       textRenderer: TextPaint(style: TextStyleMap.dataLabel),
-      position: Vector2(20, 230 + idx * 30),
+      position: Vector2(20, 240 + idx * 30),
     ));
     var text = TextComponent(
       anchor: Anchor.centerLeft,
       text: value,
       textRenderer: TextPaint(style: TextStyleMap.data),
-      position: Vector2(30, 230 + idx * 30),
+      position: Vector2(30, 240 + idx * 30),
     );
     add(text);
     return text;

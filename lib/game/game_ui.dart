@@ -2,7 +2,6 @@ import 'package:flame/components.dart';
 import 'package:flutter/material.dart';
 import 'package:scwar/config/config.dart';
 import 'package:scwar/config/game_config.dart';
-import 'dart:developer';
 import 'package:scwar/game/game.dart';
 import 'package:scwar/utils/number_util.dart';
 

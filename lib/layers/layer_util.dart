@@ -1,7 +1,6 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:scwar/game/game.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 Widget makeTextButton(SCWarGame game, String name, VoidCallback onClick,
     {Color color = const Color(0xFFF7E7CE)}) {
@@ -50,7 +49,7 @@ Widget makeTextButton(SCWarGame game, String name, VoidCallback onClick,
   // );
 }
 
-Widget makeIconButton(BuildContext context, SCWarGame game, IconData icon,
+Widget makeIconTextButton(BuildContext context, SCWarGame game, IconData icon,
     String name, VoidCallback onClick,
     {Color? color}) {
   double scale = game.scale;
@@ -107,4 +106,37 @@ Widget makeIconButton(BuildContext context, SCWarGame game, IconData icon,
   //     onClick();
   //   },
   // );
+}
+
+Widget makeIconButton(
+    BuildContext context, SCWarGame game, IconData icon, VoidCallback onClick,
+    {Color? color, Color? iconColor, double? size, bool enable = true}) {
+  double scale = game.scale;
+  size ??= 50;
+  return ElevatedButton(
+    onPressed: () {
+      if (enable) {
+        onClick();
+      }
+    },
+    style: ElevatedButton.styleFrom(
+        backgroundColor: !enable
+            ? const Color(0xFF717171)
+            : color ?? const Color(0xFF3292b8), // 按钮背景颜色
+        padding: const EdgeInsets.symmetric(vertical: 5.0),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(5 / scale),
+        ),
+        fixedSize: Size(size / scale, size / scale)),
+    child: SizedBox(
+      // width: 145 / scale,
+      // height: 40 / scale,
+      // padding: EdgeInsets.all(3.0 / scale),
+      child: Icon(
+        icon,
+        size: (size - 20) / scale,
+        color: iconColor ?? Colors.white, // 图标颜色
+      ),
+    ),
+  );
 }

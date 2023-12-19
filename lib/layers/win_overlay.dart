@@ -35,7 +35,7 @@ Widget buidlWinOverlay(BuildContext context, SCWarGame game) {
     SizedBox(height: 5 / scale),
   ];
   List<Widget> buttons = [
-    makeIconButton(
+    makeIconTextButton(
         context, game, Iconfont.home, AppLocalizations.of(context)!.home, () {
       game.gameManager.soundManager.playCick();
       game.goHome();
@@ -52,7 +52,7 @@ Widget buidlWinOverlay(BuildContext context, SCWarGame game) {
   } else {
     if (game.gameManager.level < 50) {
       buttons.add(SizedBox(height: 20 / scale));
-      buttons.add(makeIconButton(context, game, Iconfont.next,
+      buttons.add(makeIconTextButton(context, game, Iconfont.next,
           '${AppLocalizations.of(context)!.level} ${game.gameManager.level + 1}',
           () {
         game.gameManager.soundManager.playCick();

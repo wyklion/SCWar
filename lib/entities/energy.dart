@@ -1,4 +1,3 @@
-import 'dart:developer';
 import 'package:flame/effects.dart';
 import 'package:flutter/rendering.dart';
 import 'package:scwar/utils/number_util.dart';

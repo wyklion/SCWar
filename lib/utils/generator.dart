@@ -1,4 +1,3 @@
-import 'dart:developer';
 import 'dart:math' as math;
 import 'package:scwar/data/game_data.dart';
 import 'package:scwar/entities/entity_info.dart';

@@ -64,13 +64,13 @@ class RebornComponent extends StatelessWidget {
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            makeIconButton(context, game, Iconfont.end,
+                            makeIconTextButton(context, game, Iconfont.end,
                                 AppLocalizations.of(context)!.no,
                                 color: const Color(0xFFb33030), () {
                               onFinish();
                             }),
                             SizedBox(height: 35 / scale),
-                            makeIconButton(
+                            makeIconTextButton(
                                 context,
                                 game,
                                 Iconfont.video,
@@ -176,13 +176,13 @@ class GameOverComponent extends StatelessWidget {
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            makeIconButton(context, game, Iconfont.home,
+                            makeIconTextButton(context, game, Iconfont.home,
                                 AppLocalizations.of(context)!.home, () {
                               game.gameManager.soundManager.playCick();
                               game.goHome();
                             }),
                             SizedBox(height: 20 / scale),
-                            makeIconButton(context, game, Iconfont.restart,
+                            makeIconTextButton(context, game, Iconfont.restart,
                                 AppLocalizations.of(context)!.restart, () {
                               game.gameManager.soundManager.playCick();
                               game.restart();

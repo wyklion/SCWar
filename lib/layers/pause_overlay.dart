@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:scwar/config/game_config.dart';
 import 'package:scwar/game/game.dart';
@@ -108,19 +106,19 @@ Widget buidlPauseOverlay(BuildContext context, SCWarGame game) {
                       SizedBox(height: 20 / scale),
                       SoundSwitchButton(game: game),
                       SizedBox(height: 20 / scale),
-                      makeIconButton(context, game, Iconfont.home,
+                      makeIconTextButton(context, game, Iconfont.home,
                           AppLocalizations.of(context)!.home, () {
                         game.gameManager.soundManager.playCick();
                         game.goHome();
                       }),
                       SizedBox(height: 20 / scale),
-                      makeIconButton(context, game, Iconfont.restart,
+                      makeIconTextButton(context, game, Iconfont.restart,
                           AppLocalizations.of(context)!.restart, () {
                         game.gameManager.soundManager.playCick();
                         game.restart();
                       }),
                       SizedBox(height: 20 / scale),
-                      makeIconButton(context, game, Iconfont.play,
+                      makeIconTextButton(context, game, Iconfont.play,
                           AppLocalizations.of(context)!.resume, () {
                         game.gameManager.soundManager.playCick();
                         game.resume();

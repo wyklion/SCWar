@@ -30,11 +30,15 @@ class Iconfont {
     fontFamily: 'Iconfont',
   );
   static const menu = IconData(
-    0xe7c6,
+    0xe663,
     fontFamily: 'Iconfont',
   );
   static const back = IconData(
     0xe6b1,
+    fontFamily: 'Iconfont',
+  );
+  static const foward = IconData(
+    0xe68b,
     fontFamily: 'Iconfont',
   );
   static const ok = IconData(
@@ -55,6 +59,10 @@ class Iconfont {
   );
   static const kefu = IconData(
     0xe635,
+    fontFamily: 'Iconfont',
+  );
+  static const leaderboard = IconData(
+    0xe6c5,
     fontFamily: 'Iconfont',
   );
 }

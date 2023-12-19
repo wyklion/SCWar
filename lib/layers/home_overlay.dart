@@ -1,4 +1,7 @@
+import 'dart:io';
+
 import 'package:auto_size_text/auto_size_text.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:scwar/config/config.dart';
 import 'package:scwar/config/game_config.dart';
@@ -205,44 +208,58 @@ Widget makePlayButton(BuildContext context, SCWarGame game) {
 
 Widget makeLevelButton(BuildContext context, SCWarGame game) {
   double scale = game.scale;
-  return Center(
+  List<Widget> children = [
+    ElevatedButton(
+      onPressed: () {
+        game.gameManager.soundManager.playCick();
+        game.goToLevel();
+      },
+      style: ElevatedButton.styleFrom(
+        backgroundColor: const Color(0xFF4baea0), // 按钮背景颜色
+        padding: const EdgeInsets.symmetric(vertical: 5.0),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(5 / scale),
+        ),
+        fixedSize: Size(180 / scale, 60 / scale),
+        foregroundColor: const Color(0xFF7DCEA0),
+        textStyle: TextStyle(
+          textBaseline: TextBaseline.ideographic,
+          fontSize: 40 / scale,
+          fontWeight: FontWeight.bold,
+          shadows: const [
+            Shadow(
+              blurRadius: 3,
+              color: Color(0xff003333),
+              offset: Offset(3, 3),
+            ),
+          ],
+        ),
+      ),
+      child: SizedBox(
+        width: 120 / scale,
+        child: AutoSizeText(
+          AppLocalizations.of(context)!.level,
+          textAlign: TextAlign.center,
+        ),
+      ),
+    ),
+  ];
+
+  if (!kIsWeb && Platform.isIOS) {
+    children.add(SizedBox(height: 32 / scale));
+    children.add(makeIconButton(context, game, Iconfont.leaderboard, () {
+      game.gameManager.soundManager.playCick();
+      game.goLeaderboard();
+    }, color: const Color(0xFF4baea0), iconColor: const Color(0xFF9DDEB0)));
+  }
+  return Align(
+    alignment: Alignment.bottomCenter,
     child: SizedBox(
-      height: 300 / scale,
+      height: 390 / scale,
       child: Align(
-        alignment: Alignment.bottomCenter,
-        child: ElevatedButton(
-          onPressed: () {
-            game.gameManager.soundManager.playCick();
-            game.goToLevel();
-          },
-          style: ElevatedButton.styleFrom(
-            backgroundColor: const Color(0xFF4baea0), // 按钮背景颜色
-            padding: const EdgeInsets.symmetric(vertical: 5.0),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(5 / scale),
-            ),
-            fixedSize: Size(180 / scale, 60 / scale),
-            foregroundColor: const Color(0xFF7DCEA0),
-            textStyle: TextStyle(
-              textBaseline: TextBaseline.ideographic,
-              fontSize: 40 / scale,
-              fontWeight: FontWeight.bold,
-              shadows: const [
-                Shadow(
-                  blurRadius: 3,
-                  color: Color(0xff003333),
-                  offset: Offset(3, 3),
-                ),
-              ],
-            ),
-          ),
-          child: SizedBox(
-            width: 120 / scale,
-            child: AutoSizeText(
-              AppLocalizations.of(context)!.level,
-              textAlign: TextAlign.center,
-            ),
-          ),
+        alignment: Alignment.topCenter,
+        child: Column(
+          children: children,
         ),
       ),
     ),
@@ -318,7 +335,7 @@ class KefuComponent extends StatelessWidget {
                         ),
                       ),
                     ),
-                    makeIconButton(context, game, Iconfont.ok,
+                    makeIconTextButton(context, game, Iconfont.ok,
                         AppLocalizations.of(context)!.ok,
                         color: const Color(0xFF6FCF97), () {
                       onOk();

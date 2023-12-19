@@ -1,18 +1,18 @@
 import 'dart:async';
-import 'dart:developer';
 import 'dart:io';
 import 'package:flame/components.dart';
 import 'package:flame/game.dart';
 import 'package:flame/events.dart';
-import 'package:flame/extensions.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:games_services/games_services.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:scwar/config/config.dart';
 import 'package:scwar/data/player_data.dart';
 import 'package:scwar/game/game_ui.dart';
 import 'package:scwar/game/game_world.dart';
 import 'package:scwar/data/local_storage.dart';
+import 'package:scwar/utils/game_services_controller.dart';
 import 'package:scwar/utils/sound_manager.dart';
 import '../config/game_config.dart';
 import 'game_manager.dart';
@@ -30,6 +30,7 @@ class SCWarGame extends FlameGame<SCWarWorld> with TapDetector, ScaleDetector {
   late LocalStorage localStorage;
   RewardedAd? rewardedAd;
   BuildContext context;
+  GamesServicesController gsc = GamesServicesController();
 
   SCWarGame(this.context)
       : super(
@@ -54,6 +55,9 @@ class SCWarGame extends FlameGame<SCWarWorld> with TapDetector, ScaleDetector {
     world.showHome();
     overlays.add('home');
     _loadAd();
+    if (!kIsWeb && Platform.isIOS) {
+      gsc.initialize();
+    }
     return super.onLoad();
   }
 
@@ -102,6 +106,7 @@ class SCWarGame extends FlameGame<SCWarWorld> with TapDetector, ScaleDetector {
   void win() {
     playerData.levels[gameManager.level][0]++;
     playerData.saveLevelsStorage(localStorage);
+    submitScore(gameManager.level);
     overlays.add('win');
   }
 
@@ -161,6 +166,18 @@ class SCWarGame extends FlameGame<SCWarWorld> with TapDetector, ScaleDetector {
     overlays.add('game');
     gameManager.level++;
     gameManager.restartGame();
+  }
+
+  void goLeaderboard() {
+    if (!kIsWeb && Platform.isIOS) {
+      gsc.showLeaderboard();
+    }
+  }
+
+  void submitScore(int value) {
+    if (!kIsWeb && Platform.isIOS) {
+      gsc.submitLeaderboardScore(value);
+    }
   }
 
   @override
