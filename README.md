@@ -83,6 +83,7 @@ Zahlen-Turmverteidigungsspiel
 circle,square,clash,strategy,merge,battle,invaders,turret,puzzle,upgrade, numbers,tower,defense,2048
 方圆,塔防,数字,策略,合成,射击,2048,圆,方块,颜色,升级,合并,number
 
+隐私政策 https://www.freeprivacypolicy.com/live/2bf87b12-1d94-4a44-8f7a-ba88bb898181
 
 # 开发记录（2023）
 
